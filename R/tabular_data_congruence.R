@@ -12,7 +12,7 @@
 #' @examples 
 #' my_metadata<-loadMetadata()
 #' 
-loadMetadata <- function(directory=getwd()){
+load.metadata <- function(directory=getwd()){
   #catch and store current working directory
   orig_wd <- getwd()
   #reset the working directory to the original directory when function is exited
@@ -64,7 +64,7 @@ loadMetadata <- function(directory=getwd()){
 #' @export
 #'
 #' @examples my_data<-loadData()
-loadData<-function(directory=getwd()){
+load.data<-function(directory=getwd()){
   orig_wd<-getwd()
   on.exit(setwd(orig_wd))
   setwd(directory)
@@ -94,7 +94,7 @@ loadData<-function(directory=getwd()){
 #'
 #' @examples
 #' metadataVersion(my_metadata)
-metadataVersion<-function(emlObject){
+test.metadataVersion<-function(emlObject){
   vers<-substr(sub(".*https://eml.ecoinformatics.org/eml-", "", emlObject), 1, 5)[1]
   vers<-numeric_version(vers)
   if(vers<"2.2.1"){
@@ -118,7 +118,7 @@ metadataVersion<-function(emlObject){
 #' @export
 #'
 #' @examples
-validateSchema<-function(emlObject){
+test.validateSchema<-function(emlObject){
   EML::eml_validate(emlObject)
 }
 
