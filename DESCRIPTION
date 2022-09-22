@@ -1,11 +1,12 @@
-Package: DPCchecker
+Package: DPchecker
 Title: Checks Data Packages for Congruence
 Version: 0.0.0.9000
 Authors: 
     person("Rob", "Baker", , "robert_baker@nps.gov", role = c("aut", "cre"),
            comment = c(ORCID = "0000-0001-7591-5035"))
 Description: Allows the user (and reviewer) to check a data package and test whether it meets the congruence standards set forth by NPS for upload to DataStore as a datapackage.
-License: `use_mit_license()`
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
