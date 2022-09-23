@@ -1,27 +1,26 @@
 #' Load Metadata
-#' 
-#' @description loads the metadata file from a given path or directory.
-#' 
-#' @details given a path or directory (default is the working directory) loadMetadata looks for files with the ending *_metadata.xml. The function quits and warns the user if no such files are found or if more than one such file is found. If only one \*_metadata.xml file is found, it checked for one of 3 formats: FGDC, ISO, or EML. Currently only EML is supported and the function will warn the user and quit if non-EML metadata is found. The EML metadata file is loaded into R's work space for future use during congruence checking.
+#'
+#' @description load.metadata loads the metadata file from a given path or directory.
+#'
+#' @details given a path or directory (default is the working directory) load.metadata looks for files with the ending *_metadata.xml. The function quits and warns the user if no such files are found or if more than one such file is found. If only one \*_metadata.xml file is found, it checked for one of 3 formats: FGDC, ISO, or EML. Currently only EML is supported and the function will warn the user and quit if non-EML metadata is found. The EML metadata file is loaded into R's work space for future use during congruence checking.
 #'
 #' @param directory the directory where the metadata file is found (i.e. your data package). Defaults to the current working directory. On exit, returns you to the current working directory.
 #'
 #' @return an R-object formatted as EML metadata.
 #' @export
 #'
-#' @examples 
-#' my_metadata<-loadMetadata()
-#' 
+#' @examples
+#' my_metadata<-load.metadata()
+#'
 load.metadata <- function(directory=getwd()){
-  #catch and store current working directory
+  #switch directories; on exit return to current directory:
   orig_wd <- getwd()
-  #reset the working directory to the original directory when function is exited
   on.exit(setwd(orig_wd))
-  #switch to directory where metadata should be
-  setwd(directory) 
+  setwd(directory)
+
   #get list of all files ending in metadata.xml
   lf<-list.files(pattern="metadata.xml")
-  
+
   #if metadata file exists, stop the function and warn the user
   if(length(lf) < 1){
     stop("No metadata found. Your metadata file name must end in _metadata.xml")
@@ -30,18 +29,18 @@ load.metadata <- function(directory=getwd()){
   if(length(lf) > 1){
     stop("The data package format only allows one metadata file per data package. Please remove extraneous metadata files or combine them into a single file.")
   }
-  
+
   #if exactly 1 metadata file exists, determine what format the metadata file is. Accept only EML (for now):
   if(length(lf)==1){
-    if(sum(grepl("<metstdv>FGDC-STD-001-1998", readLines(lf)))>0){
+    if(sum(grepl("<metstdv>FGDC-STD-001-1998", readr::read_lines(lf)))>0){
       metaformat<-"fgdc"
       stop(paste0("\nCongruence checking is not yet supported for ", metaformat, " metadata."))
     }
-    else if(sum(grepl("schemas.isotc211.org/19115", readLines(lf)))>0){
+    else if(sum(grepl("schemas.isotc211.org/19115", readr::read_lines(lf)))>0){
       metaformat<-"ISO19915"
       stop(paste0("\nCongruence checking is not yet supported for ", metaformat, " metadata."))
     }
-    else if(sum(grepl("<eml:eml", readLines(lf)))>0){
+    else if(sum(grepl("<eml:eml", readr::read_lines(lf)))>0){
       metaformat<-"eml"
       #writeLines(paste0("\nYou are working with ", metaformat, " metadata"))
       #load metadata
@@ -55,23 +54,23 @@ load.metadata <- function(directory=getwd()){
 
 #' Load Data
 #'
-#' @description loadData inspects the working directory for data files. Loads all existing data files into a tibble. 
-#' 
-#' @details loads all data files in a specified directory (default is the working directory) into a tibble for later use in congruence checking. Returns the user to the working directory upon exit. Currently only supports .csv files. 
+#' @description load.data inspects the working directory for data files. Loads all existing data files into a tibble.
+#'
+#' @details loads all data files in a specified directory (default is the working directory) into a tibble for later use in congruence checking. Returns the user to the working directory upon exit. Currently only supports .csv files.
 #' @param directory the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.
 #'
 #' @return a tibble of .csvs
 #' @export
 #'
-#' @examples my_data<-loadData()
+#' @examples my_data<-load.data()
 load.data<-function(directory=getwd()){
-  orig_wd<-getwd()
+  #switch directories; on exit return to current directory:
+  orig_wd <- getwd()
   on.exit(setwd(orig_wd))
   setwd(directory)
-  lf<-list.files(pattern=".csv")
-  names<-gsub(pattern="\\.csv$", "", lf)
-  lf<-list.st<-list()
 
+  lf<-list.files(pattern=".csv")
+  tibble_List<-list()
   for(i in lf){
     filepath<-file.path(getwd(),i)
     tibble_List[[i]]<-assign(i, readr::read_csv(filepath, show_col_types=FALSE))
@@ -82,10 +81,10 @@ load.data<-function(directory=getwd()){
 
 
 #' EML Version Check
-#' 
-#' @description metadataVersion determines whether the version of the metadata supplied meets the current criteria for an NPS data package.
-#' 
-#' @details currently only EML is supported. EML must be version >= 2.2.0. 
+#'
+#' @description test.metadataVersion determines whether the version of the metadata supplied meets the current criteria for an NPS data package.
+#'
+#' @details currently only EML is supported. EML must be version >= 2.2.0.
 #'
 #' @param emlObject an R object containing EML metadata from a EML formatted .xml file loaded using either loadMetatdata() or EML::read_eml(<filename>, from="xml")
 #'
@@ -93,7 +92,7 @@ load.data<-function(directory=getwd()){
 #' @export
 #'
 #' @examples
-#' metadataVersion(my_metadata)
+#' test.metadataVersion(my_metadata)
 test.metadataVersion<-function(emlObject){
   vers<-substr(sub(".*https://eml.ecoinformatics.org/eml-", "", emlObject), 1, 5)[1]
   vers<-numeric_version(vers)
@@ -107,25 +106,284 @@ test.metadataVersion<-function(emlObject){
 
 
 #' Validate Metadata Schema
-#' 
-#' @description validateSchema inspects a metadata object loaded into R and determines whether it is schema-valid.
-#' 
+#'
+#' @description test.validateSchema inspects a metadata object loaded into R and determines whether it is schema-valid.
+#'
 #' @details currently, only EML is supported. For now this is just a wrapper form EML::eml_validate().
 #'
-#' @param emlObject 
+#' @param emlObject an R object containing EML metadata from a EML formatted .xml file loaded using either loadMetatdata() or EML::read_eml(<filename>, from="xml")
+#'
+#' @return message
+#' @export
+#'
+#' @examples
+#' test.validateSchema(emlObject)
+test.validateSchema<-function(emlObject){
+  EML::eml_validate(emlObject)
+}
+
+#' Footer Check
+#'
+#' @description test.footer checks the metadata files to determine whether data files contain footer lines or not.
+#'
+#' @details If footer lines are not present, the data package passes the test. If footer lines are present, the data package fails the test and the user is instructed to remove footer lines prior to data package upload. Currently only EML metadata are supported.
+#'
+#' @param emlObject an R object containing EML metadata from a EML formatted .xml file loaded using either loadMetatdata() or EML::read_eml(<filename>, from="xml")
+#'
+#' @return message
+#' @export
+#'
+#' @examples
+#' test.footer(my_metadata)
+test.footer<-function(emlObject){
+  if(is.null(arcticdatautils::eml_get_simple(emlObject, "numFooterLines"))==TRUE){
+    message("Footer Check passed: Metadata indicates data files do not have footers")
+  }
+  else {
+    message("Footer Check ERROR: metadata indicates that data files include footers. Please remove all footers from data files")
+  }
+}
+
+
+#' Header Check
+#'
+#' @description test.headerNum checks the metadata files to ensure that each data file contains exactly one header row.
+#'
+#' @details headerCheck examines the numHeaderLines element from EML (currently only EML is supported) metadata to determine how many header rows there are. If there are no header rows or if there is more than one header row, the test fails. The test also fails if there is no information about the number of header rows.
+#'
+#' @param emlObject an R object containing EML metadata from a EML formatted .xml file loaded using either loadMetatdata() or EML::read_eml(<filename>, from="xml")
 #'
 #' @return
 #' @export
 #'
 #' @examples
-test.validateSchema<-function(emlObject){
-  EML::eml_validate(emlObject)
+#' test.headerNum(my_metadata)
+test.headerNum<-function(emlObject){
+  header<-arcticdatautils::eml_get_simple(emlObject, "numHeaderLines")
+  if(is.null(header)==TRUE){
+    stop("Header Check ERROR: metadata does not contain information about number of header rows")
+  }
+  headerNum<-NULL
+  for(i in seq_along(header)){
+    if(header[i]!=1){
+      stop("Header Check ERROR: data files must contain exactly one header row")
+    }
+    else{
+      headerNum<-append(headerNum, i)
+    }
+  }
+  if(length(headerNum)==length(headerNum)){
+    message("Header Check passed: Metadata indicates that each data file contains exactly one header row")
+  }
+}
+
+#' Field Delimiter Check\
+#'
+#' @description test.delimiter checks the metadata file and ensures that each data file has a field delimiter with exactly one character. For instance, ",".
+#'
+#' @details test.delimiter examines the fieldDelimiter element from EML (currently only EML is supported) metadata to determine how many characters there are. If there is no fieldDelimiter element, the test returns an error. If the field delimiter is anything other than exactly one character in length, the test returns an error.
+#'
+#' @param emlObject an R object containing EML metadata from a EML formatted .xml file loaded using either loadMetatdata() or EML::read_eml(<filename>, from="xml")
+#'
+#' @return message
+#' @export
+#'
+#' @examples
+#' test.delimiter(my_metadata)
+test.delimiter<-function(emlObject){
+  delimit<-arcticdatautils::eml_get_simple(emlObject, "fieldDelimiter")
+  if(is.null(delimit)==TRUE){
+    stop("Field Delimiter Check ERROR: metadata does not contain information about the field delimiter for data files")
+  }
+  delimitNum<-NULL
+  for(i in seq_along(delimit)){
+    if(length(delimit[i])!=1){
+      stop("Field Delimiter Check ERROR: the field delimiter must be a single character")
+    }
+    else{
+      delimitNum<-append(delimitNum, i)
+    }
+  }
+  if(length(delimitNum)==length(delimit)){
+    message("Field Delimiter Check passed: Metadata indicates that each data file contains a field delimiter that is a single character")
+  }
+}
+
+#' Test Metadata for Duplicate Filenames
+#'
+#' @description test.dupMetaEntries test to see whether there are duplicate filenames listed for the data files in (EML) metadata.
+#'
+#' @details specifically, test.dupMetaEntries looks at the <physical> element(s) of a metadata file (which describe each data file) and asks whether there are duplicates entries under the objectName child element, which is where the file name for each data file is stored. If your files are not in your working directory and you specified their location, reverts back to your working directory on exit.
+#'
+#' @param directory the directory where the files for your data package reside. Defaults to the current working directory.
+#'
+#' @return message
+#' @export
+#'
+#' @examples test.dupMetaEntries()
+test.dupMetaEntries<-function(directory=getwd()){
+  #switch directories; on exit return to current directory:
+  orig_wd <- getwd()
+  on.exit(setwd(orig_wd))
+  setwd(directory)
+
+  #load metadata
+  mymeta<-load.metadata(directory)
+  #get physical elements (and all children elements)
+  attribs<-EML::eml_get(mymeta, "physical")
+  #remove @context
+  newAttribs<-within(attribs, rm('@context'))
+  #make a list of data file filenames in the metadata:
+  fn<-NULL
+  for(i in seq_along(newAttribs)){
+    fn<-append(fn, newAttribs[[i]][[1]])
+  }
+  #find duplicate entries:
+  dups<-fn[duplicated(fn)]
+  #if no duplicates, test passed:
+  if(length(dups)==0){
+    message("PASSED: Each data file name is used exactly once in the metadata file")
+  }
+  #if duplicates, test failed:
+  if(length(dups>0)){
+    print(paste0("The following filenames are duplicated in the metadata file:\n", dups))
+    stop("ERROR: metadata file name check failed. Some filenames are used more than once in the metadata.")
+  }
+}
+
+#' Test Data Files for Duplicate Names
+#'
+#' @description test.dupDataFiles looks at the file names of .csv files within a specified directory and tests whether there are any duplicates.
+#'
+#' @details not sure why you'd ever need this function. Seems that most file systems won't let you have duplicate file names, but here it is for the sake of completeness. If you specify a directory other than your current working directory, it will return to the current working directory on exit.
+#'
+#' @param directory path to your data files. Defaults to the current working directory.
+#'
+#' @return
+#' @export
+#'
+#' @examples test.dupDataFiles()
+test.dupDataFiles<-function(directory=getwd()){
+  #switch directories; on exit return to current directory:
+  orig_wd <- getwd()
+  on.exit(setwd(orig_wd))
+  setwd(directory)
+
+  #get data file filenames (only .csv supported for now):
+  lf<-list.files(pattern=".csv")
+
+  #find duplicate entries:
+  dups<-lf[duplicated(lf)]
+  #if no duplicates, test passed:
+  if(length(dups)==0){
+    message("PASSED: Each data file name is used exactly once")
+  }
+  #if duplicates, test failed:
+  if(length(dups>0)){
+    print(paste0("The following data filenames are duplicated:\n", dups))
+    stop("ERROR: data file name check failed. Some filenames are used more than once.")
+  }
+}
+
+#' File Name Match
+#'
+#' @description test.fileNameMatch checks to see whether all data files (.csv) within a specified directory are listed under the objectName (child of physical) element in an EML metadata file in the same directory, and vice versa. Mismatches will result in an error message.
+#'
+#' @details If a directory other than the current working directory is specified, test.fileNameMatch returns to the current working directory on exit. Note that the metadata file must follow NPS naming conventions, specifically ending in *_metadata.xml. test.fileNameMatch assumes there are the same number of data files in the directory as dataTables in the metadata file.
+#'
+#' @param directory path to the data files and metadata of a data package. Defaults to the current working directory.
+#'
+#' @return
+#' @export
+#'
+#' @examples test.fileNameMatch()
+test.fileNameMatch<-function(directory=getwd()){
+  #on exit return to current working directory:
+  orig_wd <- getwd()
+  on.exit(setwd(orig_wd))
+  setwd(directory)
+
+  #get metadata filenames from "physical" attribute:
+  mymeta<-load.metadata(directory)
+  #get physical elements (and all children elements)
+  phys<-EML::eml_get(mymeta, "physical")
+  #remove @context
+  newphys<-within(phys, rm('@context'))
+  #make a list of data file filenames in the metadata:
+  fn<-NULL
+  for(i in seq_along(newphys)){
+    fn<-append(fn, newphys[[i]][[1]])
+  }
+
+  #get filenames from .csv data files in directory:
+  lf<-list.files(pattern=".csv")
+
+  #items in metadata but not data file names:
+  meta<-setdiff(fn, lf)
+
+  #items in data file names but not in metadata:
+  dat<-setdiff(lf, fn)
+
+  if(length(meta)==0 && length(dat)==0){
+    message("PASSED: file name congruence check. All data files are listed in metadata and all metdata files names refer to data files")
+  }
+  if(length(meta)>0){
+      cat(paste0("ERROR: metadata lists file names that do not have corresponding data files:\n", meta))
+  }
+  if(length(dat)>0){
+      cat(paste0("ERROR: data files exist that are not listed in the metadata:\n", dat))
+  }
+}
+
+test.fieldNum<-function(directory=getwd()){
+  #on exit return to current working directory:
+  orig_wd <- getwd()
+  on.exit(setwd(orig_wd))
+  setwd(directory)
+
+  #load metadata
+  mymeta<-load.metadata(directory)
+
+  #get dataTable and all children elements
+  dattab<-EML::eml_get(mymeta, "dataTable")
+  newdat<-within(dattab, rm('@context'))
+
+  #for each table, make a list of attribute names; Table nameis the name of the file that contains those attributes:
+  for(i in seq_along(newdat)){
+    #filenames in metadata
+    fname<-newdat[[i]][[3]][[1]]
+    attriblist<-newdat[[i]][[4]][[1]]
+    assign(paste0("Meta_", fname), NULL)
+    for(j in seq_along(attriblist)){
+      attribname<-newdat[[i]][[4]][[1]][[j]][[1]]
+      assign(paste0("Meta_", fname), append(get(paste0("Meta_", fname)), attribname))
+    }
+  }
+
+  lf<-list.files(pattern=".csv")
+
+  #get first row of each .csv. Assumes there is exactly 1 header row!
+  for(i in seq_along(lf)){
+    colnum <- readLines(lf[i], n = 1)
+    assign(paste0("Data_", lf[i]), strsplit(colnum, ",")[[1]])
+  }
+
+  for(i in seq_along(lf)){
+    if(length(get(paste0("Data_",lf[i])))!=length(get(paste0("Meta_",  newdat[[i]][[3]][[1]])))){
+      print(lf[i])
+      print(newdat[[i]][[3]][[1]])
+      stop("ERROR: field numer mismatch. Some columns in data files are not listed in metadata or some attributes listed in metadata were not found in the data files.")
+    }
+  }
+  print("PASSED: field number match. All columns in data files are listed in metadata and all attributes in metadata are columns in the data files.")
 }
 
 
 
 
-    
-    
-    
-  
+
+
+
+
+
+
