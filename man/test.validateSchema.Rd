@@ -7,11 +7,17 @@
 test.validateSchema(emlObject)
 }
 \arguments{
-\item{emlObject}{}
+\item{emlObject}{an R object containing EML metadata from a EML formatted .xml file loaded using either loadMetatdata() or EML::read_eml(<filename>, from="xml")}
+}
+\value{
+message
 }
 \description{
-validateSchema inspects a metadata object loaded into R and determines whether it is schema-valid.
+test.validateSchema inspects a metadata object loaded into R and determines whether it is schema-valid.
 }
 \details{
 currently, only EML is supported. For now this is just a wrapper form EML::eml_validate().
+}
+\examples{
+test.validateSchema(emlObject)
 }

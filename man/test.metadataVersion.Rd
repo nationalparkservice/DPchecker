@@ -13,11 +13,11 @@ test.metadataVersion(emlObject)
 message
 }
 \description{
-metadataVersion determines whether the version of the metadata supplied meets the current criteria for an NPS data package.
+test.metadataVersion determines whether the version of the metadata supplied meets the current criteria for an NPS data package.
 }
 \details{
 currently only EML is supported. EML must be version >= 2.2.0.
 }
 \examples{
-metadataVersion(my_metadata)
+test.metadataVersion(my_metadata)
 }
