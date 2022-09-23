@@ -13,12 +13,12 @@ load.metadata(directory = getwd())
 an R-object formatted as EML metadata.
 }
 \description{
-loads the metadata file from a given path or directory.
+load.metadata loads the metadata file from a given path or directory.
 }
 \details{
 
 }
 \examples{
-my_metadata<-loadMetadata()
+my_metadata<-load.metadata()
 
 }

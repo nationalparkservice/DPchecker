@@ -13,11 +13,11 @@ load.data(directory = getwd())
 a tibble of .csvs
 }
 \description{
-loadData inspects the working directory for data files. Loads all existing data files into a tibble.
+load.data inspects the working directory for data files. Loads all existing data files into a tibble.
 }
 \details{
 loads all data files in a specified directory (default is the working directory) into a tibble for later use in congruence checking. Returns the user to the working directory upon exit. Currently only supports .csv files.
 }
 \examples{
-my_data<-loadData()
+my_data<-load.data()
 }
