@@ -4,10 +4,10 @@
 \alias{test.validateSchema}
 \title{Validate Metadata Schema}
 \usage{
-test.validateSchema(emlObject)
+test.validateSchema(directory = getwd())
 }
 \arguments{
-\item{emlObject}{an R object containing EML metadata from a EML formatted .xml file loaded using either loadMetatdata() or EML::read_eml(<filename>, from="xml")}
+\item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
 }
 \value{
 message
@@ -19,5 +19,5 @@ test.validateSchema inspects a metadata object loaded into R and determines whet
 currently, only EML is supported. For now this is just a wrapper form EML::eml_validate().
 }
 \examples{
-test.validateSchema(emlObject)
+test.validateSchema()
 }

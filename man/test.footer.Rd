@@ -4,10 +4,10 @@
 \alias{test.footer}
 \title{Footer Check}
 \usage{
-test.footer(emlObject)
+test.footer(directory = getwd())
 }
 \arguments{
-\item{emlObject}{an R object containing EML metadata from a EML formatted .xml file loaded using either loadMetatdata() or EML::read_eml(<filename>, from="xml")}
+\item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
 }
 \value{
 message
@@ -19,5 +19,5 @@ test.footer checks the metadata files to determine whether data files contain fo
 If footer lines are not present, the data package passes the test. If footer lines are present, the data package fails the test and the user is instructed to remove footer lines prior to data package upload. Currently only EML metadata are supported.
 }
 \examples{
-test.footer(my_metadata)
+test.footer()
 }

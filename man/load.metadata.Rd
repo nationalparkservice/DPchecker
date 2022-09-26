@@ -7,7 +7,7 @@
 load.metadata(directory = getwd())
 }
 \arguments{
-\item{directory}{the directory where the metadata file is found (i.e. your data package). Defaults to the current working directory. On exit, returns you to the current working directory.}
+\item{directory}{the directory where the metadata file is found - i.e. your data package. Defaults to the current working directory. On exit, returns you to the current working directory.}
 }
 \value{
 an R-object formatted as EML metadata.
@@ -16,7 +16,7 @@ an R-object formatted as EML metadata.
 load.metadata loads the metadata file from a given path or directory.
 }
 \details{
-
+given a path or directory - default is the working directory -  load.metadata looks for files with the ending *_metadata.xml. The function quits and warns the user if no such files are found or if more than one such file is found. If only one metadata file is found, it checked for one of 3 formats: FGDC, ISO, or EML. Currently only EML is supported and the function will warn the user and quit if non-EML metadata is found. The EML metadata file is loaded into R's work space for future use during congruence checking.
 }
 \examples{
 my_metadata<-load.metadata()

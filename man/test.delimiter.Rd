@@ -2,22 +2,22 @@
 % Please edit documentation in R/tabular_data_congruence.R
 \name{test.delimiter}
 \alias{test.delimiter}
-\title{Field Delimiter Check\}
+\title{Field Delimiter Check}
 \usage{
-test.delimiter(emlObject)
+test.delimiter(directory = getwd())
 }
 \arguments{
-\item{emlObject}{an R object containing EML metadata from a EML formatted .xml file loaded using either loadMetatdata() or EML::read_eml(<filename>, from="xml")}
+\item{directory}{the directory where the metadata file is found - i.e. your data package. Defaults to the current working directory. On exit, returns you to the current working directory.}
 }
 \value{
 message
 }
 \description{
-test.delimiter checks the metadata file and ensures that each data file has a field delimiter with exactly one character. For instance, ",".
+test.delimiter checks the metadata file and ensures that each data file has a field delimiter with exactly one characte (e.g. ", ").
 }
 \details{
 test.delimiter examines the fieldDelimiter element from EML (currently only EML is supported) metadata to determine how many characters there are. If there is no fieldDelimiter element, the test returns an error. If the field delimiter is anything other than exactly one character in length, the test returns an error.
 }
 \examples{
-test.delimiter(my_metadata)
+test.delimiter()
 }

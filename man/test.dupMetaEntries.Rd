@@ -16,7 +16,7 @@ message
 test.dupMetaEntries test to see whether there are duplicate filenames listed for the data files in (EML) metadata.
 }
 \details{
-specifically, test.dupMetaEntries looks at the <physical> element(s) of a metadata file (which describe each data file) and asks whether there are duplicates entries under the objectName child element, which is where the file name for each data file is stored. If your files are not in your working directory and you specified their location, reverts back to your working directory on exit.
+specifically, test.dupMetaEntries looks at the 'physical' elements of a metadata file, which describe each data file, and asks whether there are duplicates entries under the objectName child element, which is where the file name for each data file is stored. If your files are not in your working directory and you specified their location, reverts back to your working directory on exit.
 }
 \examples{
 test.dupMetaEntries()

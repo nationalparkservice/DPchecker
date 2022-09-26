@@ -4,10 +4,13 @@
 \alias{test.headerNum}
 \title{Header Check}
 \usage{
-test.headerNum(emlObject)
+test.headerNum(directory = getwd())
 }
 \arguments{
-\item{emlObject}{an R object containing EML metadata from a EML formatted .xml file loaded using either loadMetatdata() or EML::read_eml(<filename>, from="xml")}
+\item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
+}
+\value{
+message
 }
 \description{
 test.headerNum checks the metadata files to ensure that each data file contains exactly one header row.
@@ -16,5 +19,5 @@ test.headerNum checks the metadata files to ensure that each data file contains 
 headerCheck examines the numHeaderLines element from EML (currently only EML is supported) metadata to determine how many header rows there are. If there are no header rows or if there is more than one header row, the test fails. The test also fails if there is no information about the number of header rows.
 }
 \examples{
-test.headerNum(my_metadata)
+test.headerNum()
 }

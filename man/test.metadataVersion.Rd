@@ -4,10 +4,10 @@
 \alias{test.metadataVersion}
 \title{EML Version Check}
 \usage{
-test.metadataVersion(emlObject)
+test.metadataVersion(directory = getwd())
 }
 \arguments{
-\item{emlObject}{an R object containing EML metadata from a EML formatted .xml file loaded using either loadMetatdata() or EML::read_eml(<filename>, from="xml")}
+\item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
 }
 \value{
 message
@@ -19,5 +19,5 @@ test.metadataVersion determines whether the version of the metadata supplied mee
 currently only EML is supported. EML must be version >= 2.2.0.
 }
 \examples{
-test.metadataVersion(my_metadata)
+test.metadataVersion()
 }

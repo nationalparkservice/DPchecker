@@ -9,6 +9,9 @@ test.fileNameMatch(directory = getwd())
 \arguments{
 \item{directory}{path to the data files and metadata of a data package. Defaults to the current working directory.}
 }
+\value{
+text
+}
 \description{
 test.fileNameMatch checks to see whether all data files (.csv) within a specified directory are listed under the objectName (child of physical) element in an EML metadata file in the same directory, and vice versa. Mismatches will result in an error message.
 }

@@ -9,6 +9,9 @@ test.dupDataFiles(directory = getwd())
 \arguments{
 \item{directory}{path to your data files. Defaults to the current working directory.}
 }
+\value{
+message
+}
 \description{
 test.dupDataFiles looks at the file names of .csv files within a specified directory and tests whether there are any duplicates.
 }
