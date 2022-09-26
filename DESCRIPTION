@@ -6,7 +6,7 @@ Author:
            comment = c(ORCID = "0000-0001-7591-5035"))
 Maintainer: rob baker <robert_baker@nps.gov>
 Description: Allows the user (and reviewer) to check a data package and test whether it meets the congruence standards set forth by NPS for upload to DataStore as a datapackage.
-License: use_mit_license()
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
@@ -14,6 +14,6 @@ Suggests:
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports:
+    arcticdatautils (>= 0.7.0),
     EML,
     readr
-Remotes: github::NCEAS/arcticdatautils
