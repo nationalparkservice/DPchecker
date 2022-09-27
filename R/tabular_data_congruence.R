@@ -46,7 +46,7 @@ load.metadata <- function(directory=getwd()){
       #load metadata
       metadata<-EML::read_eml(lf, from="xml")
       #return metadata to the the workspace
-      cat(paste0("PASSED: Metadata check passed. EML metadata (",crayon::blue(lf),") found and loaded into R.\n\n"))
+      cat(paste0("PASSED: Metadata check passed. EML metadata (",crayon::blue$bold(lf),") found and loaded into R.\n\n"))
       return(metadata)
     }
   }
@@ -405,38 +405,40 @@ test.fieldNum<-function(directory=getwd()){
   #load metadata
   mymeta<-load.metadata(directory)
 
-  #get dataTable and all children elements
-  dattab<-EML::eml_get(mymeta, "dataTable")
-  newdat<-within(dattab, rm('@context'))
+  if(!is.null(mymeta)){
+    #get dataTable and all children elements
+    dattab<-EML::eml_get(mymeta, "dataTable")
+    newdat<-within(dattab, rm('@context'))
 
-  #for each table, make a list of attribute names; Table name is the name of the file that contains those attributes:
-  for(i in seq_along(newdat)){
-    #filenames in metadata
-    fname<-newdat[[i]][[3]][[1]]
-    attriblist<-newdat[[i]][[4]][[1]]
-    assign(paste0("Meta_", fname), NULL)
-    for(j in seq_along(attriblist)){
-      attribname<-newdat[[i]][[4]][[1]][[j]][[1]]
-      assign(paste0("Meta_", fname), append(get(paste0("Meta_", fname)), attribname))
+    #for each table, make a list of attribute names; Table name is the name of the file that contains those attributes:
+    for(i in seq_along(newdat)){
+      #filenames in metadata
+      fname<-newdat[[i]][[3]][[1]]
+      attriblist<-newdat[[i]][[4]][[1]]
+      assign(paste0("Meta_", fname), NULL)
+      for(j in seq_along(attriblist)){
+        attribname<-newdat[[i]][[4]][[1]][[j]][[1]]
+        assign(paste0("Meta_", fname), append(get(paste0("Meta_", fname)), attribname))
+      }
     }
-  }
 
-  lf<-list.files(pattern=".csv")
+    lf<-list.files(pattern=".csv")
 
-  #get first row of each .csv. Assumes there is exactly 1 header row!
-  for(i in seq_along(lf)){
-    colnum <- readLines(lf[i], n = 1)
-    assign(paste0("Data_", lf[i]), strsplit(colnum, ",")[[1]])
-  }
-
-  for(i in seq_along(lf)){
-    if(length(get(paste0("Data_",lf[i])))!=length(get(paste0("Meta_",  newdat[[i]][[3]][[1]])))){
-      print(lf[i])
-      print(newdat[[i]][[3]][[1]])
-      stop("ERROR: field numer mismatch. Some columns in data files are not listed in metadata or some attributes listed in metadata were not found in the data files.")
+    #get first row of each .csv. Assumes there is exactly 1 header row!
+    for(i in seq_along(lf)){
+      colnum <- readLines(lf[i], n = 1)
+      assign(paste0("Data_", lf[i]), strsplit(colnum, ",")[[1]])
     }
+
+    for(i in seq_along(lf)){
+      if(length(get(paste0("Data_",lf[i])))!=length(get(paste0("Meta_",  newdat[[i]][[3]][[1]])))){
+        print(lf[i])
+        print(newdat[[i]][[3]][[1]])
+        stop("ERROR: field numer mismatch. Some columns in data files are not listed in metadata or some attributes listed in metadata were not found in the data files.")
+      }
+    }
+    print("PASSED: field number match. All columns in data files are listed in metadata and all attributes in metadata are columns in the data files.")
   }
-  print("PASSED: field number match. All columns in data files are listed in metadata and all attributes in metadata are columns in the data files.")
 }
 
 
