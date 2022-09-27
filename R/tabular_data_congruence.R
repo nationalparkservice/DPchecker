@@ -23,11 +23,11 @@ load.metadata <- function(directory=getwd()){
 
   #if metadata file exists, stop the function and warn the user
   if(length(lf) < 1){
-    message("ERROR: Metadata check failed. No metadata found. Your metadata file name must end in _metadata.xml")
+    message("ERROR: Metadata check failed. No metadata found. Your metadata file name must end in _metadata.xml.\n")
   }
   #if multiple metadata files exists, stop the function and warn the user
   if(length(lf) > 1){
-    message("ERROR: Metadata check failed. The data package format only allows one metadata file per data package. Please remove extraneous metadata files or combine them into a single file.")
+    message("ERROR: Metadata check failed. The data package format only allows one metadata file per data package. Please remove extraneous metadata files or combine them into a single file.\n")
   }
 
   #if exactly 1 metadata file exists, determine what format the metadata file is. Accept only EML (for now):
@@ -46,7 +46,7 @@ load.metadata <- function(directory=getwd()){
       #load metadata
       metadata<-EML::read_eml(lf, from="xml")
       #return metadata to the the workspace
-      message(paste0("PASSED: Metadata check passed. EML metadata (", lf, ") found and loaded into R"))
+      message(paste0("PASSED: Metadata check passed. EML metadata (", lf, ") found and loaded into R.\n"))
       return(metadata)
     }
   }
@@ -106,10 +106,10 @@ test.metadataVersion<-function(directory=getwd()){
     vers<-substr(sub(".*https://eml.ecoinformatics.org/eml-", "", mymeta, 1, 5)[1])
     vers<-numeric_version(vers)
     if(vers<"2.2.1"){
-      message("EML version: Error - must be 2.2.0 or later")
+      message("ERROR: unsupported EML version: EML must be 2.2.0 or later.\n")
     }
     if(vers>="2.2.0"){
-      message("EML version: Valid")
+      message("PASSED: EML version is suppoted.\n")
     }
   }
 }
@@ -162,10 +162,10 @@ test.footer<-function(directory=getwd()){
   mymeta<-load.metadata(directory)
   if(!is.null(mymeta)){
     if(is.null(arcticdatautils::eml_get_simple(mymeta, "numFooterLines"))==TRUE){
-      message("Footer Check passed: Metadata indicates data files do not have footers")
+      message("Footer Check passed: Metadata indicates data files do not have footers.\n")
     }
     else {
-      message("Footer Check ERROR: metadata indicates that data files include footers. Please remove all footers from data files")
+      message("Footer Check ERROR: metadata indicates that data files include footers. Please remove all footers from data files.\n")
     }
   }
 }
@@ -370,7 +370,7 @@ test.fileNameMatch<-function(directory=getwd()){
     dat<-setdiff(lf, fn)
 
     if(length(meta)==0 && length(dat)==0){
-      message("PASSED: file name congruence check. All data files are listed in metadata and all metdata files names refer to data files")
+      message("PASSED: file name congruence check. All data files are listed in metadata and all metdata files names refer to data files.\n")
     }
     if(length(meta)>0){
       message("ERROR: metadata lists file names that do not have corresponding data files:")
@@ -383,6 +383,19 @@ test.fileNameMatch<-function(directory=getwd()){
   }
 }
 
+#' Test Number of Fields
+#'
+#' @description test.filedNum compares the number of attributes each dataTable within the EML metadata to the number of columns for the corresponding .csv. If the numbers are the same, the test passes. If the numbers differ, the test fails.
+#'
+#' @details One thing to be cautious of: test.fieldNum does not compare the order or names of the columns! For now, that's on you.
+#'
+#' @param directory path to the data package files. Defaults to the current working directory.
+#'
+#' @return message
+#' @export
+#'
+#' @examples
+#' test.fieldNum()
 test.fieldNum<-function(directory=getwd()){
   #on exit return to current working directory:
   orig_wd <- getwd()
@@ -396,7 +409,7 @@ test.fieldNum<-function(directory=getwd()){
   dattab<-EML::eml_get(mymeta, "dataTable")
   newdat<-within(dattab, rm('@context'))
 
-  #for each table, make a list of attribute names; Table nameis the name of the file that contains those attributes:
+  #for each table, make a list of attribute names; Table name is the name of the file that contains those attributes:
   for(i in seq_along(newdat)){
     #filenames in metadata
     fname<-newdat[[i]][[3]][[1]]
