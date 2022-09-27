@@ -46,7 +46,7 @@ load.metadata <- function(directory=getwd()){
       #load metadata
       metadata<-EML::read_eml(lf, from="xml")
       #return metadata to the the workspace
-      message(paste0("PASSED: Metadata check passed. EML metadata (", lf, ") found and loaded into R.\n"))
+      cat(paste0("PASSED: Metadata check passed. EML metadata (",crayon::blue(lf),") found and loaded into R.\n\n"))
       return(metadata)
     }
   }
