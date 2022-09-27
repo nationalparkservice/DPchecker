@@ -288,7 +288,7 @@ test.dupMetaEntries<-function(directory=getwd()){
     dups<-fn[duplicated(fn)]
     #if no duplicates, test passed:
     if(length(dups)==0){
-      message("PASSED: Each data file name is used exactly once in the metadata file")
+      message("PASSED: Each data file name is used exactly once in the metadata file.")
     }
     #if duplicates, test failed:
     if(length(dups>0)){
@@ -323,7 +323,7 @@ test.dupDataFiles<-function(directory=getwd()){
   dups<-lf[duplicated(lf)]
   #if no duplicates, test passed:
   if(length(dups)==0){
-    message("PASSED: Each data file name is used exactly once")
+    message("PASSED: Each data file name is used exactly once.")
   }
   #if duplicates, test failed:
   if(length(dups>0)){
@@ -356,13 +356,9 @@ test.fileNameMatch<-function(directory=getwd()){
   if(!is.null(mymeta)){
     #get physical elements (and all children elements)
     phys<-EML::eml_get(mymeta, "physical")
-    #remove @context
-    newphys<-within(phys, rm('@context'))
-    #make a list of data file filenames in the metadata:
-    fn<-NULL
-    for(i in seq_along(newphys)){
-      fn<-append(fn, newphys[[i]][[1]])
-    }
+
+    #get everything under "objectName"
+    fn<-unlist(phys)[grepl('objectName',names(unlist(phys)), fixed=T)]
 
     #get filenames from .csv data files in directory:
     lf<-list.files(pattern=".csv")
@@ -377,10 +373,12 @@ test.fileNameMatch<-function(directory=getwd()){
       message("PASSED: file name congruence check. All data files are listed in metadata and all metdata files names refer to data files")
     }
     if(length(meta)>0){
-      cat(paste0("ERROR: metadata lists file names that do not have corresponding data files:\n", meta))
+      message("ERROR: metadata lists file names that do not have corresponding data files:")
+      print(meta)
     }
     if(length(dat)>0){
-      cat(paste0("ERROR: data files exist that are not listed in the metadata:\n", dat))
+      message("ERROR: data files exist that are not listed in the metadata:")
+      print(dat)
     }
   }
 }
