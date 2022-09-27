@@ -136,7 +136,15 @@ test.validateSchema<-function(directory=getwd()){
 
   mymeta<-load.metadata(directory)
   if(!is.null(mymeta)){
-    EML::eml_validate(mymeta)
+    val<-EML::eml_validate(mymeta)
+    if(val==TRUE){
+      message("PASSED: Your metada is schema valid.\n")
+    }
+    if(val!=TRUE){
+      message("ERROR: Your is metadata is schema-invalid.\n")
+      attribs<-attributes(val)
+      print(attribs)
+    }
   }
 }
 
