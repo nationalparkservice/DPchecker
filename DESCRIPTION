@@ -15,5 +15,6 @@ Suggests:
 Config/testthat/edition: 3
 Imports:
     arcticdatautils (>= 0.7.0),
+    crayon,
     EML,
     readr
