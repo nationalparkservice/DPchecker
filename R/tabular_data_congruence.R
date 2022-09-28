@@ -214,7 +214,7 @@ test.headerNum<-function(directory=getwd()){
       }
     }
     if(length(headerNum)==length(headerNum)){
-      message("Header Check passed: Metadata indicates that each data file contains exactly one header row")
+      message("PASSED header Check: Metadata indicates that each data file contains exactly one header row")
     }
   }
 }
@@ -256,7 +256,7 @@ test.delimiter<-function(directory=getwd()){
       }
     }
     if(length(delimitNum)==length(delimit)){
-      message("Field Delimiter Check passed: Metadata indicates that each data file contains a field delimiter that is a single character")
+      message("PASSED: field delimiter check passed: Metadata indicates that each data file contains a field delimiter that is a single character")
     }
   }
 }
