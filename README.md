@@ -25,26 +25,9 @@ library(DPchecker)
 
 # If you set your working directory to the directory with your data package data files and metadata file:
 
-test.metadataVersion()
+test.validateSchema()
 
 # Alternatively, you can supply the path to the data package data files and metadata without changing your working directory:
 
-test.metadataVersion("C:/user/documents/mydatapackage")
+test.validateSchema("C:/user/documents/mydatapackage")
 ```
-
-# Installation
-You can install the development version of DPchecker from Github with:
-
-#install.packages("devtools")
-devtools::install_github("nationalparkservice/DPChecker")
-
-#examples
-Check whether your metadata are schema-valid:
-
-If you set your working directory to the directory with your data package data files and metadata file:
-
-test.metadataVersion()
-
-Alternatively, you can supply the path to the data package data files and metadata without changing your working directory:
-
-test.metadataVersion("C:/user/documents/mydatapackage")
