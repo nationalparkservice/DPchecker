@@ -379,11 +379,11 @@ test.fileNameMatch<-function(directory=getwd()){
     }
     if(length(meta)>0){
       message("ERROR: metadata lists file names that do not have corresponding data files:")
-      print(meta)
+      print(crayon::red$bold(meta))
     }
     if(length(dat)>0){
       message("ERROR: data files exist that are not listed in the metadata:")
-      print(dat)
+      cat(crayon::red$bold(dat))
     }
   }
 }
