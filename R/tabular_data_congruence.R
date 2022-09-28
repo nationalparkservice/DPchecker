@@ -349,41 +349,73 @@ test.dupDataFiles<-function(directory=getwd()){
 #' @export
 #'
 #' @examples test.fileNameMatch()
-test.fileNameMatch<-function(directory=getwd()){
+test.fieldNum<-function(directory=getwd()){
   #on exit return to current working directory:
   orig_wd <- getwd()
   on.exit(setwd(orig_wd))
   setwd(directory)
 
-  #get metadata filenames from "physical" attribute:
+  #load metadata
   mymeta<-load.metadata(directory)
 
   if(!is.null(mymeta)){
-    #get physical elements (and all children elements)
-    phys<-EML::eml_get(mymeta, "physical")
+    #get dataTable and all children elements
+    dataTab<-EML::eml_get(mymeta, "dataTable")
+    #newdat<-within(dattab, rm('@context'))
 
-    #get everything under "objectName"
-    fn<-unlist(phys)[grepl('objectName',names(unlist(phys)), fixed=T)]
+    #list the filenames associated with each dataTable:
+    fn<-unlist(dataTab)[grepl('objectName',names(unlist(dataTab)), fixed=T)]
 
-    #get filenames from .csv data files in directory:
+    #Make a list of each filename ("Meta_<filename>") that contains the names of the attributes associated with each data file.
+
+    #if only one dataTable:
+    if(length(suppressWarnings(within(dataTab[1], rm('@context'))))==0){
+      attribs<-unlist(dataTab)[grepl('attributeName',names(unlist(dataTab)), fixed=T)]
+      assign(paste0("Meta_", fn), NULL)
+      for(i in seq_along(attribs)){
+        assign(paste0("Meta_", fn), append(get(paste0("Meta_", fn)), attribs[[i]]))
+      }
+    }
+
+    #if mulitple dataTables:
+    if(length(suppressWarnings(within(dataTab[1], rm('@context'))))>0){
+      newdat<-within(dataTab, rm('@context'))
+      for(i in seq_along(fn)){
+        attriblist<-newdat[[i]][[4]][[1]]
+        assign(paste0("Meta_", fn[i]), NULL)
+        for(j in seq_along(attriblist)){
+          attribname<-newdat[[i]][[4]][[1]][[j]][[1]]
+          assign(paste0("Meta_", fn[i]), append(get(paste0("Meta_", fn[i])), attribname))
+        }
+      }
+    }
+
+    #list of all .csv in the directory
     lf<-list.files(pattern=".csv")
 
-    #items in metadata but not data file names:
-    meta<-setdiff(fn, lf)
-
-    #items in data file names but not in metadata:
-    dat<-setdiff(lf, fn)
-
-    if(length(meta)==0 && length(dat)==0){
-      message("PASSED: file name congruence check. All data files are listed in metadata and all metdata files names refer to data files.\n")
+    #get first row of each .csv. Assumes there is exactly 1 header row!
+    for(i in seq_along(lf)){
+      colnum <- readLines(lf[i], n = 1)
+      assign(paste0("Data_", lf[i]), strsplit(colnum, ",")[[1]])
     }
-    if(length(meta)>0){
-      message("ERROR: metadata lists file names that do not have corresponding data files:")
-      print(crayon::red$bold(meta))
+
+    #Check each CSV. If column number and attribute number are a mismatch, add it to a list.
+    mismatch<-NULL
+    for(i in seq_along(lf)){
+      #assign(paste0("files", lf[i]), NULL)
+      if(length(get(paste0("Data_",lf[i])))!=length(get(paste0("Meta_", lf[i])))){
+        mismatch<-append(mismatch, lf[i])
+      }
     }
-    if(length(dat)>0){
-      message("ERROR: data files exist that are not listed in the metadata:")
-      cat(crayon::red$bold(dat))
+
+    #if there are any mismatches, print ERROR and specify problematic files:
+    if(length(mismatch>0)){
+      cat("ERROR: field numer mismatch. Some columns in data files are not listed in metadata or some attributes listed in metadata were not found as headers in the data files: \n")
+      cat(crayon::red$bold(mismatch), sep="\n")
+    }
+    #if there are no mismatches, print passed msg:
+    else{
+      cat("PASSED: field number match. All columns in data files are listed in metadata and all attributes in metadata are columns in the data files.")
     }
   }
 }
