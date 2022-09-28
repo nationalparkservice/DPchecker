@@ -1,3 +1,4 @@
+
 # DPchecker
 
 #### v0.0.0.9000
@@ -19,7 +20,6 @@ devtools::install_github("nationalparkservice/DPchecker")
 
 ## Examples:
 Check whether your metadata are schema-valid:
-
 
 ``` r
 library(DPchecker)
