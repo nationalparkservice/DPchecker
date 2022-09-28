@@ -285,23 +285,20 @@ test.dupMetaEntries<-function(directory=getwd()){
   if(!is.null(mymeta)){
     #get physical elements (and all children elements)
     attribs<-EML::eml_get(mymeta, "physical")
-    #remove @context
-    newAttribs<-within(attribs, rm('@context'))
-    #make a list of data file filenames in the metadata:
-    fn<-NULL
-    for(i in seq_along(newAttribs)){
-      fn<-append(fn, newAttribs[[i]][[1]])
-    }
+
+    #list all file names held in "objectName"
+    fn<-unlist(attribs)[grepl('objectName',names(unlist(attribs)), fixed=T)]
+
     #find duplicate entries:
     dups<-fn[duplicated(fn)]
+
     #if no duplicates, test passed:
     if(length(dups)==0){
       message("PASSED: Each data file name is used exactly once in the metadata file.")
     }
     #if duplicates, test failed:
     if(length(dups>0)){
-      print(paste0("The following filenames are duplicated in the metadata file:\n", dups))
-      stop("ERROR: metadata file name check failed. Some filenames are used more than once in the metadata.")
+      cat(paste0("ERROR: metadata file name check failed. Some filenames are used more than once in the metadata:\n", crayon::red$bold(dups)))
     }
   }
 }
