@@ -349,6 +349,58 @@ test.dupDataFiles<-function(directory=getwd()){
 #' @export
 #'
 #' @examples test.fileNameMatch()
+test.fileNameMatch<-function(directory=getwd()){
+  #on exit return to current working directory:
+  orig_wd <- getwd()
+  on.exit(setwd(orig_wd))
+  setwd(directory)
+
+  #get metadata filenames from "physical" attribute:
+  mymeta<-load.metadata(directory)
+
+  if(!is.null(mymeta)){
+    #get physical elements (and all children elements)
+    phys<-EML::eml_get(mymeta, "physical")
+
+    #get everything under "objectName"
+    fn<-unlist(phys)[grepl('objectName',names(unlist(phys)), fixed=T)]
+
+    #get filenames from .csv data files in directory:
+    lf<-list.files(pattern=".csv")
+
+    #items in metadata but not data file names:
+    meta<-setdiff(fn, lf)
+
+    #items in data file names but not in metadata:
+    dat<-setdiff(lf, fn)
+
+    if(length(meta)==0 && length(dat)==0){
+      message("PASSED: file name congruence check. All data files are listed in metadata and all metdata files names refer to data files.\n")
+    }
+    if(length(meta)>0){
+      message("ERROR: metadata lists file names that do not have corresponding data files:")
+      print(crayon::red$bold(meta))
+    }
+    if(length(dat)>0){
+      message("ERROR: data files exist that are not listed in the metadata:")
+      cat(crayon::red$bold(dat))
+    }
+  }
+}
+
+#' Test Number of Fields
+#'
+#' @description test.filedNum compares the number of attributes each dataTable within the EML metadata to the number of columns for the corresponding .csv. If the numbers are the same, the test passes. If the numbers differ, the test fails.
+#'
+#' @details One thing to be cautious of: test.fieldNum does not compare the order or names of the columns! For now, that's on you.
+#'
+#' @param directory path to the data package files. Defaults to the current working directory.
+#'
+#' @return message
+#' @export
+#'
+#' @examples
+#' test.fieldNum()
 test.fieldNum<-function(directory=getwd()){
   #on exit return to current working directory:
   orig_wd <- getwd()
@@ -390,7 +442,6 @@ test.fieldNum<-function(directory=getwd()){
       }
     }
 
-    #list of all .csv in the directory
     lf<-list.files(pattern=".csv")
 
     #get first row of each .csv. Assumes there is exactly 1 header row!
@@ -417,64 +468,6 @@ test.fieldNum<-function(directory=getwd()){
     else{
       cat("PASSED: field number match. All columns in data files are listed in metadata and all attributes in metadata are columns in the data files.")
     }
-  }
-}
-
-#' Test Number of Fields
-#'
-#' @description test.filedNum compares the number of attributes each dataTable within the EML metadata to the number of columns for the corresponding .csv. If the numbers are the same, the test passes. If the numbers differ, the test fails.
-#'
-#' @details One thing to be cautious of: test.fieldNum does not compare the order or names of the columns! For now, that's on you.
-#'
-#' @param directory path to the data package files. Defaults to the current working directory.
-#'
-#' @return message
-#' @export
-#'
-#' @examples
-#' test.fieldNum()
-test.fieldNum<-function(directory=getwd()){
-  #on exit return to current working directory:
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-  setwd(directory)
-
-  #load metadata
-  mymeta<-load.metadata(directory)
-
-  if(!is.null(mymeta)){
-    #get dataTable and all children elements
-    dattab<-EML::eml_get(mymeta, "dataTable")
-    newdat<-within(dattab, rm('@context'))
-
-    #for each table, make a list of attribute names; Table name is the name of the file that contains those attributes:
-    for(i in seq_along(newdat)){
-      #filenames in metadata
-      fname<-newdat[[i]][[3]][[1]]
-      attriblist<-newdat[[i]][[4]][[1]]
-      assign(paste0("Meta_", fname), NULL)
-      for(j in seq_along(attriblist)){
-        attribname<-newdat[[i]][[4]][[1]][[j]][[1]]
-        assign(paste0("Meta_", fname), append(get(paste0("Meta_", fname)), attribname))
-      }
-    }
-
-    lf<-list.files(pattern=".csv")
-
-    #get first row of each .csv. Assumes there is exactly 1 header row!
-    for(i in seq_along(lf)){
-      colnum <- readLines(lf[i], n = 1)
-      assign(paste0("Data_", lf[i]), strsplit(colnum, ",")[[1]])
-    }
-
-    for(i in seq_along(lf)){
-      if(length(get(paste0("Data_",lf[i])))!=length(get(paste0("Meta_",  newdat[[i]][[3]][[1]])))){
-        print(lf[i])
-        print(newdat[[i]][[3]][[1]])
-        stop("ERROR: field numer mismatch. Some columns in data files are not listed in metadata or some attributes listed in metadata were not found in the data files.")
-      }
-    }
-    print("PASSED: field number match. All columns in data files are listed in metadata and all attributes in metadata are columns in the data files.")
   }
 }
 
