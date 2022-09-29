@@ -103,13 +103,13 @@ test.metadataVersion<-function(directory=getwd()){
 
   mymeta<-load.metadata(directory)
   if(!is.null(mymeta)){
-    vers<-substr(sub(".*https://eml.ecoinformatics.org/eml-", "", mymeta, 1, 5)[1])
+    vers<-substr(sub(".*https://eml.ecoinformatics.org/eml-", "", mymeta)[1], 1, 5)
     vers<-numeric_version(vers)
-    if(vers<"2.2.1"){
+    if(vers<"2.2.0"){
       message("ERROR: unsupported EML version: EML must be 2.2.0 or later.\n")
     }
     if(vers>="2.2.0"){
-      message("PASSED: EML version is suppoted.\n")
+      message("PASSED: EML version is supported.\n")
     }
   }
 }
