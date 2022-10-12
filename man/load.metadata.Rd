@@ -4,10 +4,10 @@
 \alias{load.metadata}
 \title{Load Metadata}
 \usage{
-load.metadata(directory = getwd())
+load.metadata(directory = here::here())
 }
 \arguments{
-\item{directory}{the directory where the metadata file is found - i.e. your data package. Defaults to the current working directory. On exit, returns you to the current working directory.}
+\item{directory}{the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.}
 }
 \value{
 an R-object formatted as EML metadata.
