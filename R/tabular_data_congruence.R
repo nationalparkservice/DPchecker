@@ -58,12 +58,11 @@ load_metadata <- function(directory = here::here()) {
 #'
 #' @examples my_data <- load_data()
 load_data <- function(directory = here::here()) {
-  lf <- list.files(pattern = ".csv")
-  tibble_list <- list()
-  for (i in lf) {
-    filepath <- file.path(directory, i)
-    tibble_list[[i]] <- assign(i, readr::read_csv(filepath, show_col_types = FALSE))
-  }
+  data_filenames <- list.files(path = directory, pattern = ".csv")
+  tibble_list <- sapply(data_filenames,
+                        function(data_file) {readr::read_csv(file.path(directory, data_file), show_col_types = FALSE)},
+                        USE.NAMES = TRUE,
+                        simplify = FALSE)
   return(tibble_list)
 }
 
