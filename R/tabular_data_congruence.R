@@ -57,16 +57,11 @@ load_metadata <- function(directory = here::here()) {
 #' @export
 #'
 #' @examples my_data <- load_data()
-load_data <- function(directory = getwd()) {
-  # switch directories; on exit return to current directory:
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-  setwd(directory)
-
+load_data <- function(directory = here::here()) {
   lf <- list.files(pattern = ".csv")
   tibble_list <- list()
   for (i in lf) {
-    filepath <- file.path(getwd(), i)
+    filepath <- file.path(directory, i)
     tibble_list[[i]] <- assign(i, readr::read_csv(filepath, show_col_types = FALSE))
   }
   return(tibble_list)
@@ -87,12 +82,7 @@ load_data <- function(directory = getwd()) {
 #'
 #' @examples
 #' test_metadata_version()
-test_metadata_version <- function(directory = getwd()) {
-  # switch directories; on exit return to current directory:
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-  setwd(directory)
-
+test_metadata_version <- function(directory = here::here()) {
   mymeta <- load_metadata(directory)
   if (!is.null(mymeta)) {
     vers <- substr(sub(".*https://eml.ecoinformatics.org/eml-", "", mymeta)[1], 1, 5)
@@ -120,12 +110,7 @@ test_metadata_version <- function(directory = getwd()) {
 #'
 #' @examples
 #' test_validate_schema()
-test_validate_schema <- function(directory = getwd()) {
-  # switch directories; on exit return to current directory:
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-  setwd(directory)
-
+test_validate_schema <- function(directory = here::here()) {
   mymeta <- load_metadata(directory)
   if (!is.null(mymeta)) {
     val <- EML::eml_validate(mymeta)
@@ -153,12 +138,7 @@ test_validate_schema <- function(directory = getwd()) {
 #'
 #' @examples
 #' test_footer()
-test_footer <- function(directory = getwd()) {
-  # switch directories; on exit return to current directory:
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-  setwd(directory)
-
+test_footer <- function(directory = here::here()) {
   mymeta <- load_metadata(directory)
   if (!is.null(mymeta)) {
     if (is.null(arcticdatautils::eml_get_simple(mymeta, "numFooterLines")) == TRUE) {
@@ -183,12 +163,7 @@ test_footer <- function(directory = getwd()) {
 #'
 #' @examples
 #' test_header_num()
-test_header_num <- function(directory = getwd()) {
-  # switch directories; on exit return to current directory:
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-  setwd(directory)
-
+test_header_num <- function(directory = here::here()) {
   mymeta <- load_metadata(directory)
   if (!is.null(mymeta)) {
     header <- arcticdatautils::eml_get_simple(mymeta, "numHeaderLines")
@@ -222,12 +197,7 @@ test_header_num <- function(directory = getwd()) {
 #'
 #' @examples
 #' test_delimiter()
-test_delimiter <- function(directory = getwd()) {
-  # switch directories; on exit return to current directory:
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-  setwd(directory)
-
+test_delimiter <- function(directory = here::here()) {
   # load metadata
   mymeta <- load_metadata(directory)
 
@@ -262,12 +232,7 @@ test_delimiter <- function(directory = getwd()) {
 #' @export
 #'
 #' @examples test_dup_meta_entries()
-test_dup_meta_entries <- function(directory = getwd()) {
-  # switch directories; on exit return to current directory:
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-  setwd(directory)
-
+test_dup_meta_entries <- function(directory = here::here()) {
   # load metadata
   mymeta <- load_metadata(directory)
 
@@ -304,14 +269,9 @@ test_dup_meta_entries <- function(directory = getwd()) {
 #' @export
 #'
 #' @examples test_dup_data_files()
-test_dup_data_files <- function(directory = getwd()) {
-  # switch directories; on exit return to current directory:
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-  setwd(directory)
-
+test_dup_data_files <- function(directory = here::here()) {
   # get data file filenames (only .csv supported for now):
-  lf <- list.files(pattern = ".csv")
+  lf <- list.files(path = directory, pattern = ".csv")
 
   # find duplicate entries:
   dups <- lf[duplicated(lf)]
@@ -338,12 +298,7 @@ test_dup_data_files <- function(directory = getwd()) {
 #' @export
 #'
 #' @examples test_file_name_match()
-test_file_name_match <- function(directory = getwd()) {
-  # on exit return to current working directory:
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-  setwd(directory)
-
+test_file_name_match <- function(directory = here::here()) {
   # get metadata filenames from "physical" attribute:
   mymeta <- load_metadata(directory)
 
@@ -355,7 +310,7 @@ test_file_name_match <- function(directory = getwd()) {
     fn <- unlist(phys)[grepl("objectName", names(unlist(phys)), fixed = T)]
 
     # get filenames from .csv data files in directory:
-    lf <- list.files(pattern = ".csv")
+    lf <- list.files(path = directory, pattern = ".csv")
 
     # items in metadata but not data file names:
     meta <- setdiff(fn, lf)
@@ -390,12 +345,7 @@ test_file_name_match <- function(directory = getwd()) {
 #'
 #' @examples
 #' test_field_num()
-test_field_num <- function(directory = getwd()) {
-  # on exit return to current working directory:
-  orig_wd <- getwd()
-  on.exit(setwd(orig_wd))
-  setwd(directory)
-
+test_field_num <- function(directory = here::here()) {
   # load metadata
   mymeta <- load_metadata(directory)
 
@@ -430,7 +380,7 @@ test_field_num <- function(directory = getwd()) {
       }
     }
 
-    lf <- list.files(pattern = ".csv")
+    lf <- list.files(path = directory, pattern = ".csv")
 
     # get first row of each .csv. Assumes there is exactly 1 header row!
     for (i in seq_along(lf)) {

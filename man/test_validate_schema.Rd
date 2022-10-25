@@ -4,7 +4,7 @@
 \alias{test_validate_schema}
 \title{Validate Metadata Schema}
 \usage{
-test_validate_schema(directory = getwd())
+test_validate_schema(directory = here::here())
 }
 \arguments{
 \item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}

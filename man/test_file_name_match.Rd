@@ -4,7 +4,7 @@
 \alias{test_file_name_match}
 \title{File Name Match}
 \usage{
-test_file_name_match(directory = getwd())
+test_file_name_match(directory = here::here())
 }
 \arguments{
 \item{directory}{path to the data files and metadata of a data package. Defaults to the current working directory.}

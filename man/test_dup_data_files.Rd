@@ -4,7 +4,7 @@
 \alias{test_dup_data_files}
 \title{Test Data Files for Duplicate Names}
 \usage{
-test_dup_data_files(directory = getwd())
+test_dup_data_files(directory = here::here())
 }
 \arguments{
 \item{directory}{path to your data files. Defaults to the current working directory.}

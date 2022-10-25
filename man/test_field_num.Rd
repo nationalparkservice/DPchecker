@@ -4,7 +4,7 @@
 \alias{test_field_num}
 \title{Test Number of Fields}
 \usage{
-test_field_num(directory = getwd())
+test_field_num(directory = here::here())
 }
 \arguments{
 \item{directory}{path to the data package files. Defaults to the current working directory.}

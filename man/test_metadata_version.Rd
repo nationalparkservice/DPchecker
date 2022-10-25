@@ -4,7 +4,7 @@
 \alias{test_metadata_version}
 \title{EML Version Check}
 \usage{
-test_metadata_version(directory = getwd())
+test_metadata_version(directory = here::here())
 }
 \arguments{
 \item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
