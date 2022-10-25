@@ -35,7 +35,6 @@ load.metadata <- function(directory = here::here()) {
       stop(paste0("\nCongruence checking is not yet supported for ", metaformat, " metadata."))
     } else if (sum(grepl("<eml:eml", readr::read_lines(lf))) > 0) {
       metaformat <- "eml"
-      # writeLines(paste0("\nYou are working with ", metaformat, " metadata"))
       # load metadata
       metadata <- EML::read_eml(lf, from = "xml")
       # return metadata to the the workspace
@@ -403,7 +402,6 @@ test.fieldNum <- function(directory = getwd()) {
   if (!is.null(mymeta)) {
     # get dataTable and all children elements
     dataTab <- EML::eml_get(mymeta, "dataTable")
-    # newdat<-within(dattab, rm('@context'))
 
     # list the filenames associated with each dataTable:
     fn <- unlist(dataTab)[grepl("objectName", names(unlist(dataTab)), fixed = T)]
@@ -443,7 +441,6 @@ test.fieldNum <- function(directory = getwd()) {
     # Check each CSV. If column number and attribute number are a mismatch, add it to a list.
     mismatch <- NULL
     for (i in seq_along(lf)) {
-      # assign(paste0("files", lf[i]), NULL)
       if (length(get(paste0("Data_", lf[i]))) != length(get(paste0("Meta_", lf[i])))) {
         mismatch <- append(mismatch, lf[i])
       }
