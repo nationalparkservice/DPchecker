@@ -4,10 +4,10 @@
 \alias{test_metadata_version}
 \title{EML Version Check}
 \usage{
-test_metadata_version(directory = here::here())
+test_metadata_version(metadata = load_metadata(here::here()))
 }
 \arguments{
-\item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
 message

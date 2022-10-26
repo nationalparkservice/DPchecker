@@ -4,10 +4,10 @@
 \alias{test_dup_meta_entries}
 \title{Test Metadata for Duplicate Filenames}
 \usage{
-test_dup_meta_entries(directory = here::here())
+test_dup_meta_entries(metadata = load_metadata(here::here()))
 }
 \arguments{
-\item{directory}{the directory where the files for your data package reside. Defaults to the current working directory.}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
 message

@@ -4,10 +4,10 @@
 \alias{test_header_num}
 \title{Header Check}
 \usage{
-test_header_num(directory = here::here())
+test_header_num(metadata = load_metadata(here::here()))
 }
 \arguments{
-\item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
 message

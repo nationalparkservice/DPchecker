@@ -4,10 +4,12 @@
 \alias{test_field_num}
 \title{Test Number of Fields}
 \usage{
-test_field_num(directory = here::here())
+test_field_num(directory = here::here(), metadata = load_metadata(directory))
 }
 \arguments{
-\item{directory}{path to the data package files. Defaults to the current working directory.}
+\item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
+
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
 message
