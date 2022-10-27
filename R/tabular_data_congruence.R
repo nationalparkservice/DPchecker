@@ -303,8 +303,8 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
   dir_only <- setdiff(files_in_dir, files_in_metadata)
 
   if (length(meta_only) == 0 && length(dir_only) == 0) {
-    message("PASSED: file name congruence check. All data files are listed in metadata and all metdata files names refer to data files.")
-  } else if (length(meta_only) > 0 | length(dir_only) > 0) {
+    message("PASSED: file name congruence check. All data files are listed in metadata and all metadata files names refer to data files.")
+  } else if (length(meta_only) > 0 || length(dir_only) > 0) {
     meta_txt <- paste("\n", crayon::red$bold(meta_only), collapse = "")
     dat_txt <- paste("\n", crayon::red$bold(dir_only), collapse = "")
     msg <- paste0(length(meta_only), " files listed in metadata and missing from data folder", meta_txt,
