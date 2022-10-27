@@ -316,81 +316,76 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
   return(invisible(metadata))
 }
 
-#' Test Number of Fields
+#' Test Matching Data/Metadata Fields
 #'
-#' @description test_field_num compares the number of attributes each dataTable within the EML metadata to the number of columns for the corresponding .csv. If the numbers are the same, the test passes. If the numbers differ, the test fails.
+#' @description test_fields_match compares the attributes of each dataTable within the EML metadata to the columns in the corresponding .csv. If the columns have the same names and order, the test passes. If the columns differ, the test fails.
 #'
-#' @details One thing to be cautious of: test.fieldNum does not compare the order or names of the columns! For now, that's on you.
+#' @details test_fields_match briefly checks that data files match, but you should really run `test_file_name_match()` before you run this test.
 #'
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
 #'
-#' @return message
+#' @return Invisibly returns `metadata`.
 #' @export
 #'
 #' @examples
-#' test_field_num()
-test_field_num <- function(directory = here::here(), metadata = load_metadata(directory)) {
+#' test_fields_match()
+test_fields_match <- function(directory = here::here(), metadata = load_metadata(directory)) {
 
   # get dataTable and all children elements
   data_tbl <- EML::eml_get(metadata, "dataTable")
 
-  # # list the filenames associated with each dataTable:
-  # data_files <- unlist(data_tbl)[grepl("objectName", names(unlist(data_tbl)), fixed = T)]
-
-  # Make a list of each filename ("Meta_<filename>") that contains the names of the attributes associated with each data file.
-
+  # Get list of attributes for each table in the metadata
   metadata_attrs <- lapply(data_tbl, function(tbl) {arcticdatautils::eml_get_simple(tbl, "attributeName")})
   metadata_attrs$`@context` <- NULL
   names(metadata_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
 
-  # # if only one dataTable:
-  # if (length(suppressWarnings(within(data_tbl[1], rm("@context")))) == 0) {
-  #   attribs <- unlist(data_tbl)[grepl("attributeName", names(unlist(data_tbl)), fixed = T)]
-  #   assign(paste0("Meta_", data_files), NULL)
-  #   for (i in seq_along(attribs)) {
-  #     assign(paste0("Meta_", data_files), append(get(paste0("Meta_", data_files)), attribs[[i]]))
-  #   }
-  # }
-  #
-  # # if mulitple dataTables:
-  # if (length(suppressWarnings(within(data_tbl[1], rm("@context")))) > 0) {
-  #   newdat <- within(data_tbl, rm("@context"))
-  #   for (i in seq_along(data_files)) {
-  #     attriblist <- newdat[[i]][[4]][[1]]
-  #     assign(paste0("Meta_", data_files[i]), NULL)
-  #     for (j in seq_along(attriblist)) {
-  #       attribname <- newdat[[i]][[4]][[1]][[j]][[1]]
-  #       assign(paste0("Meta_", data_files[i]), append(get(paste0("Meta_", data_files[i])), attribname))
-  #     }
-  #   }
-  # }
-
+  # Get list of column names for each table in the csv data
   data_files <- list.files(path = directory, pattern = ".csv")
+  data_colnames <- sapply(data_files, function(data_file) {names(readr::read_csv(file.path(directory, data_file), n_max = 1, show_col_types = FALSE))}, USE.NAMES = TRUE, simplify = FALSE)
 
-  # get first row of each .csv. Assumes there is exactly 1 header row!
-  # for (i in seq_along(lf)) {
-  #   colnum <- readLines(lf[i], n = 1)
-  #   assign(paste0("Data_", lf[i]), strsplit(colnum, ",")[[1]])
-  # }
-  data_colnames <- sapply(data_files, function(data_file) {readLines(file.path(directory, data_file), n = 1)}, USE.NAMES = TRUE, simplify = FALSE)
+  # Quick check that tables match
+  if (!(all(names(data_colnames) %in% names(metadata_attrs)) & all(names(metadata_attrs) %in% names(data_colnames)))) {
+    stop("Mismatch in data filenames and files listed in metadata. Call `test_file_name_match()` for more info.")
+  }
 
-  # Check each CSV. If column number and attribute number are a mismatch, add it to a list.
-  mismatch <- NULL
-  for (i in seq_along(lf)) {
-    if (length(get(paste0("Data_", lf[i]))) != length(get(paste0("Meta_", lf[i])))) {
-      mismatch <- append(mismatch, lf[i])
+  # Check each CSV. If column and attributes are a mismatch, describe the issue
+  mismatches <- sapply(data_files, function(data_file) {
+    meta_cols <- metadata_attrs[[data_file]]
+    data_cols <- data_colnames[[data_file]]
+    if (length(meta_cols) == length(data_cols) && all(meta_cols == data_cols)) {  # Columns match and are in right order
+      return(NULL)
+    } else if (all(meta_cols %in% data_cols) && all(data_cols %in% meta_cols)) {  # Columns match and are in wrong order
+      return("Metadata column order does not match data column order")
+    } else {  # Columns don't match
+      missing_from_meta <- paste(data_cols[!(data_cols %in% meta_cols)], collapse = ", ")
+      missing_from_data <- paste(meta_cols[!(meta_cols %in% data_cols)], collapse = ", ")
+      if (missing_from_meta != "") {
+        missing_from_meta <- paste0("Data column(s) ", crayon::red$bold(missing_from_meta), " missing from metadata")
+      } else {
+        missing_from_meta <- NULL
+      }
+      if (missing_from_data != "") {
+        missing_from_data <- paste0("Metadata column(s) ", crayon::red$bold(missing_from_data), " missing from data")
+      } else {
+        missing_from_data <- NULL
+      }
+      return(paste0(paste(c(missing_from_data, missing_from_meta), collapse = ". "), "."))
     }
+  }, USE.NAMES = TRUE, simplify = FALSE)
+
+  # Remove tables from list that pass the test, and convert it to a named vector
+  mismatches <- purrr::discard(mismatches, is.null) %>%
+    unlist()
+
+  # If there are mismatches, throw an error, otherwise, print a message indicating passed test
+  if (!is.null(mismatches)) {
+    msg <- paste0(names(mismatches), ":  ", mismatches, collapse = "\n")
+    msg <- paste("Field mismatch between data and metadata:\n", msg)
+    stop(msg)
+  } else {
+    message("PASSED: fields match. All columns in data files are listed in metadata and all attributes in metadata are columns in the data files.")
   }
 
-  # if there are any mismatches, print ERROR and specify problematic files:
-  if (length(mismatch > 0)) {
-    cat("ERROR: field numer mismatch. Some columns in data files are not listed in metadata or some attributes listed in metadata were not found as headers in the data files: \n")
-    cat(crayon::red$bold(mismatch), sep = "\n")
-  }
-  # if there are no mismatches, print passed msg:
-  else {
-    cat("PASSED: field number match. All columns in data files are listed in metadata and all attributes in metadata are columns in the data files.")
-  }
-
+  return(invisible(metadata))
 }
