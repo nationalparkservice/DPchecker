@@ -115,7 +115,7 @@ test_validate_schema <- function(metadata = load_metadata(here::here())) {
 
   val <- EML::eml_validate(metadata)
   if (val == TRUE) {
-    message("PASSED: Your metada is schema valid.")
+    message("PASSED: Your metadata is schema valid.")
   } else {
     attribs <- attributes(val)
     stop(paste0("Your is metadata is schema-invalid.\n", attribs))
