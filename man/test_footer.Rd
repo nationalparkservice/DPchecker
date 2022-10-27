@@ -10,7 +10,7 @@ test_footer(metadata = load_metadata(here::here()))
 \item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
-message
+Invisibly returns \code{metadata}.
 }
 \description{
 test_footer checks the metadata files to determine whether data files contain footer lines or not.

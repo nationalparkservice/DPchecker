@@ -10,7 +10,7 @@ test_dup_meta_entries(metadata = load_metadata(here::here()))
 \item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
-message
+Invisibly returns \code{metadata}.
 }
 \description{
 test_dup_meta_entries test to see whether there are duplicate filenames listed for the data files in (EML) metadata.

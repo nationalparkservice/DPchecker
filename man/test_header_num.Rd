@@ -10,7 +10,7 @@ test_header_num(metadata = load_metadata(here::here()))
 \item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
-message
+Invisibly returns \code{metadata}.
 }
 \description{
 test_header_num checks the metadata files to ensure that each data file contains exactly one header row.

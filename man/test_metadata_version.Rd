@@ -10,7 +10,7 @@ test_metadata_version(metadata = load_metadata(here::here()))
 \item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
-message
+Invisibly returns \code{metadata}.
 }
 \description{
 test_metadata_version determines whether the version of the metadata supplied meets the current criteria for an NPS data package.

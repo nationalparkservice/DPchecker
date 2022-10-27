@@ -79,7 +79,7 @@ load_data <- function(directory = here::here()) {
 #'
 #' @param metadata The metadata object returned by `load_metadata`. If parameter not provided, defaults to calling `load_metadata` in current project directory.
 #'
-#' @return message
+#' @return Invisibly returns `metadata`.
 #' @export
 #'
 #' @examples
@@ -106,7 +106,7 @@ test_metadata_version <- function(metadata = load_metadata(here::here())) {
 #'
 #' @inheritParams test_metadata_version
 #'
-#' @return message
+#' @return Invisibly returns `metadata`.
 #' @export
 #'
 #' @examples
@@ -132,7 +132,7 @@ test_validate_schema <- function(metadata = load_metadata(here::here())) {
 #'
 #' @inheritParams test_metadata_version
 #'
-#' @return message
+#' @return Invisibly returns `metadata`.
 #' @export
 #'
 #' @examples
@@ -157,7 +157,7 @@ test_footer <- function(metadata = load_metadata(here::here())) {
 #'
 #' @inheritParams test_metadata_version
 #'
-#' @return message
+#' @return Invisibly returns `metadata`.
 #' @export
 #'
 #' @examples
@@ -187,7 +187,7 @@ test_header_num <- function(metadata = load_metadata(here::here())) {
 #'
 #' @inheritParams test_metadata_version
 #'
-#' @return message
+#' @return Invisibly returns `metadata`.
 #' @export
 #'
 #' @examples
@@ -217,7 +217,7 @@ test_delimiter <- function(metadata = load_metadata(here::here())) {
 #'
 #' @inheritParams test_metadata_version
 #'
-#' @return message
+#' @return Invisibly returns `metadata`.
 #' @export
 #'
 #' @examples test_dup_meta_entries()
@@ -252,7 +252,7 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 #'
 #' @inheritParams load_data
 #'
-#' @return message
+#' @return Invisibly returns `metadata`.
 #' @export
 #'
 #' @examples test_dup_data_files()
@@ -282,9 +282,8 @@ test_dup_data_files <- function(directory = here::here()) {
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
 #'
-#' @return text
+#' @return Invisibly returns `metadata`.
 #' @export
-#'
 #' @examples test_file_name_match()
 test_file_name_match <- function(directory = here::here(), metadata = load_metadata(directory)) {
 

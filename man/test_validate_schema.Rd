@@ -10,7 +10,7 @@ test_validate_schema(metadata = load_metadata(here::here()))
 \item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
-message
+Invisibly returns \code{metadata}.
 }
 \description{
 test_validate_schema inspects a metadata object loaded into R and determines whether it is schema-valid.

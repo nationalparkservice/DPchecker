@@ -10,7 +10,7 @@ test_delimiter(metadata = load_metadata(here::here()))
 \item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
-message
+Invisibly returns \code{metadata}.
 }
 \description{
 test_delimiter checks the metadata file and ensures that each data file has a field delimiter with exactly one character (e.g. ", ").
