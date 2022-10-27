@@ -17,6 +17,7 @@ for (dir in dirs) {
     try(test_dup_meta_entries(meta))
     try(test_file_name_match(dir, meta))
     try(test_fields_match(dir, meta))
+    try(test_numeric_fields(dir, meta))
   }
 
   cat("\n")

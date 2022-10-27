@@ -392,3 +392,70 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 
   return(invisible(metadata))
 }
+
+#' Test Numeric Fields
+#'
+#' @description test_numeric_fields verifies that all columns listed as numeric in the metadata are free of non-numeric data.
+#'
+#' @details "NA" and missing data codes documented in the metadata will *not* cause this test to fail.
+#'
+#' @inheritParams load_data
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' test_numeric_fields()
+test_numeric_fields <- function(directory = here::here(), metadata = load_metadata(directory)) {
+
+  # get dataTable and all children elements
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  data_tbl$`@context` <- NULL
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  # Get list of attributes for each table in the metadata
+  metadata_attrs <- lapply(data_tbl, function(tbl) {
+    attrs <- suppressMessages(EML::get_attributes(tbl$attributeList))
+    attrs <- attrs$attributes
+    attrs <- dplyr::filter(attrs, domain == "numericDomain")
+    return(attrs)
+  })
+  metadata_attrs$`@context` <- NULL
+  names(metadata_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  # Get list of column names for each table in the csv data
+  data_files <- list.files(path = directory, pattern = ".csv")
+  data_non_numeric <- sapply(data_files, function(data_file) {
+    na_strings <- c("", "NA")
+    if ("missingValueCode" %in% names(metadata_attrs[[data_file]])) {
+      na_strings <- c(na_strings, unique(metadata_attrs[[data_file]]$missingValueCode))
+    }
+    num_data <- readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(metadata_attrs[[data_file]]$attributeName), na = na_strings, show_col_types = FALSE)
+    non_numeric <- dplyr::select(num_data, !where(is.numeric))
+    if (ncol(non_numeric) > 0) {
+      return(paste(names(non_numeric), sep = ", "))  # List non-numeric columns
+    } else {
+      return(NULL)
+    }
+  },
+  USE.NAMES = TRUE, simplify = FALSE)
+
+  # This will be null unless supposedly numeric columns read in as non-numeric
+  data_non_numeric <- purrr::discard(data_non_numeric, is.null)
+  data_non_numeric <- unlist(data_non_numeric)
+
+  # If numeric cols contain non-numeric values, throw an error, otherwise, print a message indicating passed test
+  if (!is.null(data_non_numeric)) {
+    msg <- paste0(names(data_non_numeric), ":  ", data_non_numeric, collapse = "\n")
+    msg <- paste("Columns indicated as numeric in metadata contain non-numeric values:\n", msg)
+    stop(msg)
+  } else {
+    message("PASSED: Columns indicated as numeric in metadata contain only numeric values and valid missing value codes.")
+  }
+
+  return(invisible(metadata))
+}
