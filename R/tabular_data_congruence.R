@@ -333,6 +333,10 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 
   # get dataTable and all children elements
   data_tbl <- EML::eml_get(metadata, "dataTable")
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
 
   # Get list of attributes for each table in the metadata
   metadata_attrs <- lapply(data_tbl, function(tbl) {arcticdatautils::eml_get_simple(tbl, "attributeName")})
