@@ -18,4 +18,5 @@ Imports:
     crayon,
     here,
     EML,
-    readr
+    readr,
+    magrittr
