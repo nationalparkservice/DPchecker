@@ -1,5 +1,5 @@
 dirs <- list.dirs(here::here("scratchpad"))
-dirs <- dirs[-1]
+dirs <- dirs[-1]  # get rid of root dir
 
 for (dir in dirs) {
   cat(paste(crayon::blue$bold(basename(dir)), "\n"))
@@ -7,7 +7,7 @@ for (dir in dirs) {
   meta <- try(load_metadata(dir))
   data <- try(load_data(dir))
 
-  if (!any("try-error" %in% class(meta))) {
+  if (!any("try-error" %in% class(meta))) {  # Run tests unless metadata fails to load
     try(test_validate_schema(meta))
     try(test_metadata_version(meta))
     try(test_delimiter(meta))
