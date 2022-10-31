@@ -397,7 +397,7 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 #'
 #' @description test_numeric_fields verifies that all columns listed as numeric in the metadata are free of non-numeric data.
 #'
-#' @details "NA" and missing data codes documented in the metadata will *not* cause this test to fail.
+#' @details "NA" and missing data codes documented in the metadata will *not* cause this test to fail. Note that this test assumes that the column types that are in the metadata are the intended types, i.e., if your metadata says a column is text and it should actually be numeric, it will not be caught by this test.
 #'
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
@@ -418,26 +418,42 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
   }
 
   # Get list of attributes for each table in the metadata
-  metadata_attrs <- lapply(data_tbl, function(tbl) {
+  numeric_attrs <- lapply(data_tbl, function(tbl) {
     attrs <- suppressMessages(EML::get_attributes(tbl$attributeList))
     attrs <- attrs$attributes
     attrs <- dplyr::filter(attrs, domain == "numericDomain")
     return(attrs)
   })
-  metadata_attrs$`@context` <- NULL
-  names(metadata_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+  numeric_attrs$`@context` <- NULL
+  names(numeric_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
 
   # Get list of column names for each table in the csv data
   data_files <- list.files(path = directory, pattern = ".csv")
   data_non_numeric <- sapply(data_files, function(data_file) {
-    na_strings <- c("", "NA")
-    if ("missingValueCode" %in% names(metadata_attrs[[data_file]])) {
-      na_strings <- c(na_strings, unique(metadata_attrs[[data_file]]$missingValueCode))
+    num_col_names <- numeric_attrs[[data_file]]$attributeName
+    # If the table doesn't have any numeric columns listed in the metadata, it automatically passes
+    if (length(num_col_names) == 0) {
+      return(NULL)
     }
-    num_data <- readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(metadata_attrs[[data_file]]$attributeName), na = na_strings, show_col_types = FALSE)
-    non_numeric <- dplyr::select(num_data, !where(is.numeric))
-    if (ncol(non_numeric) > 0) {
-      return(paste(names(non_numeric), sep = ", "))  # List non-numeric columns
+    na_strings <- c("", "NA")
+    if ("missingValueCode" %in% names(numeric_attrs[[data_file]])) {
+      na_strings <- c(na_strings, unique(numeric_attrs[[data_file]]$missingValueCode))
+    }
+    # Read everything as character, then see if it fails when converting to number
+    num_data <- readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(num_col_names), na = na_strings, col_types = rep("c", length(num_col_names)), show_col_types = FALSE)
+    non_numeric <- sapply(names(num_data), function(col) {
+      col_data <- num_data[[col]]
+      col_data <- col_data[!is.na(col_data)]
+      col_data <- suppressWarnings(as.numeric(col_data))
+      if (any(is.na(col_data))) {
+        return(col)
+      } else {
+        return(NULL)
+      }
+    }, simplify = FALSE, USE.NAMES = TRUE)
+    non_numeric <- purrr::discard(non_numeric, is.null)
+    if (length(names(non_numeric)) > 0) {
+      return(paste(names(non_numeric), collapse = ", "))  # List non-numeric columns
     } else {
       return(NULL)
     }

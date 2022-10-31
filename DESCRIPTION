@@ -19,4 +19,5 @@ Imports:
     here,
     EML,
     readr,
-    magrittr
+    magrittr,
+    tidyselect
