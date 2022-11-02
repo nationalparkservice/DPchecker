@@ -4,13 +4,13 @@
 \alias{test_footer}
 \title{Footer Check}
 \usage{
-test_footer(directory = here::here())
+test_footer(metadata = load_metadata(here::here()))
 }
 \arguments{
-\item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
-message
+Invisibly returns \code{metadata}.
 }
 \description{
 test_footer checks the metadata files to determine whether data files contain footer lines or not.

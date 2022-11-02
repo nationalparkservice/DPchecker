@@ -7,10 +7,10 @@
 test_dup_data_files(directory = here::here())
 }
 \arguments{
-\item{directory}{path to your data files. Defaults to the current working directory.}
+\item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
 }
 \value{
-message
+Invisibly returns \code{metadata}.
 }
 \description{
 test_dup_data_files looks at the file names of .csv files within a specified directory and tests whether there are any duplicates.
@@ -20,4 +20,5 @@ not sure why you'd ever need this function. Seems that most file systems won't l
 }
 \examples{
 test_dup_data_files()
+
 }

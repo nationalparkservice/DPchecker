@@ -4,16 +4,16 @@
 \alias{test_delimiter}
 \title{Field Delimiter Check}
 \usage{
-test_delimiter(directory = here::here())
+test_delimiter(metadata = load_metadata(here::here()))
 }
 \arguments{
-\item{directory}{the directory where the metadata file is found - i.e. your data package. Defaults to the current working directory. On exit, returns you to the current working directory.}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
-message
+Invisibly returns \code{metadata}.
 }
 \description{
-test_delimiter checks the metadata file and ensures that each data file has a field delimiter with exactly one characte (e.g. ", ").
+test_delimiter checks the metadata file and ensures that each data file has a field delimiter with exactly one character (e.g. ", ").
 }
 \details{
 test_delimiter examines the fieldDelimiter element from EML (currently only EML is supported) metadata to determine how many characters there are. If there is no fieldDelimiter element, the test returns an error. If the field delimiter is anything other than exactly one character in length, the test returns an error.
