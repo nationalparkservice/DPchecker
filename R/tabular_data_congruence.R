@@ -583,3 +583,24 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
 }
 
 
+#' Convert EML date/time format string to one that R can parse
+#'
+#' @param eml_format_string
+#'
+#' @return A date/time format string that can be parsed by `readr` or `strptime`.
+#' @export
+#'
+#' @examples
+#' convert_datetime_format("MM/DD/YYYY")
+convert_datetime_format <- function(eml_format_string) {
+  r_format_string <- eml_format_string %>%
+    stringr::str_replace_all("YYYY", "%Y") %>%
+    stringr::str_replace_all("YY", "%y") %>%
+    stringr::str_replace_all("MMM", "%b") %>%
+    stringr::str_replace_all("MM", "%m") %>%
+    stringr::str_replace_all("DD", "%d") %>%
+    stringr::str_replace_all("(hh)|(HH)", "%H") %>%
+    stringr::str_replace_all("mm", "%M") %>%
+    stringr::str_replace_all("(ss)|(SS)", "%S")
+
+  return(r_format_string)
