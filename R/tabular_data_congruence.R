@@ -536,14 +536,17 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
     # Get format string for each date/time column and filter out anything that doesn't have a year associated with it
     dttm_formats <- dttm_attrs[[data_file]]$formatString
     dttm_col_names <- dttm_col_names[grepl("Y", dttm_formats)]
-    dttm_formats <- dttm_formats[grepl("Y", dttm_formats)]
+    # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
+    dttm_formats <- as.list(convert_datetime_format(dttm_formats[grepl("Y", dttm_formats)]))
+    dttm_formats <- lapply(dttm_formats, readr::col_datetime)
+    names(dttm_formats) <- dttm_col_names
 
     # Read date/time columns, find max/min, and compare with max and min dates in metadata
     na_strings <- c("", "NA")
     if ("missingValueCode" %in% names(dttm_attrs[[data_file]])) {
       na_strings <- c(na_strings, unique(dttm_attrs[[data_file]]$missingValueCode))
     }
-    dttm_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(dttm_col_names), na = na_strings, col_types = readr::cols(.default = readr::col_datetime()), show_col_types = FALSE))
+    dttm_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(dttm_col_names), na = na_strings, col_types = do.call(readr::cols, dttm_formats), show_col_types = FALSE))
     out_of_range <- sapply(names(dttm_data), function(col) {
       col_data <- dttm_data[[col]]
       if (all(is.na(col_data))) {
@@ -607,3 +610,4 @@ convert_datetime_format <- function(eml_format_string) {
     stringr::str_replace_all("(ss)|(SS)", "%S")
 
   return(r_format_string)
+}
