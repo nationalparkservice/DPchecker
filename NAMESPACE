@@ -2,6 +2,7 @@
 
 export(load_data)
 export(load_metadata)
+export(test_date_range)
 export(test_delimiter)
 export(test_dup_data_files)
 export(test_dup_meta_entries)

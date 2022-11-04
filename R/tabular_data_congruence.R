@@ -475,3 +475,111 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 
   return(invisible(metadata))
 }
+
+#' Test Date Range
+#'
+#' @description test_date_range verifies that dates in the dataset are consistent with the date range in the metadata.
+#'
+#' @details Currently, this function operates on the assumption that the dates and times in your dataset are stored in a valid ISO format. If your dates/times are in a different format, this function may behave unpredictably.
+#'
+#' @inheritParams load_data
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' test_date_range()
+test_date_range <- function(directory = here::here(), metadata = load_metadata(directory)) {
+
+  # get dataTable and all children elements
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  data_tbl$`@context` <- NULL
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  # Get begin date from metadata
+  meta_begin_date <- readr::parse_datetime(EMLeditor::get.beginDate(metadata), format = "%d %B %Y")
+  meta_end_date <- readr::parse_datetime(EMLeditor::get.endDate(metadata), format = "%d %B %Y")
+  meta_date_range <- c(begin = meta_begin_date, end = meta_end_date)
+
+  # Check if temporal coverage info is complete
+  if (all(is.na(meta_date_range))) {
+    warning("Metadata does not contain temporal coverage information.")
+    return(metadata)
+  } else if (any(is.na(meta_date_range))) {
+    missing_date <- names(meta_date_range[is.na(meta_date_range)])
+    present_date <- names(meta_date_range[!is.na(meta_date_range)])
+    warning(paste("Metadata temporal coverage is missing", missing_date, "date. This test will still check data against", present_date, "date."))
+  }
+
+  # Get list of date/time attributes for each table in the metadata
+  dttm_attrs <- lapply(data_tbl, function(tbl) {
+    attrs <- suppressMessages(EML::get_attributes(tbl$attributeList))
+    attrs <- attrs$attributes
+    attrs <- dplyr::filter(attrs, domain == "dateTimeDomain")
+    return(attrs)
+  })
+  dttm_attrs$`@context` <- NULL
+  names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
+  data_files <- list.files(path = directory, pattern = ".csv")
+  data_out_of_range <- sapply(data_files, function(data_file) {
+    dttm_col_names <- dttm_attrs[[data_file]]$attributeName
+    # If the table doesn't have any date/time columns listed in the metadata, it automatically passes
+    if (length(dttm_col_names) == 0) {
+      return(NULL)
+    }
+    # Get format string for each date/time column and filter out anything that doesn't have a year associated with it
+    dttm_formats <- dttm_attrs[[data_file]]$formatString
+    dttm_col_names <- dttm_col_names[grepl("Y", dttm_formats)]
+    dttm_formats <- dttm_formats[grepl("Y", dttm_formats)]
+
+    # Read date/time columns, find max/min, and compare with max and min dates in metadata
+    na_strings <- c("", "NA")
+    if ("missingValueCode" %in% names(dttm_attrs[[data_file]])) {
+      na_strings <- c(na_strings, unique(dttm_attrs[[data_file]]$missingValueCode))
+    }
+    dttm_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(dttm_col_names), na = na_strings, col_types = readr::cols(.default = readr::col_datetime()), show_col_types = FALSE))
+    out_of_range <- sapply(names(dttm_data), function(col) {
+      col_data <- dttm_data[[col]]
+      if (all(is.na(col_data))) {
+        return(paste(col, "(failed to parse)"))
+      }
+      max_date <- max(col_data, na.rm = TRUE)
+      min_date <- min(col_data, na.rm = TRUE)
+      if (max_date > meta_end_date || min_date < meta_begin_date) {
+        return(paste0(col, " [", min_date, ", ", max_date, "]"))  # column name and actual date range
+      } else {
+        return(NULL)
+      }
+    }, simplify = FALSE, USE.NAMES = TRUE)
+    out_of_range <- purrr::discard(out_of_range, is.null)
+    if (length(names(out_of_range)) > 0) {
+      return(paste(out_of_range, collapse = ", "))  # List out of range date columns
+    } else {
+      return(NULL)
+    }
+  },
+  USE.NAMES = TRUE, simplify = FALSE)
+
+  # This will be null unless supposedly numeric columns read in as non-numeric
+  data_out_of_range <- purrr::discard(data_out_of_range, is.null)
+  data_out_of_range <- unlist(data_out_of_range)
+
+  # If numeric cols contain non-numeric values, throw an error, otherwise, print a message indicating passed test
+  if (!is.null(data_out_of_range)) {
+    msg <- paste0(names(data_out_of_range), ":  ", data_out_of_range, collapse = "\n")
+    msg <- paste0("The following date/time columns are out of the range [", meta_begin_date, ", ", meta_end_date, "] specified in the metadata:\n", msg)
+    stop(msg)
+  } else {
+    message("PASSED: Columns indicated as date/time in metadata are within the stated temporal coverage range.")
+  }
+
+  return(invisible(metadata))
+}
+
+
