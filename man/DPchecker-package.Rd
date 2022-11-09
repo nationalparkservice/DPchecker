@@ -8,4 +8,20 @@
 \description{
 Allows the user (and reviewer) to check a data package and test whether it meets the congruence standards set forth by NPS for upload to DataStore as a datapackage.
 }
+\author{
+\strong{Maintainer}: Rob Baker \email{robert_baker@nps.gov}
+
+Authors:
+\itemize{
+  \item Rob Baker \email{robert_baker@nps.gov} (\href{https://orcid.org/0000-0001-7591-5035}{ORCID})
+  \item Sarah E. Wright \email{sarah_wright@nps.gov}
+}
+
+Other contributors:
+\itemize{
+  \item Issac Quevedo [contributor]
+  \item Amelia Sherman [contributor]
+}
+
+}
 \keyword{internal}
