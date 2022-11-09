@@ -18,7 +18,7 @@ Invisibly returns \code{metadata}.
 test_date_range verifies that dates in the dataset are consistent with the date range in the metadata.
 }
 \details{
-Currently, this function operates on the assumption that the dates and times in your dataset are stored in a valid ISO format. If your dates/times are in a different format, this function may behave unpredictably.
+This function checks columns that are identified as date/time in the metadata. It throws a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and throw an error.
 }
 \examples{
 test_date_range()

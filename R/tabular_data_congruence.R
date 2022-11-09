@@ -173,7 +173,7 @@ test_header_num <- function(metadata = load_metadata(here::here())) {
     wrong_headers <- paste0("     ", names(wrong_headers), ": ", wrong_headers, collapse = "\n")
     stop(paste0("Metadata indicates that the following data files do not contain either zero or more than one header row:\n", wrong_headers))
   } else {
-    message("PASSED header Check: Metadata indicates that each data file contains exactly one header row")
+    message("PASSED header check: Metadata indicates that each data file contains exactly one header row")
   }
 
   return(invisible(metadata))
@@ -349,7 +349,7 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 
   # Quick check that tables match
   if (!(all(names(data_colnames) %in% names(metadata_attrs)) & all(names(metadata_attrs) %in% names(data_colnames)))) {
-    stop("Mismatch in data filenames and files listed in metadata. Call `test_file_name_match()` for more info.")
+    stop("Mismatch in data filenames and files listed in metadata. You must resolve this issue before you can verify that fields match. Call `test_file_name_match()` for more info.")
   }
 
   # Check each CSV. If column and attributes are a mismatch, describe the issue
@@ -480,7 +480,7 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #'
 #' @description test_date_range verifies that dates in the dataset are consistent with the date range in the metadata.
 #'
-#' @details Currently, this function operates on the assumption that the dates and times in your dataset are stored in a valid ISO format. If your dates/times are in a different format, this function may behave unpredictably.
+#' @details This function checks columns that are identified as date/time in the metadata. It throws a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and throw an error.
 #'
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
@@ -505,14 +505,15 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   meta_end_date <- readr::parse_datetime(EMLeditor::get.endDate(metadata), format = "%d %B %Y")
   meta_date_range <- c(begin = meta_begin_date, end = meta_end_date)
 
-  # Check if temporal coverage info is complete
+  # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
+  # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
   if (all(is.na(meta_date_range))) {
     warning("Metadata does not contain temporal coverage information.")
     return(metadata)
   } else if (any(is.na(meta_date_range))) {
     missing_date <- names(meta_date_range[is.na(meta_date_range)])
     present_date <- names(meta_date_range[!is.na(meta_date_range)])
-    warning(paste("Metadata temporal coverage is missing", missing_date, "date. This test will still check data against", present_date, "date."))
+    stop(paste("Metadata temporal coverage is missing", missing_date, "date."))
   }
 
   # Get list of date/time attributes for each table in the metadata
@@ -583,9 +584,14 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
 
   # If numeric cols contain non-numeric values, throw an error, otherwise, print a message indicating passed test
   if (!is.null(dataset_out_of_range)) {
-    msg <- paste0(names(dataset_out_of_range), ":  ", dataset_out_of_range, collapse = "\n")
+    msg <- paste0("\t", names(dataset_out_of_range), ":  ", dataset_out_of_range, collapse = "\n")
     msg <- paste0("The following date/time columns are out of the range [", meta_begin_date, ", ", meta_end_date, "] specified in the metadata:\n", msg)
-    stop(msg)
+    if (grepl("failed to parse", msg)) {
+      stop(msg)  # Throw an error if some dates won't parse
+    } else {
+      warning(msg)  # If dates all parse but are out of range, just throw a warning.
+    }
+
   } else {
     message("PASSED: Columns indicated as date/time in metadata are within the stated temporal coverage range.")
   }
