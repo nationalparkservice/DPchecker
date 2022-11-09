@@ -22,4 +22,5 @@ Imports:
     EML,
     readr,
     magrittr,
-    tidyselect
+    tidyselect,
+    lubridate

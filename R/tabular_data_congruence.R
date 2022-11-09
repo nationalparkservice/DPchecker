@@ -527,7 +527,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
 
   # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
   data_files <- list.files(path = directory, pattern = ".csv")
-  data_out_of_range <- sapply(data_files, function(data_file) {
+  dataset_out_of_range <- sapply(data_files, function(data_file) {
     dttm_col_names <- dttm_attrs[[data_file]]$attributeName
     # If the table doesn't have any date/time columns listed in the metadata, it automatically passes
     if (length(dttm_col_names) == 0) {
@@ -537,8 +537,9 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
     dttm_formats <- dttm_attrs[[data_file]]$formatString
     dttm_col_names <- dttm_col_names[grepl("Y", dttm_formats)]
     # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
-    dttm_formats <- as.list(convert_datetime_format(dttm_formats[grepl("Y", dttm_formats)]))
-    dttm_formats <- lapply(dttm_formats, readr::col_datetime)
+    dttm_formats_r <- as.list(convert_datetime_format(dttm_formats[grepl("Y", dttm_formats)])) %>%
+      lapply(readr::col_datetime)
+    names(dttm_formats_r) <- dttm_col_names
     names(dttm_formats) <- dttm_col_names
 
     # Read date/time columns, find max/min, and compare with max and min dates in metadata
@@ -546,23 +547,30 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
     if ("missingValueCode" %in% names(dttm_attrs[[data_file]])) {
       na_strings <- c(na_strings, unique(dttm_attrs[[data_file]]$missingValueCode))
     }
-    dttm_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(dttm_col_names), na = na_strings, col_types = do.call(readr::cols, dttm_formats), show_col_types = FALSE))
-    out_of_range <- sapply(names(dttm_data), function(col) {
+    dttm_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(dttm_col_names), na = na_strings, col_types = do.call(readr::cols, dttm_formats_r), show_col_types = FALSE))
+    tbl_out_of_range <- sapply(names(dttm_data), function(col) {
       col_data <- dttm_data[[col]]
       if (all(is.na(col_data))) {
         return(paste(col, "(failed to parse)"))
       }
       max_date <- max(col_data, na.rm = TRUE)
       min_date <- min(col_data, na.rm = TRUE)
-      if (max_date > meta_end_date || min_date < meta_begin_date) {
-        return(paste0(col, " [", min_date, ", ", max_date, "]"))  # column name and actual date range
-      } else {
-        return(NULL)
+      format_str_r <- dttm_formats_r[col]
+      bad_cols <- NULL
+
+      # Compare years first, and only compare months and days if they are included in the format string
+      if (lubridate::year(max_date) > lubridate::year(meta_end_date) || lubridate::year(min_date) < lubridate::year(meta_begin_date)) {
+        bad_cols <- paste0(col, " [", format(min_date, format_str_r), ", ", format(max_date, format_str_r), "]") # column name and actual date range
+      } else if (grepl("%m", format_str_r) && (lubridate::month(max_date) > lubridate::month(meta_end_date) || lubridate::month(min_date) < lubridate::month(meta_begin_date))) {
+        bad_cols <- paste0(col, " [", format(min_date, format_str_r), ", ", format(max_date, format_str_r), "]")
+      } else if (grepl("%d", format_str_r) && (lubridate::day(max_date) > lubridate::day(meta_end_date) || lubridate::day(min_date) < lubridate::day(meta_begin_date))) {
+        bad_cols <- paste0(col, " [", format(min_date, format_str_r), ", ", format(max_date, format_str_r), "]")
       }
+      return(bad_cols)
     }, simplify = FALSE, USE.NAMES = TRUE)
-    out_of_range <- purrr::discard(out_of_range, is.null)
-    if (length(names(out_of_range)) > 0) {
-      return(paste(out_of_range, collapse = ", "))  # List out of range date columns
+    tbl_out_of_range <- purrr::discard(tbl_out_of_range, is.null)
+    if (length(names(tbl_out_of_range)) > 0) {
+      return(paste(tbl_out_of_range, collapse = ", "))  # List out of range date columns
     } else {
       return(NULL)
     }
@@ -570,12 +578,12 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   USE.NAMES = TRUE, simplify = FALSE)
 
   # This will be null unless supposedly numeric columns read in as non-numeric
-  data_out_of_range <- purrr::discard(data_out_of_range, is.null)
-  data_out_of_range <- unlist(data_out_of_range)
+  dataset_out_of_range <- purrr::discard(dataset_out_of_range, is.null)
+  dataset_out_of_range <- unlist(dataset_out_of_range)
 
   # If numeric cols contain non-numeric values, throw an error, otherwise, print a message indicating passed test
-  if (!is.null(data_out_of_range)) {
-    msg <- paste0(names(data_out_of_range), ":  ", data_out_of_range, collapse = "\n")
+  if (!is.null(dataset_out_of_range)) {
+    msg <- paste0(names(dataset_out_of_range), ":  ", dataset_out_of_range, collapse = "\n")
     msg <- paste0("The following date/time columns are out of the range [", meta_begin_date, ", ", meta_end_date, "] specified in the metadata:\n", msg)
     stop(msg)
   } else {
