@@ -36,9 +36,10 @@ load_metadata <- function(directory = here::here()) {
       if (is.null(metadata)) {
         cli::cli_abort(c("x" = "Could not load metadata."))
       } else {
-        message(cli::cli_inform(c("v" = "Metadata check passed. EML metadata {.file {metadata_file}} found and loaded into R.")))
+        cli::cli_inform(c("v" = "Metadata check passed. EML metadata {.file {metadata_file}} found and loaded into R."))
       }
-
+    } else {
+      cli::cli_abort(c("x" = "Could not determine metadata format."))
     }
   } else if (length(metadata_file) < 1) { # if no metadata file exists, stop the function and warn the user
     cli::cli_abort(c("x" = "Metadata check failed. No metadata found. Your metadata file name must end in {.file _metadata.xml}."))
