@@ -23,4 +23,11 @@ Imports:
     readr,
     magrittr,
     tidyselect,
-    lubridate
+    lubridate,
+    EMLeditor (>= 0.0.1.0),
+    cli,
+    dplyr,
+    purrr,
+    stringr
+Remotes: 
+    nationalparkservice/EMLeditor
