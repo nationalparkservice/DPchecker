@@ -513,8 +513,8 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   }
 
   # Get begin date from metadata
-  meta_begin_date <- readr::parse_datetime(EMLeditor::get.beginDate(metadata), format = "%d %B %Y")
-  meta_end_date <- readr::parse_datetime(EMLeditor::get.endDate(metadata), format = "%d %B %Y")
+  meta_begin_date <- readr::parse_datetime(EMLeditor::get_begin_date(metadata), format = "%d %B %Y")
+  meta_end_date <- readr::parse_datetime(EMLeditor::get_end_date(metadata), format = "%d %B %Y")
   meta_date_range <- c(begin = meta_begin_date, end = meta_end_date)
 
   # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
