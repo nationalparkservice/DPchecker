@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:stmml="http://www.xml-cml.org/schema/stmml-1.2" packageId="(POST-ASSEMBLYLINE) Example_BICY_Veg_metadata" xsi:schemaLocation="https://eml.ecoinformatics.org/eml-2.2.0/eml.xsd https://eml.ecoinformatics.org/eml-2.2.0/eml.xsd" system="unknown">
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-2.1.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:stmml="http://www.xml-cml.org/schema/stmml-1.2" packageId="(POST-ASSEMBLYLINE) Example_BICY_Veg_metadata" xsi:schemaLocation="https://eml.ecoinformatics.org/eml-2.2.0/eml.xsd https://eml.ecoinformatics.org/eml-2.2.0/eml.xsd" system="unknown">
   <dataset>
     <alternateIdentifier>doi: https://doi.org/10.57830/2295086</alternateIdentifier>
     <title>EXAMPLE: A Quantitative Plant Inventory of Big Cypress National Preserve: Processed Data (Publicly Available)</title>
@@ -15820,15 +15820,6 @@
     <maintenance>
       <description>complete</description>
     </maintenance>
-    <contact>
-      <individualName>
-        <givenName>Judd</givenName>
-        <surName>Patterson</surName>
-      </individualName>
-      <organizationName>NPS</organizationName>
-      <electronicMailAddress>judd_patterson@nps.gov</electronicMailAddress>
-      <userId directory="https://orcid.org">https://orcid.org/0000-0002-0951-7917</userId>
-    </contact>
     <publisher>
       <organizationName>National Park Service</organizationName>
       <address>
@@ -15859,11 +15850,11 @@
         <authentication method="MD5">d2f8fe468e393c41c6dccf30bab1a91a</authentication>
         <dataFormat>
           <textFormat>
-            <numHeaderLines>1</numHeaderLines>
+            <numHeaderLines>2</numHeaderLines>
             <recordDelimiter>\n</recordDelimiter>
             <attributeOrientation>column</attributeOrientation>
             <simpleDelimited>
-              <fieldDelimiter>,</fieldDelimiter>
+              <fieldDelimiter>,,</fieldDelimiter>
             </simpleDelimited>
           </textFormat>
         </dataFormat>
@@ -16343,11 +16334,10 @@
         <authentication method="MD5">1121726158224578eb5a1125f5c35624</authentication>
         <dataFormat>
           <textFormat>
-            <numHeaderLines>1</numHeaderLines>
             <recordDelimiter>\n</recordDelimiter>
             <attributeOrientation>column</attributeOrientation>
             <simpleDelimited>
-              <fieldDelimiter>,</fieldDelimiter>
+              <fieldDelimiter>..</fieldDelimiter>
             </simpleDelimited>
           </textFormat>
         </dataFormat>
