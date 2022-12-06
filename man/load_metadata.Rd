@@ -4,10 +4,12 @@
 \alias{load_metadata}
 \title{Load Metadata}
 \usage{
-load_metadata(directory = here::here())
+load_metadata(directory = here::here(), inform_success = FALSE)
 }
 \arguments{
 \item{directory}{the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.}
+
+\item{inform_success}{Boolean indicating whether to display a message when metadata is successfully loaded.}
 }
 \value{
 an R-object formatted as EML metadata.
