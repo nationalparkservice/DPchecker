@@ -93,7 +93,10 @@ load_data <- function(directory = here::here()) {
 test_metadata_version <- function(metadata = load_metadata(here::here())) {
 
   vers <- substr(sub(".*https://eml.ecoinformatics.org/eml-", "", metadata)[1], 1, 5)
-  vers <- numeric_version(vers)
+  tryCatch(vers <- numeric_version(vers),
+           error = function(err) {
+             cli::cli_abort(c("x" = err$message))
+           })
   if (vers < "2.2.0") {
     cli::cli_abort(c("x" = "Unsupported EML version: EML must be 2.2.0 or later. Your version is {.val {vers}}."))
   } else {  # vers >= 2.2.0
