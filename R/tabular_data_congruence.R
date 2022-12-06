@@ -182,17 +182,28 @@ test_footer <- function(metadata = load_metadata(here::here())) {
 #' test_header_num()
 test_header_num <- function(metadata = load_metadata(here::here())) {
 
-  header <- arcticdatautils::eml_get_simple(metadata, "numHeaderLines")
-  names(header) <- arcticdatautils::eml_get_simple(metadata, "entityName")
-  if (is.null(header)) {
+  tbl_metadata <- EML::eml_get(metadata, "dataTable")
+  if ("entityName" %in% names(tbl_metadata)) {
+    tbl_metadata <- list(tbl_metadata)  # Handle single data table case
+  }
+  bad_headers <- sapply(tbl_metadata, function(tbl) {
+    header_lines <- arcticdatautils::eml_get_simple(tbl, "numHeaderLines")
+    return(tibble::tibble(table_name = tbl$entityName,
+                          header_lines = ifelse(is.null(header_lines), NA, header_lines)))
+  },
+  simplify = FALSE)
+  bad_headers$`@context` <- NULL
+  bad_headers <- do.call(rbind, bad_headers)
+  bad_headers <- dplyr::filter(bad_headers, is.na(header_lines) | header_lines != "1")
+
+  if(nrow(bad_headers) == 0) {
+    cli::cli_inform(c("v" = "Metadata indicates that each data file contains exactly one header row."))
+  } else if (all(is.na(bad_headers$header_lines))) {
     cli::cli_abort(c("x" = "Metadata does not contain information about number of header rows"))
-  } else if (any(header != "1")) {
-    wrong_headers <- header[header != "1"]
-    wrong_headers <- paste0(names(wrong_headers), ": ", wrong_headers)
+  } else {
+    wrong_headers <- paste0(bad_headers$table_name, ": ", bad_headers$header_lines)
     names(wrong_headers) <- rep("*", length(wrong_headers))
     cli::cli_abort(c("x" = "Metadata indicates that the following data files contain either zero or more than one header row:", wrong_headers))
-  } else {
-    cli::cli_inform(c("v" = "Metadata indicates that each data file contains exactly one header row."))
   }
 
   return(invisible(metadata))
@@ -213,17 +224,35 @@ test_header_num <- function(metadata = load_metadata(here::here())) {
 #' test_delimiter()
 test_delimiter <- function(metadata = load_metadata(here::here())) {
 
-  delimit <- arcticdatautils::eml_get_simple(metadata, "fieldDelimiter")
-  names(delimit) <- arcticdatautils::eml_get_simple(metadata, "entityName")
-  if (is.null(delimit) == TRUE) {
+  tbl_metadata <- EML::eml_get(metadata, "dataTable")
+  if ("entityName" %in% names(tbl_metadata)) {
+    tbl_metadata <- list(tbl_metadata)  # Handle single data table case
+  }
+  bad_delimit <- sapply(tbl_metadata, function(tbl) {
+    delimit <- tryCatch(arcticdatautils::eml_get_simple(tbl, "fieldDelimiter"),
+                        error = function(e) {
+                          if (grepl("not recognized", e$message)) {
+                            "[INVALID]"
+                          } else {
+                            e
+                          }
+                        })
+    return(tibble::tibble(table_name = tbl$entityName,
+                          delimiter = ifelse(is.null(delimit), NA, delimit)))
+  },
+  simplify = FALSE)
+  bad_delimit$`@context` <- NULL
+  bad_delimit <- do.call(rbind, bad_delimit)
+  bad_delimit <- dplyr::filter(bad_delimit, is.na(delimiter) | nchar(delimiter) != 1 | delimiter == "[INVALID]")
+
+  if (nrow(bad_delimit) == 0) {
+    cli::cli_inform(c("v" = "Metadata indicates that each data file contains a field delimiter that is a single character"))
+  } else if (all(is.na(bad_delimit$delimiter))) {
     stop("Metadata does not contain information about the field delimiter for data files")
-  } else if (any(nchar(delimit) != 1)) {
-    wrong_delimiters <- delimit[nchar(delimit) != 1]
-    wrong_delimiters <- names(wrong_delimiters)
+  } else {
+    wrong_delimiters <- bad_delimit$table_name
     names(wrong_delimiters) <- rep("*", length(wrong_delimiters))
     cli::cli_abort(c("x" = "Metadata indicates that the following data files do not contain valid delimiters:", wrong_delimiters))
-  } else {
-    cli::cli_inform(c("v" = "Metadata indicates that each data file contains a field delimiter that is a single character"))
   }
 
   return(invisible(metadata))
