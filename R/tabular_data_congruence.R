@@ -262,7 +262,7 @@ test_delimiter <- function(metadata = load_metadata(here::here())) {
 #'
 #' @description test_dup_meta_entries test to see whether there are duplicate filenames listed for the data files in (EML) metadata.
 #'
-#' @details specifically, test_dup_meta_entries looks at the 'physical' elements of a metadata file, which describe each data file, and asks whether there are duplicates entries under the objectName child element, which is where the file name for each data file is stored. If your files are not in your working directory and you specified their location, reverts back to your working directory on exit.
+#' @details specifically, test_dup_meta_entries looks at the 'physical' elements of a metadata file, which describe each data file, and asks whether there are duplicates entries under the objectName child element, which is where the file name for each data file is stored.
 #'
 #' @inheritParams test_metadata_version
 #'
@@ -286,41 +286,12 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
   if (length(dups) == 0) {
     cli::cli_inform(c("v" = "Each data file name is used exactly once in the metadata file."))
   } else if (length(dups > 0)) {  # if duplicates, test failed:
-    names(dups) <- "*"
+    names(dups) <- rep("*", length(dups))
     cli::cli_abort(c("x" = "Metadata file name check failed. Some filenames are used more than once in the metadata:", dups))
   }
 
 
   return(invisible(metadata))
-}
-
-#' Test Data Files for Duplicate Names
-#'
-#' @description test_dup_data_files looks at the file names of .csv files within a specified directory and tests whether there are any duplicates.
-#'
-#' @details not sure why you'd ever need this function. Seems that most file systems won't let you have duplicate file names, but here it is for the sake of completeness. If you specify a directory other than your current working directory, it will return to the current working directory on exit.
-#'
-#' @inheritParams load_data
-#'
-#' @return Invisibly returns `metadata`.
-#' @export
-#'
-#' @examples test_dup_data_files()
-#'
-test_dup_data_files <- function(directory = here::here()) {
-  # get data file filenames (only .csv supported for now):
-  data_files <- list.files(path = directory, pattern = ".csv")
-
-  # find duplicate entries:
-  dups <- data_files[duplicated(data_files)]
-  # if no duplicates, test passed:
-  if (length(dups) == 0) {
-    cli::cli_inform(c("v" = "Each data file name is used exactly once."))
-  } else if (length(dups > 0)) {  # if duplicates, test failed:
-    names(dups) <- "*"
-    cli::cli_abort(c("x" = "Data file name check failed. Some filenames are used more than once.", dups_msg))
-  }
-  return(invisible(data_files))
 }
 
 #' File Name Match
