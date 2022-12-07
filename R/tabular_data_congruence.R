@@ -326,8 +326,12 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
   if (length(meta_only) == 0 && length(dir_only) == 0) {
     cli::cli_inform(c("v" = "All data files are listed in metadata and all metadata files names refer to data files."))
   } else if (length(meta_only) > 0 || length(dir_only) > 0) {
-    names(meta_only) <- "*"
-    names(dir_only) <- "*"
+    if (length(meta_only > 0)) {
+      names(meta_only) <- "*"
+    }
+    if (length(dir_only) > 0) {
+      names(dir_only) <- "*"
+    }
     cli::cli_abort(c("x" = "{length(meta_only)} file{?s} listed in metadata and missing from data folder", meta_only,
                   "x" = "{length(dir_only)} file{?s} present in data folder and missing from metadata", dir_only))
   }
@@ -379,7 +383,7 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
     if (length(meta_cols) == length(data_cols) && all(meta_cols == data_cols)) {  # Columns match and are in right order
       return(NULL)
     } else if (all(meta_cols %in% data_cols) && all(data_cols %in% meta_cols)) {  # Columns match and are in wrong order
-      return(c(" " = paste0("--> ", data_file, ": Metadata column order does not match data column order")))
+      return(c(" " = paste0("--> {.file ", data_file, "}: Metadata column order does not match data column order")))
     } else {  # Columns don't match
       missing_from_meta <- data_cols[!(data_cols %in% meta_cols)]
       if (length(missing_from_meta) > 0) {
