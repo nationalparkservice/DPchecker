@@ -575,10 +575,15 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
       na_strings <- c(na_strings, unique(dttm_attrs[[data_file]]$missingValueCode))
     }
     dttm_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(dttm_col_names), na = na_strings, col_types = do.call(readr::cols, dttm_col_spec), show_col_types = FALSE))
+    char_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(dttm_col_names), na = na_strings, col_types = rep("c", length(dttm_col_names)), show_col_types = FALSE))
+
     tbl_out_of_range <- sapply(names(dttm_data), function(col) {
       col_data <- dttm_data[[col]]
+      orig_na_count <- sum(is.na(char_data[[col]]))
       if (all(is.na(col_data))) {
         return(paste0("{.field ", col, "} (failed to parse)"))
+      } else if (sum(is.na(col_data)) > orig_na_count) {
+        return(paste0("{.field ", col, "} (partially failed to parse)"))
       }
       max_date <- max(col_data, na.rm = TRUE)
       min_date <- min(col_data, na.rm = TRUE)
