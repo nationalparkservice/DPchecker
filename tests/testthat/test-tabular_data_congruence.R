@@ -1,5 +1,7 @@
-good_dir <- here::here("tests", "testthat", "good")
-bad_dir <- here::here("tests", "testthat", "bad")
+# good_dir <- here::here("tests", "testthat", "good")
+# bad_dir <- here::here("tests", "testthat", "bad")
+good_dir <- "good"
+bad_dir <- "bad"
 
 # ---- load_metadata ----
 
@@ -39,19 +41,28 @@ test_that("load_metadata throws an error when there are multiple xml files with 
 # ---- test_metadata_version ----
 test_that("test_metadata_version displays success message for supported EML versions", {
   expect_message(test_metadata_version(load_metadata(here::here(good_dir, "BICY_good"))),
-                                       "Your EML version 2.2.0 is supported.")
+                                       "Your EML version is supported")
   expect_message(test_metadata_version(load_metadata(here::here(good_dir, "BUIS_good"))),
-                 "Your EML version 2.2.3 is supported.")
+                 "Your EML version is supported")
 
 })
 
-test_that("test_metadata_version throws error and displays failure message for unsupported EML versions", {
-  expect_error(test_metadata_version(load_metadata(here::here(bad_dir, "BICY_bad"))),
-                 "Unsupported EML version: EML must be 2.2.0 or later. Your version is 2.1.0.")
+test_that("test_metadata_version throws warning when there is a mismatch between EML namespace and schema versions and at least one is too old", {
+  expect_warning(
+    expect_warning(test_metadata_version(load_metadata(here::here(bad_dir, "bad_versions", "mismatch_warn"))),
+               "There is a mismatch"),
+               "You are using an old EML version")
+})
+
+test_that("test_metadata_version throws warning then error when there is a mismatch between EML namespace and schema versions and at least one is too new", {
+  expect_error(
+    expect_warning(test_metadata_version(load_metadata(here::here(bad_dir, "bad_versions", "mismatch_error"))),
+                   "There is a mismatch"),
+    "You are using an unsupported EML version")
 })
 
 test_that("test_metadata_version throws error for invalid EML versions", {
-  expect_error(test_metadata_version(load_metadata(here::here(bad_dir, "BUIS_bad"))))
+  expect_error(test_metadata_version(load_metadata(here::here(bad_dir, "bad_versions", "not_a_version"))))
 })
 
 
@@ -130,9 +141,9 @@ test_that("test_dup_meta_entries displays success message if no duplicate files 
 })
 
 test_that("test_dup_meta_entries displays error message if metadata contains duplicate filenames", {
-  expect_error(test_dup_meta_entries(load_metadata(here::here(bad_dir,"data_metadata_mismatch", "BICY"))),
+  expect_error(test_dup_meta_entries(load_metadata(here::here(bad_dir,"data_metadata_mismatch", "BICY_files"))),
                  "Metadata file name check failed. Some filenames are used more than once in the metadata:.*Mini_BICY_Veg_Transect_Cleaned.csv.*Mini_BICY_Veg_Intercept_Cleaned.csv$")
-  expect_error(test_dup_meta_entries(load_metadata(here::here(bad_dir, "data_metadata_mismatch", "BUIS"))),
+  expect_error(test_dup_meta_entries(load_metadata(here::here(bad_dir, "data_metadata_mismatch", "BUIS_files"))),
                  "Metadata file name check failed. Some filenames are used more than once in the metadata:.*BUIS_herps.csv$")
 
 })
