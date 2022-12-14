@@ -696,6 +696,7 @@ DPchecker_example <- function(dp_name = NULL) {
 #' @examples
 #' convert_datetime_format("MM/DD/YYYY")
 #' convert_datetime_format(c("MM/DD/YYYY", "YY-MM-DD"))
+#'
 convert_datetime_format <- function(eml_format_string) {
   r_format_string <- eml_format_string %>%
     stringr::str_replace_all("YYYY", "%Y") %>%

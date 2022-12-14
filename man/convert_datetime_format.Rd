@@ -21,4 +21,5 @@ This is not a sophisticated function. If the EML format string is not valid, it 
 \examples{
 convert_datetime_format("MM/DD/YYYY")
 convert_datetime_format(c("MM/DD/YYYY", "YY-MM-DD"))
+
 }
