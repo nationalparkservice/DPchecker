@@ -11,7 +11,8 @@
 #' @export
 #'
 #' @examples
-#' my_metadata <- load_metadata()
+#' data_pkg_dir <- DPchecker_example("BICY_veg")
+#' my_metadata <- load_metadata(data_pkg_dir)
 #'
 load_metadata <- function(directory = here::here(), inform_success = FALSE) {
   # get list of all files ending in metadata.xml
@@ -65,7 +66,9 @@ load_metadata <- function(directory = here::here(), inform_success = FALSE) {
 #' @return a tibble of .csvs
 #' @export
 #'
-#' @examples my_data <- load_data()
+#' @examples
+#' data_pkg_dir <- DPchecker_example("BICY_veg")
+#' my_data <- load_data(data_pkg_dir)
 load_data <- function(directory = here::here()) {
   data_filenames <- list.files(path = directory, pattern = ".csv")
   tibble_list <- sapply(data_filenames,
@@ -89,18 +92,37 @@ load_data <- function(directory = here::here()) {
 #' @export
 #'
 #' @examples
-#' test_metadata_version()
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_metadata_version(meta)
 test_metadata_version <- function(metadata = load_metadata(here::here())) {
 
-  vers <- substr(sub(".*https://eml.ecoinformatics.org/eml-", "", metadata)[1], 1, 5)
-  tryCatch(vers <- numeric_version(vers),
+  # Declaring oldest and newest accepted versions here so that they're easier to update
+  oldest_accepted_ver <- "2.2.0"
+  newest_accepted_ver <- "2.2.0"
+
+  # vers <- substr(sub(".*https://eml.ecoinformatics.org/eml-", "", metadata)[1], 1, 5)
+  vers <- c(EML::eml_get(metadata, "eml")[[1]],
+            unlist(strsplit(EML::eml_get(metadata, "schemaLocation")[[1]], "\\s"))[1])
+  vers <- vers %>%
+    stringr::str_extract("eml-\\d+\\.\\d+(\\.\\d+)?") %>%
+    stringr::str_replace("eml-", "")
+
+  tryCatch({ns_ver <- numeric_version(vers[1])
+           schema_ver <- numeric_version(vers[2])},
            error = function(err) {
              cli::cli_abort(c("x" = err$message))
            })
-  if (vers < "2.2.0") {
-    cli::cli_abort(c("x" = "Unsupported EML version: EML must be 2.2.0 or later. Your version is {.val {vers}}."))
-  } else {  # vers >= 2.2.0
-    cli::cli_inform(c("v" = "Your EML version {.val {vers}} is supported."))
+
+  # Check that both namespace and schema versions are within accepted range
+  if (ns_ver != schema_ver) {
+    cli::cli_warn(c("!" = "There is a mismatch between your namespace version ({.val {ns_ver}}) and your schema version ({.val {schema_ver}})."))
+  }
+  if (ns_ver < oldest_accepted_ver || schema_ver < oldest_accepted_ver) {
+    cli::cli_warn(c("!" = "You are using an old EML version: {oldest_accepted_ver} or later is recommended."))
+  } else if (ns_ver > newest_accepted_ver || schema_ver > newest_accepted_ver) {
+    cli::cli_abort(c("x" = "You are using an unsupported EML version: versions beyond {newest_accepted_ver} not accepted."))
+  } else {
+    cli::cli_inform(c("v" = "Your EML version is supported."))
   }
 
   return(invisible(metadata))
@@ -119,7 +141,8 @@ test_metadata_version <- function(metadata = load_metadata(here::here())) {
 #' @export
 #'
 #' @examples
-#' test_validate_schema()
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_validate_schema(meta)
 test_validate_schema <- function(metadata = load_metadata(here::here())) {
 
   val <- EML::eml_validate(metadata)
@@ -154,7 +177,8 @@ test_validate_schema <- function(metadata = load_metadata(here::here())) {
 #' @export
 #'
 #' @examples
-#' test_footer()
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_footer(meta)
 test_footer <- function(metadata = load_metadata(here::here())) {
 
   if (is.null(arcticdatautils::eml_get_simple(metadata, "numFooterLines"))) {
@@ -179,7 +203,8 @@ test_footer <- function(metadata = load_metadata(here::here())) {
 #' @export
 #'
 #' @examples
-#' test_header_num()
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_header_num(meta)
 test_header_num <- function(metadata = load_metadata(here::here())) {
 
   tbl_metadata <- EML::eml_get(metadata, "dataTable")
@@ -221,7 +246,8 @@ test_header_num <- function(metadata = load_metadata(here::here())) {
 #' @export
 #'
 #' @examples
-#' test_delimiter()
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_delimiter(meta)
 test_delimiter <- function(metadata = load_metadata(here::here())) {
 
   tbl_metadata <- EML::eml_get(metadata, "dataTable")
@@ -269,7 +295,9 @@ test_delimiter <- function(metadata = load_metadata(here::here())) {
 #' @return Invisibly returns `metadata`.
 #' @export
 #'
-#' @examples test_dup_meta_entries()
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_dup_meta_entries(meta)
 test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 
 
@@ -305,7 +333,9 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 #'
 #' @return Invisibly returns `metadata`.
 #' @export
-#' @examples test_file_name_match()
+#' @examples
+#' dir <- DPchecker_example("BICY_veg")
+#' test_file_name_match(dir)
 test_file_name_match <- function(directory = here::here(), metadata = load_metadata(directory)) {
 
   # get physical elements (and all children elements)
@@ -352,7 +382,8 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
 #' @export
 #'
 #' @examples
-#' test_fields_match()
+#' dir <- DPchecker_example("BICY_veg")
+#' test_fields_match(dir)
 test_fields_match <- function(directory = here::here(), metadata = load_metadata(directory)) {
 
   # get dataTable and all children elements
@@ -427,7 +458,8 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 #' @export
 #'
 #' @examples
-#' test_numeric_fields()
+#' dir <- DPchecker_example("BICY_veg")
+#' test_numeric_fields(dir)
 test_numeric_fields <- function(directory = here::here(), metadata = load_metadata(directory)) {
 
   # get dataTable and all children elements
@@ -511,7 +543,8 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #' @export
 #'
 #' @examples
-#' test_date_range()
+#' dir <- DPchecker_example("BICY_veg")
+#' test_date_range(dir)
 test_date_range <- function(directory = here::here(), metadata = load_metadata(directory)) {
 
   # get dataTable and all children elements
@@ -629,6 +662,25 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   }
 
   return(invisible(metadata))
+}
+
+#' Generate path to example data
+#'
+#' @param dp_name Name of data package. If omitted, this function will list all available example data packages.
+#'
+#' @return Path to example data, if dp_name is specified, or all available example data if not.
+#' @export
+#'
+#' @examples
+#' DPchecker_example()
+#' DPchecker_example("BUIS_herps")
+DPchecker_example <- function(dp_name = NULL) {
+  if (is.null(dp_name)) {
+    dir(system.file("extdata", package = "DPchecker"))
+  } else {
+    message("Data are provided for example use only. Do not assume that they are complete, accurate, or up to date.")
+    system.file("extdata", dp_name, package = "DPchecker", mustWork = TRUE)
+  }
 }
 
 

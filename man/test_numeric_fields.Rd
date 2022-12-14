@@ -24,5 +24,6 @@ test_numeric_fields verifies that all columns listed as numeric in the metadata 
 "NA" and missing data codes documented in the metadata will \emph{not} cause this test to fail. Note that this test assumes that the column types that are in the metadata are the intended types, i.e., if your metadata says a column is text and it should actually be numeric, it will not be caught by this test.
 }
 \examples{
-test_numeric_fields()
+dir <- DPchecker_example("BICY_veg")
+test_numeric_fields(dir)
 }

@@ -21,6 +21,7 @@ load_metadata loads the metadata file from a given path or directory.
 given a path or directory - default is the working directory -  load_metadata looks for files with the ending *_metadata.xml. The function quits and warns the user if no such files are found or if more than one such file is found. If only one metadata file is found, it checked for one of 3 formats: FGDC, ISO, or EML. Currently only EML is supported and the function will warn the user and quit if non-EML metadata is found. The EML metadata file is loaded into R's work space for future use during congruence checking.
 }
 \examples{
-my_metadata <- load_metadata()
+data_pkg_dir <- DPchecker_example("BICY_veg")
+my_metadata <- load_metadata(data_pkg_dir)
 
 }

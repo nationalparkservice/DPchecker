@@ -24,5 +24,6 @@ test_fields_match compares the attributes of each dataTable within the EML metad
 test_fields_match briefly checks that data files match, but you should really run \code{test_file_name_match()} before you run this test.
 }
 \examples{
-test_fields_match()
+dir <- DPchecker_example("BICY_veg")
+test_fields_match(dir)
 }

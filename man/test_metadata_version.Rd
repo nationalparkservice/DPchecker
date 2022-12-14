@@ -19,5 +19,6 @@ test_metadata_version determines whether the version of the metadata supplied me
 currently only EML is supported. EML must be version >= 2.2.0.
 }
 \examples{
-test_metadata_version()
+meta <- load_metadata(DPchecker_example("BICY_veg"))
+test_metadata_version(meta)
 }

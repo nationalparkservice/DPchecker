@@ -24,5 +24,6 @@ test_file_name_match checks to see whether all data files (.csv) within a specif
 If a directory other than the current working directory is specified, test.fileNameMatch returns to the current working directory on exit. Note that the metadata file must follow NPS naming conventions, specifically ending in *_metadata.xml. test.fileNameMatch assumes there are the same number of data files in the directory as dataTables in the metadata file.
 }
 \examples{
-test_file_name_match()
+dir <- DPchecker_example("BICY_veg")
+test_file_name_match(dir)
 }

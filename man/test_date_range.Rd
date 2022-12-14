@@ -21,5 +21,6 @@ test_date_range verifies that dates in the dataset are consistent with the date 
 This function checks columns that are identified as date/time in the metadata. It throws a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and throw an error.
 }
 \examples{
-test_date_range()
+dir <- DPchecker_example("BICY_veg")
+test_date_range(dir)
 }

@@ -19,5 +19,6 @@ test_validate_schema inspects a metadata object loaded into R and determines whe
 currently, only EML is supported. For now this is just a wrapper form EML::eml_validate().
 }
 \examples{
-test_validate_schema()
+meta <- load_metadata(DPchecker_example("BICY_veg"))
+test_validate_schema(meta)
 }

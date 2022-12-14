@@ -19,5 +19,6 @@ test_footer checks the metadata files to determine whether data files contain fo
 If footer lines are not present, the data package passes the test. If footer lines are present, the data package fails the test and the user is instructed to remove footer lines prior to data package upload. Currently only EML metadata are supported.
 }
 \examples{
-test_footer()
+meta <- load_metadata(DPchecker_example("BICY_veg"))
+test_footer(meta)
 }

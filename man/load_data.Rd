@@ -19,5 +19,6 @@ load_data inspects the working directory for data files. Loads all existing data
 loads all data files in a specified directory (default is the working directory) into a tibble for later use in congruence checking. Returns the user to the working directory upon exit. Currently only supports .csv files.
 }
 \examples{
-my_data <- load_data()
+data_pkg_dir <- DPchecker_example("BICY_veg")
+my_data <- load_data(data_pkg_dir)
 }

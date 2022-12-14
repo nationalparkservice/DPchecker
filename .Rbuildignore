@@ -2,3 +2,5 @@
 ^\.Rproj\.user$
 ^DPchecker\.Rproj$
 ^LICENSE\.md$
+^\.github$
+^codecov\.yml$
