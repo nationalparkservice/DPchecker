@@ -28,6 +28,7 @@ Imports:
     purrr,
     stringr,
     tibble
-Remotes: 
-    nationalparkservice/EMLeditor
+Remotes:  
+    nationalparkservice/EMLeditor,
+    https://github.com/NCEAS/arcticdatautils
 URL: https://nationalparkservice.github.io/DPchecker/

@@ -8,6 +8,13 @@
 \description{
 Allows the user (and reviewer) to check a data package and test whether it meets the congruence standards set forth by NPS for upload to DataStore as a datapackage.
 }
+\seealso{
+Useful links:
+\itemize{
+  \item \url{https://nationalparkservice.github.io/DPchecker/}
+}
+
+}
 \author{
 \strong{Maintainer}: Rob Baker \email{robert_baker@nps.gov}
 
