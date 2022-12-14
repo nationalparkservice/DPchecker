@@ -6,6 +6,7 @@
 
 <!-- badges: start -->
   [![R-CMD-check](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml)
+[![R-CMD-check](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 DPchecker (Data Package checker) is a package with a series of functions for NPS data package authors and reviewers to check for internal consistency among data/meta data and with the data package standards.
