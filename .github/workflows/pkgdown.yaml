@@ -30,7 +30,7 @@ jobs:
 
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
-          packages: XML
+          packages: any::XML
           extra-packages: any::pkgdown, local::.
           needs: website
 
