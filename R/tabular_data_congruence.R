@@ -17,6 +17,7 @@
 load_metadata <- function(directory = here::here(), inform_success = FALSE) {
   # get list of all files ending in metadata.xml
   lf <- list.files(path = directory, pattern = "metadata.xml", ignore.case = TRUE)
+
   metadata_file <- file.path(directory, lf)
 
   # if exactly 1 metadata file exists, determine what format the metadata file is. Accept only EML (for now):
@@ -246,6 +247,7 @@ test_header_num <- function(metadata = load_metadata(here::here())) {
 #' @export
 #'
 #' @examples
+
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_delimiter(meta)
 test_delimiter <- function(metadata = load_metadata(here::here())) {
@@ -317,7 +319,6 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
     names(dups) <- rep("*", length(dups))
     cli::cli_abort(c("x" = "Metadata file name check failed. Some filenames are used more than once in the metadata:", dups))
   }
-
 
   return(invisible(metadata))
 }
@@ -808,6 +809,60 @@ DPchecker_example <- function(dp_name = NULL) {
     message("Data are provided for example use only. Do not assume that they are complete, accurate, or up to date.")
     system.file("extdata", dp_name, package = "DPchecker", mustWork = TRUE)
   }
+
+  # Get list of attributes for each table in the metadata
+  metadata_attrs <- lapply(data_tbl, function(tbl) {arcticdatautils::eml_get_simple(tbl, "attributeName")})
+  metadata_attrs$`@context` <- NULL
+  names(metadata_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  # Get list of column names for each table in the csv data
+  data_files <- list.files(path = directory, pattern = ".csv")
+  data_colnames <- sapply(data_files, function(data_file) {names(readr::read_csv(file.path(directory, data_file), n_max = 1, show_col_types = FALSE))}, USE.NAMES = TRUE, simplify = FALSE)
+
+  # Quick check that tables match
+  if (!(all(names(data_colnames) %in% names(metadata_attrs)) & all(names(metadata_attrs) %in% names(data_colnames)))) {
+    stop("Mismatch in data filenames and files listed in metadata. Call `test_file_name_match()` for more info.")
+  }
+
+  # Check each CSV. If column and attributes are a mismatch, describe the issue
+  mismatches <- sapply(data_files, function(data_file) {
+    meta_cols <- metadata_attrs[[data_file]]
+    data_cols <- data_colnames[[data_file]]
+    if (length(meta_cols) == length(data_cols) && all(meta_cols == data_cols)) {  # Columns match and are in right order
+      return(NULL)
+    } else if (all(meta_cols %in% data_cols) && all(data_cols %in% meta_cols)) {  # Columns match and are in wrong order
+      return("Metadata column order does not match data column order")
+    } else {  # Columns don't match
+      missing_from_meta <- paste(data_cols[!(data_cols %in% meta_cols)], collapse = ", ")
+      missing_from_data <- paste(meta_cols[!(meta_cols %in% data_cols)], collapse = ", ")
+      if (missing_from_meta != "") {
+        missing_from_meta <- paste0("Data column(s) ", crayon::red$bold(missing_from_meta), " missing from metadata")
+      } else {
+        missing_from_meta <- NULL
+      }
+      if (missing_from_data != "") {
+        missing_from_data <- paste0("Metadata column(s) ", crayon::red$bold(missing_from_data), " missing from data")
+      } else {
+        missing_from_data <- NULL
+      }
+      return(paste0(paste(c(missing_from_data, missing_from_meta), collapse = ". "), "."))
+    }
+  }, USE.NAMES = TRUE, simplify = FALSE)
+
+  # Remove tables from list that pass the test, and convert it to a named vector
+  mismatches <- purrr::discard(mismatches, is.null) %>%
+    unlist()
+
+  # If there are mismatches, throw an error, otherwise, print a message indicating passed test
+  if (!is.null(mismatches)) {
+    msg <- paste0(names(mismatches), ":  ", mismatches, collapse = "\n")
+    msg <- paste("Field mismatch between data and metadata:\n", msg)
+    stop(msg)
+  } else {
+    message("PASSED: fields match. All columns in data files are listed in metadata and all attributes in metadata are columns in the data files.")
+  }
+
+  return(invisible(metadata))
 }
 
 
