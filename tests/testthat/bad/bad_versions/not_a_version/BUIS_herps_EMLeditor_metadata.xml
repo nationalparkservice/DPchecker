@@ -1,0 +1,1037 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<eml:eml xmlns:eml="https://eml.ecoinformatics.org/eml-wrong_ver" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:stmml="http://www.xml-cml.org/schema/stmml-1.2" packageId="BUIS_herps_metadata" xsi:schemaLocation="https://eml.ecoinformatics.org/eml-wrong_ver/eml.xsd https://eml.ecoinformatics.org/eml-2.2.0/eml.xsd" system="unknown">
+  <dataset>
+    <alternateIdentifier>doi: https://doi.org/10.57830/2295037</alternateIdentifier>
+    <title>Buck Island Reef National Monument Herpetofauna Inventories</title>
+    <creator>
+      <individualName>
+        <givenName>Amelia</givenName>
+        <givenName>G</givenName>
+        <surName>Sherman</surName>
+      </individualName>
+      <organizationName>NPS</organizationName>
+      <electronicMailAddress>amelia_sherman@partner.nps.gov</electronicMailAddress>
+    </creator>
+    <metadataProvider>
+      <organizationName>BUIS</organizationName>
+    </metadataProvider>
+    <metadataProvider>
+      <organizationName>SFCN</organizationName>
+    </metadataProvider>
+    <associatedParty>
+      <individualName>
+        <givenName>Robert</givenName>
+        <givenName>L</givenName>
+        <surName>Baker</surName>
+      </individualName>
+      <organizationName>NPS</organizationName>
+      <electronicMailAddress>Rob_Baker@nps.gov</electronicMailAddress>
+      <role>contributor</role>
+    </associatedParty>
+    <pubDate>2022-11-15</pubDate>
+    <language>eng</language>
+    <abstract>
+      <para>DUring the year of 2001, a herpetofaunal inventory was conducted at Buck Island (BUIS) off the coast of Florida in an effort to try to find and record a comprehensive list of the species found within the parks. To achieve this goal an opportunistic encounter survey was conducted. In an effort to comply with Executive Order 13642, Making Open and Machine Readable the New Default for Government Information (GPO 2013), almost 20 years after this inventory project ended, the numerous datasets created as a result of the study were cleaned and processed in order to become machine readable and accessible to the public. </para>
+    </abstract>
+    <keywordSet>
+      <keyword>BUIS</keyword>
+      <keyword>Buck Island</keyword>
+      <keyword>SFCN</keyword>
+      <keyword>herps</keyword>
+      <keyword>herpetofauna</keyword>
+    </keywordSet>
+    <keywordSet>
+      <keyword>lizards</keyword>
+      <keyword>reptiles</keyword>
+      <keywordThesaurus>LTER Controlled Vocabulary</keywordThesaurus>
+    </keywordSet>
+    <additionalInfo>
+      <para>Waddle JH and Others. 2002. Herpetological Inventory of Buck Island Reef National Monument&amp;#13;
+https://irma.nps.gov/DataStore/Reference/Profile/2175750</para>
+      <para>Sherman AG. 2022. Buck Island Reef National Monument (BUIS) Herpetofauna Inventory Raw Datasets&amp;#13;
+https://irma.nps.gov/DataStore/Reference/Profile/2295035</para>
+      <para>Sherman A. 2022. Buck Island Reef National Monument Herpetofauna Machine Readable Inventory&amp;#13;
+https://irma.nps.gov/DataStore/Reference/Profile/2295037</para>
+      <para>Sherman A. 2022. Buck Island Reef National Monument Herpetofauna Inventory Cleanup Script&amp;#13;
+https://irma.nps.gov/DataStore/Reference/Profile/2295038</para>
+      <para>Sherman A. Buck Island Reef National Monument Herpetofauna Inventory Data Release Report (DRR)&amp;#13;
+https://irma.nps.gov/DataStore/Reference/Profile/2295039</para>
+      <para>Buck Island Reef National Monument Herpetofauna Inventory Project. 2022&amp;#13;
+https://irma.nps.gov/DataStore/Reference/Profile/2295040&amp;#13;
+</para>
+    </additionalInfo>
+    <intellectualRights>
+      <para>This data package is released to the "public domain" under Creative Commons CC0 1.0 "No Rights Reserved" (see: https://creativecommons.org/publicdomain/zero/1.0/). It is considered professional etiquette to provide attribution of the original work if this data package is shared in whole or by individual components. A generic citation is provided for this data package on the website https://portal.edirepository.org (herein "website") in the summary metadata page. Communication (and collaboration) with the creators of this data package is recommended to prevent duplicate research or publication. This data package (and its components) is made available "as is" and with no warranty of accuracy or fitness for use. The creators of this data package and the website shall not be liable for any damages resulting from misinterpretation or misuse of the data package or its components. Periodic updates of this data package may be available from the website. Thank you.
+</para>
+    </intellectualRights>
+    <coverage>
+      <geographicCoverage>
+        <geographicDescription>2</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.6213475589926</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.6213475589926</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7867625482474</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7867625482474</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>1</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.6254644300582</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.6254644300582</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7903969604128</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7903969604128</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>3</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.6232285973053</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.6232285973053</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7893041074797</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7893041074797</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>5</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.6213417448153</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.6213417448153</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7882083361714</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7882083361714</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>4</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.6265374708181</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.6265374708181</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7901531124684</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7901531124684</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>13</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.622052300985</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.622052300985</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7896030082992</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7896030082992</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>9</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.6221033878844</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.6221033878844</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7879490207217</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7879490207217</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>12</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.6277478829821</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.6277478829821</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7894563238733</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7894563238733</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>8</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.6211474667922</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.6211474667922</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7865383087644</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7865383087644</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>11</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.6204926098992</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.6204926098992</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7881792252267</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7881792252267</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>10</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.624293700519</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.624293700519</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7860965749743</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7860965749743</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>6</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.6235597498963</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.6235597498963</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7852442568808</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7852442568808</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <geographicCoverage>
+        <geographicDescription>7</geographicDescription>
+        <boundingCoordinates>
+          <westBoundingCoordinate>-82.6227548467854</westBoundingCoordinate>
+          <eastBoundingCoordinate>-82.6227548467854</eastBoundingCoordinate>
+          <northBoundingCoordinate>17.7848894965491</northBoundingCoordinate>
+          <southBoundingCoordinate>17.7848894965491</southBoundingCoordinate>
+        </boundingCoordinates>
+      </geographicCoverage>
+      <temporalCoverage>
+        <rangeOfDates>
+          <beginDate>
+            <calendarDate>2001-06-20</calendarDate>
+          </beginDate>
+          <endDate>
+            <calendarDate>2001-10-20</calendarDate>
+          </endDate>
+        </rangeOfDates>
+      </temporalCoverage>
+      <taxonomicCoverage>
+        <taxonomicClassification>
+          <taxonRankName>kingdom</taxonRankName>
+          <taxonRankValue>Animalia</taxonRankValue>
+          <taxonId provider="https://gbif.org">1</taxonId>
+          <taxonomicClassification>
+            <taxonRankName>phylum</taxonRankName>
+            <taxonRankValue>Chordata</taxonRankValue>
+            <taxonId provider="https://gbif.org">44</taxonId>
+            <taxonomicClassification>
+              <taxonRankName>class</taxonRankName>
+              <taxonRankValue>Reptilia</taxonRankValue>
+              <taxonId provider="https://gbif.org">358</taxonId>
+              <taxonomicClassification>
+                <taxonRankName>order</taxonRankName>
+                <taxonRankValue>Squamata</taxonRankValue>
+                <taxonId provider="https://gbif.org">715</taxonId>
+                <taxonomicClassification>
+                  <taxonRankName>family</taxonRankName>
+                  <taxonRankValue>Sphaerodactylidae</taxonRankValue>
+                  <taxonId provider="https://gbif.org">5789478</taxonId>
+                  <taxonomicClassification>
+                    <taxonRankName>genus</taxonRankName>
+                    <taxonRankValue>Sphaerodactylus</taxonRankValue>
+                    <taxonId provider="https://gbif.org">8827334</taxonId>
+                    <taxonomicClassification>
+                      <taxonRankName>species</taxonRankName>
+                      <taxonRankValue>Sphaerodactylus beattyi</taxonRankValue>
+                      <taxonId provider="https://gbif.org">2445373</taxonId>
+                      <taxonomicClassification>
+                        <taxonRankName>subspecies</taxonRankName>
+                        <taxonRankValue>Sphaerodactylus beattyi beattyi</taxonRankValue>
+                        <taxonId provider="https://gbif.org">7190852</taxonId>
+                      </taxonomicClassification>
+                    </taxonomicClassification>
+                  </taxonomicClassification>
+                </taxonomicClassification>
+              </taxonomicClassification>
+            </taxonomicClassification>
+          </taxonomicClassification>
+        </taxonomicClassification>
+        <taxonomicClassification>
+          <taxonRankName>kingdom</taxonRankName>
+          <taxonRankValue>Animalia</taxonRankValue>
+          <commonName>animals</commonName>
+          <taxonId provider="https://itis.gov">202423</taxonId>
+          <taxonomicClassification>
+            <taxonRankName>subkingdom</taxonRankName>
+            <taxonRankValue>Bilateria</taxonRankValue>
+            <taxonId provider="https://itis.gov">914154</taxonId>
+            <taxonomicClassification>
+              <taxonRankName>infrakingdom</taxonRankName>
+              <taxonRankValue>Deuterostomia</taxonRankValue>
+              <taxonId provider="https://itis.gov">914156</taxonId>
+              <taxonomicClassification>
+                <taxonRankName>phylum</taxonRankName>
+                <taxonRankValue>Chordata</taxonRankValue>
+                <commonName>chordates</commonName>
+                <taxonId provider="https://itis.gov">158852</taxonId>
+                <taxonomicClassification>
+                  <taxonRankName>subphylum</taxonRankName>
+                  <taxonRankValue>Vertebrata</taxonRankValue>
+                  <commonName>vertebrates</commonName>
+                  <taxonId provider="https://itis.gov">331030</taxonId>
+                  <taxonomicClassification>
+                    <taxonRankName>infraphylum</taxonRankName>
+                    <taxonRankValue>Gnathostomata</taxonRankValue>
+                    <taxonId provider="https://itis.gov">914179</taxonId>
+                    <taxonomicClassification>
+                      <taxonRankName>superclass</taxonRankName>
+                      <taxonRankValue>Tetrapoda</taxonRankValue>
+                      <taxonId provider="https://itis.gov">914181</taxonId>
+                      <taxonomicClassification>
+                        <taxonRankName>class</taxonRankName>
+                        <taxonRankValue>Reptilia</taxonRankValue>
+                        <commonName>Reptiles</commonName>
+                        <taxonId provider="https://itis.gov">173747</taxonId>
+                        <taxonomicClassification>
+                          <taxonRankName>order</taxonRankName>
+                          <taxonRankValue>Squamata</taxonRankValue>
+                          <commonName>Amphisbaenians</commonName>
+                          <commonName>Lizards</commonName>
+                          <commonName>Snakes</commonName>
+                          <taxonId provider="https://itis.gov">173861</taxonId>
+                          <taxonomicClassification>
+                            <taxonRankName>suborder</taxonRankName>
+                            <taxonRankValue>Iguania</taxonRankValue>
+                            <commonName>Iguanas</commonName>
+                            <taxonId provider="https://itis.gov">564529</taxonId>
+                            <taxonomicClassification>
+                              <taxonRankName>family</taxonRankName>
+                              <taxonRankValue>Dactyloidae</taxonRankValue>
+                              <taxonId provider="https://itis.gov">1055379</taxonId>
+                              <taxonomicClassification>
+                                <taxonRankName>genus</taxonRankName>
+                                <taxonRankValue>Anolis</taxonRankValue>
+                                <commonName>Anoles</commonName>
+                                <commonName>Western Antillean Anoles</commonName>
+                                <taxonId provider="https://itis.gov">173883</taxonId>
+                                <taxonomicClassification>
+                                  <taxonRankName>species</taxonRankName>
+                                  <taxonRankValue>Anolis acutus</taxonRankValue>
+                                  <commonName>St. Croix Anole</commonName>
+                                  <commonName>Sharp Anole</commonName>
+                                  <commonName>Saint Croix's Anole</commonName>
+                                  <taxonId provider="https://itis.gov">173884</taxonId>
+                                </taxonomicClassification>
+                              </taxonomicClassification>
+                            </taxonomicClassification>
+                          </taxonomicClassification>
+                        </taxonomicClassification>
+                      </taxonomicClassification>
+                    </taxonomicClassification>
+                  </taxonomicClassification>
+                </taxonomicClassification>
+              </taxonomicClassification>
+            </taxonomicClassification>
+          </taxonomicClassification>
+        </taxonomicClassification>
+        <taxonomicClassification>
+          <taxonRankName>kingdom</taxonRankName>
+          <taxonRankValue>Animalia</taxonRankValue>
+          <commonName>animals</commonName>
+          <taxonId provider="https://itis.gov">202423</taxonId>
+          <taxonomicClassification>
+            <taxonRankName>subkingdom</taxonRankName>
+            <taxonRankValue>Bilateria</taxonRankValue>
+            <taxonId provider="https://itis.gov">914154</taxonId>
+            <taxonomicClassification>
+              <taxonRankName>infrakingdom</taxonRankName>
+              <taxonRankValue>Deuterostomia</taxonRankValue>
+              <taxonId provider="https://itis.gov">914156</taxonId>
+              <taxonomicClassification>
+                <taxonRankName>phylum</taxonRankName>
+                <taxonRankValue>Chordata</taxonRankValue>
+                <commonName>chordates</commonName>
+                <taxonId provider="https://itis.gov">158852</taxonId>
+                <taxonomicClassification>
+                  <taxonRankName>subphylum</taxonRankName>
+                  <taxonRankValue>Vertebrata</taxonRankValue>
+                  <commonName>vertebrates</commonName>
+                  <taxonId provider="https://itis.gov">331030</taxonId>
+                  <taxonomicClassification>
+                    <taxonRankName>infraphylum</taxonRankName>
+                    <taxonRankValue>Gnathostomata</taxonRankValue>
+                    <taxonId provider="https://itis.gov">914179</taxonId>
+                    <taxonomicClassification>
+                      <taxonRankName>superclass</taxonRankName>
+                      <taxonRankValue>Tetrapoda</taxonRankValue>
+                      <taxonId provider="https://itis.gov">914181</taxonId>
+                      <taxonomicClassification>
+                        <taxonRankName>class</taxonRankName>
+                        <taxonRankValue>Reptilia</taxonRankValue>
+                        <commonName>Reptiles</commonName>
+                        <taxonId provider="https://itis.gov">173747</taxonId>
+                        <taxonomicClassification>
+                          <taxonRankName>order</taxonRankName>
+                          <taxonRankValue>Squamata</taxonRankValue>
+                          <commonName>Amphisbaenians</commonName>
+                          <commonName>Lizards</commonName>
+                          <commonName>Snakes</commonName>
+                          <taxonId provider="https://itis.gov">173861</taxonId>
+                          <taxonomicClassification>
+                            <taxonRankName>suborder</taxonRankName>
+                            <taxonRankValue>Gekkota</taxonRankValue>
+                            <taxonId provider="https://itis.gov">564528</taxonId>
+                            <taxonomicClassification>
+                              <taxonRankName>family</taxonRankName>
+                              <taxonRankValue>Gekkonidae</taxonRankValue>
+                              <commonName>Geckos</commonName>
+                              <taxonId provider="https://itis.gov">174034</taxonId>
+                              <taxonomicClassification>
+                                <taxonRankName>genus</taxonRankName>
+                                <taxonRankValue>Hemidactylus</taxonRankValue>
+                                <commonName>House Geckos</commonName>
+                                <commonName>Half-toed Geckos</commonName>
+                                <taxonId provider="https://itis.gov">174054</taxonId>
+                                <taxonomicClassification>
+                                  <taxonRankName>species</taxonRankName>
+                                  <taxonRankValue>Hemidactylus mabouia</taxonRankValue>
+                                  <commonName>Cosmopolitan House Gecko</commonName>
+                                  <commonName>Afro-American House Gecko</commonName>
+                                  <commonName>Afroamerican house gecko</commonName>
+                                  <commonName>Wood Slave</commonName>
+                                  <taxonId provider="https://itis.gov">174058</taxonId>
+                                </taxonomicClassification>
+                              </taxonomicClassification>
+                            </taxonomicClassification>
+                          </taxonomicClassification>
+                        </taxonomicClassification>
+                      </taxonomicClassification>
+                    </taxonomicClassification>
+                  </taxonomicClassification>
+                </taxonomicClassification>
+              </taxonomicClassification>
+            </taxonomicClassification>
+          </taxonomicClassification>
+        </taxonomicClassification>
+      </taxonomicCoverage>
+    </coverage>
+    <maintenance>
+      <description>complete</description>
+    </maintenance>
+    <contact>
+      <individualName>
+        <givenName>Judd</givenName>
+        <surName>Patterson</surName>
+      </individualName>
+      <organizationName>NPS</organizationName>
+      <electronicMailAddress>Judd_Patterson@nps.gov</electronicMailAddress>
+    </contact>
+    <publisher>
+      <organizationName>National Park Service</organizationName>
+      <address>
+        <deliveryPoint>1201 Oakridge Drive, Suite 150</deliveryPoint>
+        <city>Fort Collins</city>
+        <administrativeArea>CO</administrativeArea>
+        <postalCode>80525</postalCode>
+        <country>USA</country>
+      </address>
+      <electronicMailAddress>irma@nps.gov</electronicMailAddress>
+      <onlineUrl>http://www.nps.gov</onlineUrl>
+      <userId directory="https://ror.org/">https://ror.org/044zqqy65</userId>
+    </publisher>
+    <methods>
+      <methodStep>
+        <description>
+          <para>Original Inventory Surveys</para>
+          <para>Amphibians and reptiles were surveyed at BUIS twice in the year 2001. The first survey occurred from 20 June 2001 to 21 June 2001. During this survey five observers combed the island searching for any signs of amphibians and reptiles. All habitats on the island were searched. Leaf litter was sifted through, logs and rocks were turned, the axils of bromeliads were searched, and the branches of trees and shrubs were scanned. A day and a night survey was conducted on 20 June 2001, and another day survey was conducted on 21 June 2001. It was noted at this time that the island was extremely dry, and no moisture was found under the leaf litter or in refugia such as bromeliad phytotelmata. </para>
+          <para>The second survey occurred from 17 October 2001 to 18 October 2001. Searches&amp;#13;
+were conducted during both day and night on both of these days. The survey conducted was similar to the one before, again using as many as five observers at one time to search. This survey occurred directly after a significant rainfall on the island, and found moist refugia and water in bromeliad axils.</para>
+          <para>Data Processing</para>
+          <para>The original raw datasets were being stored in an access database, and were exported into a csv format. All of the data processing was done using R. All data containing coordinates were converted from UTM to decimal latitude and longitude. The datasets are formatted in a way that is more legible and digestible for data comprehension. Columns with letter or number codes were translated and consistent columns (ie. coordinate system, geodetic datum, sampling protocol, etc.) were added. Data quality processing and flags were created. The scientific name column was created based off the species list data. All like tables were merged/joined together and the final columns were selected and named to Darwin Core standards (TDWG 2021). A threatened and endangered species function was used to check that no sensitive species were present in the datasets. None were found for this inventory.&amp;#13;
+</para>
+        </description>
+      </methodStep>
+    </methods>
+    <dataTable>
+      <entityName>BUIS_herps</entityName>
+      <entityDescription>All the data collected for the Buck Island herpetofauna inventory from 2001</entityDescription>
+      <physical>
+        <objectName>BUIS_herps.csv</objectName>
+        <size unit="bytes">15701</size>
+        <authentication method="MD5">ed3c6bcc251ef21f45ace46d4ae09e70</authentication>
+        <dataFormat>
+          <textFormat>
+			<numFooterLines>1</numFooterLines>
+            <recordDelimiter>\n</recordDelimiter>
+            <attributeOrientation>column</attributeOrientation>
+          </textFormat>
+        </dataFormat>
+        <distribution>
+          <online>
+            <url>https://irma.nps.gov/DataStore/Reference/Profile/2294549</url>
+          </online>
+        </distribution>
+      </physical>
+      <attributeList>
+        <attribute>
+          <attributeName>eventDate</attributeName>
+          <attributeDefinition>The date on which the animal was captured.</attributeDefinition>
+          <storageType>date</storageType>
+          <measurementScale>
+            <dateTime>
+              <formatString>YYYY-MM-DD</formatString>
+            </dateTime>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>eventDate_flag</attributeName>
+          <attributeDefinition>A DQ flag column for the date.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>A DQ flag column for the date.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>lifeStage</attributeName>
+          <attributeDefinition>The age class of the animal.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The age class of the animal.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>sex</attributeName>
+          <attributeDefinition>The gender of the animal if it can be determined.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The gender of the animal if it can be determined.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>locality</attributeName>
+          <attributeDefinition>A description of location where specimen was collected</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>A description of location where specimen was collected</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>recordedBy</attributeName>
+          <attributeDefinition>Name of person who collected specimen</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>Name of person who collected specimen</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>verbatimCoordinateSystem</attributeName>
+          <attributeDefinition>The original coordinate system the coordinates were recorded in.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The original coordinate system the coordinates were recorded in.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>geodeticDatum</attributeName>
+          <attributeDefinition>The geodetic datum of the coordinates.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The geodetic datum of the coordinates.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>decimalLatitude</attributeName>
+          <attributeDefinition>The latitude of the collection spot</attributeDefinition>
+          <storageType>float</storageType>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <standardUnit>degree</standardUnit>
+              </unit>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">17.7848894965491</minimum>
+                  <maximum exclusive="false">17.7903969604128</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>decimalLongitude</attributeName>
+          <attributeDefinition>the longitude of the collection spot</attributeDefinition>
+          <storageType>float</storageType>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <standardUnit>degree</standardUnit>
+              </unit>
+              <numericDomain>
+                <numberType>real</numberType>
+                <bounds>
+                  <minimum exclusive="false">-82.6277478829821</minimum>
+                  <maximum exclusive="false">-82.6204926098992</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>verbatimCoordinates</attributeName>
+          <attributeDefinition>The original coordinates recorded.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The original coordinates recorded.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>Point_ID</attributeName>
+          <attributeDefinition>The name of the plot site.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The name of the plot site.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>coordinateUncertaintyInMeters</attributeName>
+          <attributeDefinition>The amount of uncertainty in meters of the coordiante points recorded.</attributeDefinition>
+          <storageType>float</storageType>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <standardUnit>dimensionless</standardUnit>
+              </unit>
+              <numericDomain>
+                <numberType>natural</numberType>
+                <bounds>
+                  <minimum exclusive="false">20</minimum>
+                  <maximum exclusive="false">20</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>coordinate_flag</attributeName>
+          <attributeDefinition>A DQ flag column for the coordinates.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>A DQ flag column for the coordinates.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>catalogNumber</attributeName>
+          <attributeDefinition>The catalog number for the NPS's ANCS+ database</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The catalog number for the NPS's ANCS+ database</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>samplingProtocol</attributeName>
+          <attributeDefinition>The type of survey method used to sample the area.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The type of survey method used to sample the area.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>occurrenceRemarks</attributeName>
+          <attributeDefinition>Any notes about the individual animal</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>Any notes about the individual animal</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>order</attributeName>
+          <attributeDefinition>The taxonomic order to which the species belongs</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The taxonomic order to which the species belongs</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>family</attributeName>
+          <attributeDefinition>The taxonomic family to which the species belongs</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The taxonomic family to which the species belongs</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>genus</attributeName>
+          <attributeDefinition>The generic name of the species.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The generic name of the species.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>specificEpithet</attributeName>
+          <attributeDefinition>The specific epithet of the species</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The specific epithet of the species</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>infraspecificEpithet</attributeName>
+          <attributeDefinition>The subspecific designation of a species if applicable.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The subspecific designation of a species if applicable.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>vernacularName</attributeName>
+          <attributeDefinition>The common name for the species.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The common name for the species.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>scientificName</attributeName>
+          <attributeDefinition>The full scientific name of the species.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The full scientific name of the species.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>scientificName_flag</attributeName>
+          <attributeDefinition>A DQ flag column for the species recorded</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>A DQ flag column for the species recorded</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>establishmentMeans</attributeName>
+          <attributeDefinition>Whether or not the species is native to the area or not.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>Whether or not the species is native to the area or not.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>eventRemarks</attributeName>
+          <attributeDefinition>notes from the capture</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>notes from the capture</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>custom_SpeciesCode</attributeName>
+          <attributeDefinition>The three-letter code for the species</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The three-letter code for the species</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>custom_CaptureID</attributeName>
+          <attributeDefinition>The primary key field, each capture gets a unique autonumber assigned by Access</attributeDefinition>
+          <storageType>float</storageType>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <standardUnit>dimensionless</standardUnit>
+              </unit>
+              <numericDomain>
+                <numberType>natural</numberType>
+                <bounds>
+                  <minimum exclusive="false">2</minimum>
+                  <maximum exclusive="false">47</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>custom_SnoutToVentLengthInMm</attributeName>
+          <attributeDefinition>The snout-to-vent length of the animal in mm.</attributeDefinition>
+          <storageType>float</storageType>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <standardUnit>millimeter</standardUnit>
+              </unit>
+              <numericDomain>
+                <numberType>natural</numberType>
+                <bounds>
+                  <minimum exclusive="false">14</minimum>
+                  <maximum exclusive="false">63</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>custom_Substrate</attributeName>
+          <attributeDefinition>The substrate on which the animal was observed prior to capture.</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>The substrate on which the animal was observed prior to capture.</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>custom_Collected</attributeName>
+          <attributeDefinition>Whether or not it was collected</attributeDefinition>
+          <storageType>float</storageType>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <standardUnit>dimensionless</standardUnit>
+              </unit>
+              <numericDomain>
+                <numberType>whole</numberType>
+                <bounds>
+                  <minimum exclusive="false">0</minimum>
+                  <maximum exclusive="false">1</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>custom_SpecimenID</attributeName>
+          <attributeDefinition>The specimen ID field</attributeDefinition>
+          <storageType>float</storageType>
+          <measurementScale>
+            <ratio>
+              <unit>
+                <standardUnit>dimensionless</standardUnit>
+              </unit>
+              <numericDomain>
+                <numberType>natural</numberType>
+                <bounds>
+                  <minimum exclusive="false">1</minimum>
+                  <maximum exclusive="false">29</maximum>
+                </bounds>
+              </numericDomain>
+            </ratio>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>custom_CollectionDate</attributeName>
+          <attributeDefinition>Date specimen was collected</attributeDefinition>
+          <storageType>date</storageType>
+          <measurementScale>
+            <dateTime>
+              <formatString>YYYY-MM-DD</formatString>
+            </dateTime>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>custom_SacrificeDate</attributeName>
+          <attributeDefinition>Date Specimen was sacrificed and preserved</attributeDefinition>
+          <storageType>date</storageType>
+          <measurementScale>
+            <dateTime>
+              <formatString>YYYY-MM-DD</formatString>
+            </dateTime>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>custom_Fixative</attributeName>
+          <attributeDefinition>Description of fixative solution used</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>Description of fixative solution used</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+        <attribute>
+          <attributeName>custom_Preservative</attributeName>
+          <attributeDefinition>Description of preservative solution used</attributeDefinition>
+          <storageType>string</storageType>
+          <measurementScale>
+            <nominal>
+              <nonNumericDomain>
+                <textDomain>
+                  <definition>Description of preservative solution used</definition>
+                </textDomain>
+              </nonNumericDomain>
+            </nominal>
+          </measurementScale>
+        </attribute>
+      </attributeList>
+      <numberOfRecords>46</numberOfRecords>
+    </dataTable>
+    <usageCitation id="associatedDRR">
+      <alternateIdentifier>DRR: https://doi.org/10.36967/2295039</alternateIdentifier>
+      <title>Buck Island Reef National Monument Herpetofauna Inventory Data Release Report (DRR)</title>
+      <creator>
+        <organizationName>NPS</organizationName>
+      </creator>
+      <report>
+        <reportNumber>2295039</reportNumber>
+      </report>
+    </usageCitation>
+  </dataset>
+  <additionalMetadata id="CUI">
+    <metadata>
+      <CUI>PUBFUL</CUI>
+    </metadata>
+  </additionalMetadata>
+  <additionalMetadata>
+    <metadata>
+      <emlEditor>
+        <app>EMLassemblyline</app>
+        <release>3.5.5</release>
+      </emlEditor>
+    </metadata>
+  </additionalMetadata>
+  <additionalMetadata>
+    <metadata>
+      <agencyOriginated>
+        <agency>NPS</agency>
+        <byOrForNPS>TRUE</byOrForNPS>
+      </agencyOriginated>
+    </metadata>
+  </additionalMetadata>
+  <additionalMetadata id="emlEditor">
+    <metadata>
+      <emlEditor>
+        <app>EMLeditor</app>
+        <release>0.0.1.1</release>
+      </emlEditor>
+    </metadata>
+  </additionalMetadata>
+</eml:eml>

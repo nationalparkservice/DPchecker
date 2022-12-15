@@ -1,21 +1,33 @@
 Package: DPchecker
 Title: Checks Data Packages for Congruence
-Version: 0.0.0.9000
-Author: 
-    person("Rob", "Baker", , "robert_baker@nps.gov", role = c("aut", "cre"),
-           comment = c(ORCID = "0000-0001-7591-5035"))
-Maintainer: rob baker <robert_baker@nps.gov>
+Version: 0.1.0
+Authors@R: c(
+    person("Rob", "Baker", email = "robert_baker@nps.gov", role = c("cre", "aut"), comment = c(ORCID = "0000-0001-7591-5035")),
+    person(c("Sarah", "E."), "Wright", email = "sarah_wright@nps.gov", role = "aut"),
+    person("Issac", "Quevedo", role = "ctb"),
+    person("Amelia", "Sherman", role = "ctb"))
 Description: Allows the user (and reviewer) to check a data package and test whether it meets the congruence standards set forth by NPS for upload to DataStore as a datapackage.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.1
 Suggests: 
+    here,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 Imports:
     arcticdatautils (>= 0.7.0),
-    crayon,
-    here,
     EML,
-    readr
+    readr,
+    magrittr,
+    lubridate,
+    EMLeditor (>= 0.0.1.0),
+    cli,
+    dplyr,
+    purrr,
+    stringr,
+    tibble
+Remotes: 
+    nationalparkservice/EMLeditor,
+    https://github.com/NCEAS/arcticdatautils
+URL: https://nationalparkservice.github.io/DPchecker/

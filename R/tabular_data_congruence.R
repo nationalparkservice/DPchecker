@@ -5,16 +5,19 @@
 #' @details given a path or directory - default is the working directory -  load_metadata looks for files with the ending *_metadata.xml. The function quits and warns the user if no such files are found or if more than one such file is found. If only one metadata file is found, it checked for one of 3 formats: FGDC, ISO, or EML. Currently only EML is supported and the function will warn the user and quit if non-EML metadata is found. The EML metadata file is loaded into R's work space for future use during congruence checking.
 #'
 #' @param directory the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.
+#' @param inform_success Boolean indicating whether to display a message when metadata is successfully loaded.
 #'
 #' @return an R-object formatted as EML metadata.
 #' @export
 #'
 #' @examples
-#' my_metadata <- load_metadata()
+#' data_pkg_dir <- DPchecker_example("BICY_veg")
+#' my_metadata <- load_metadata(data_pkg_dir)
 #'
-load_metadata <- function(directory = here::here()) {
+load_metadata <- function(directory = here::here(), inform_success = FALSE) {
   # get list of all files ending in metadata.xml
-  lf <- list.files(path = directory, pattern = "metadata.xml")
+  lf <- list.files(path = directory, pattern = "metadata.xml", ignore.case = TRUE)
+
   metadata_file <- file.path(directory, lf)
 
   # if exactly 1 metadata file exists, determine what format the metadata file is. Accept only EML (for now):
@@ -26,22 +29,27 @@ load_metadata <- function(directory = here::here()) {
                                    TRUE ~ "UNKNOWN")
     # Read metadata
     if (metaformat == "fgdc") {
-      stop(paste0("\nCongruence checking is not yet supported for ", metaformat, " metadata."))
+      # stop(paste0("\nCongruence checking is not yet supported for ", metaformat, " metadata."))
+      cli::cli_abort(c("x" = "Congruence checking is not yet supported for {metaformat} metadata."))
     } else if (metaformat == "ISO19915") {
-      stop(paste0("\nCongruence checking is not yet supported for ", metaformat, " metadata."))
+      # stop(paste0("\nCongruence checking is not yet supported for ", metaformat, " metadata."))
+      cli::cli_abort(c("x" = "Congruence checking is not yet supported for {metaformat} metadata."))
     } else if (metaformat == "eml") {
       metadata <- EML::read_eml(metadata_file, from = "xml")
       if (is.null(metadata)) {
-        stop("Could not load metadata.")
+        cli::cli_abort(c("x" = "Could not load metadata."))
       } else {
-        message(paste0("PASSED: Metadata check passed. EML metadata (", crayon::blue$bold(metadata_file), ") found and loaded into R."))
+        if (inform_success) {
+          cli::cli_inform(c("v" = "Metadata check passed. EML metadata {.file {metadata_file}} found and loaded into R."))
+        }
       }
-
+    } else {
+      cli::cli_abort(c("x" = "Could not determine metadata format."))
     }
   } else if (length(metadata_file) < 1) { # if no metadata file exists, stop the function and warn the user
-    stop("Metadata check failed. No metadata found. Your metadata file name must end in _metadata.xml.\n")
+    cli::cli_abort(c("x" = "Metadata check failed. No metadata found. Your metadata file name must end in {.file _metadata.xml}."))
   } else if (length(metadata_file) > 1) {  # if multiple metadata files exist, stop the function and warn the user
-    stop("Metadata check failed. The data package format only allows one metadata file per data package. Please remove extraneous metadata files or combine them into a single file.\n")
+    cli::cli_abort(c("x" = "Metadata check failed. The data package format only allows one metadata file per data package. Please remove extraneous metadata files or combine them into a single file."))
   }
 
   return(metadata)
@@ -59,7 +67,9 @@ load_metadata <- function(directory = here::here()) {
 #' @return a tibble of .csvs
 #' @export
 #'
-#' @examples my_data <- load_data()
+#' @examples
+#' data_pkg_dir <- DPchecker_example("BICY_veg")
+#' my_data <- load_data(data_pkg_dir)
 load_data <- function(directory = here::here()) {
   data_filenames <- list.files(path = directory, pattern = ".csv")
   tibble_list <- sapply(data_filenames,
@@ -83,15 +93,37 @@ load_data <- function(directory = here::here()) {
 #' @export
 #'
 #' @examples
-#' test_metadata_version()
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_metadata_version(meta)
 test_metadata_version <- function(metadata = load_metadata(here::here())) {
 
-  vers <- substr(sub(".*https://eml.ecoinformatics.org/eml-", "", metadata)[1], 1, 5)
-  vers <- numeric_version(vers)
-  if (vers < "2.2.0") {
-    stop(paste("Unsupported EML version: EML must be 2.2.0 or later. Your version is", vers))
-  } else {  # vers >= 2.2.0
-    message(paste0("PASSED: Your EML version (", vers, ") is supported."))
+  # Declaring oldest and newest accepted versions here so that they're easier to update
+  oldest_accepted_ver <- "2.2.0"
+  newest_accepted_ver <- "2.2.0"
+
+  # vers <- substr(sub(".*https://eml.ecoinformatics.org/eml-", "", metadata)[1], 1, 5)
+  vers <- c(EML::eml_get(metadata, "eml")[[1]],
+            unlist(strsplit(EML::eml_get(metadata, "schemaLocation")[[1]], "\\s"))[1])
+  vers <- vers %>%
+    stringr::str_extract("eml-\\d+\\.\\d+(\\.\\d+)?") %>%
+    stringr::str_replace("eml-", "")
+
+  tryCatch({ns_ver <- numeric_version(vers[1])
+           schema_ver <- numeric_version(vers[2])},
+           error = function(err) {
+             cli::cli_abort(c("x" = err$message))
+           })
+
+  # Check that both namespace and schema versions are within accepted range
+  if (ns_ver != schema_ver) {
+    cli::cli_warn(c("!" = "There is a mismatch between your namespace version ({.val {ns_ver}}) and your schema version ({.val {schema_ver}})."))
+  }
+  if (ns_ver < oldest_accepted_ver || schema_ver < oldest_accepted_ver) {
+    cli::cli_warn(c("!" = "You are using an old EML version: {oldest_accepted_ver} or later is recommended."))
+  } else if (ns_ver > newest_accepted_ver || schema_ver > newest_accepted_ver) {
+    cli::cli_abort(c("x" = "You are using an unsupported EML version: versions beyond {newest_accepted_ver} not accepted."))
+  } else {
+    cli::cli_inform(c("v" = "Your EML version is supported."))
   }
 
   return(invisible(metadata))
@@ -110,15 +142,25 @@ test_metadata_version <- function(metadata = load_metadata(here::here())) {
 #' @export
 #'
 #' @examples
-#' test_validate_schema()
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_validate_schema(meta)
 test_validate_schema <- function(metadata = load_metadata(here::here())) {
 
   val <- EML::eml_validate(metadata)
   if (val == TRUE) {
-    message("PASSED: Your metada is schema valid.")
+    cli::cli_inform(c("v" = "Your metadata is schema valid."))
   } else {
     attribs <- attributes(val)
-    stop(paste0("Your is metadata is schema-invalid.\n", attribs))
+    issues <- c()
+    if ("errors" %in% names(attribs)) {
+      names(attribs$errors) <- rep("x", length(attribs$errors))
+      issues <- c(issues, attribs$errors)
+    }
+    if ("warnings" %in% names(attribs)) {
+      names(attribs$warnings) <- rep("!", length(names(attribs$warnings)))
+      issues <- c(issues, attribs$warnings)
+    }
+    cli::cli_abort(c("Your metadata is schema-invalid. See output from {.fn EML::eml_validate} below.", issues))
   }
 
   return(invisible(metadata))
@@ -136,13 +178,14 @@ test_validate_schema <- function(metadata = load_metadata(here::here())) {
 #' @export
 #'
 #' @examples
-#' test_footer()
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_footer(meta)
 test_footer <- function(metadata = load_metadata(here::here())) {
 
   if (is.null(arcticdatautils::eml_get_simple(metadata, "numFooterLines"))) {
-    message("PASSED: Metadata indicates data files do not have footers.\n")
+    cli::cli_inform(c("v" = "Metadata indicates data files do not have footers."))
   } else {
-    stop("Metadata indicates that data files include footers. Please remove all footers from data files.")
+    cli::cli_abort(c("x" = "Metadata indicates that data files include footers. Please remove all footers from data files."))
   }
 
   return(invisible(metadata))
@@ -161,19 +204,32 @@ test_footer <- function(metadata = load_metadata(here::here())) {
 #' @export
 #'
 #' @examples
-#' test_header_num()
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_header_num(meta)
 test_header_num <- function(metadata = load_metadata(here::here())) {
 
-  header <- arcticdatautils::eml_get_simple(metadata, "numHeaderLines")
-  names(header) <- arcticdatautils::eml_get_simple(metadata, "entityName")
-  if (is.null(header)) {
-    stop("Metadata does not contain information about number of header rows")
-  } else if (any(header != "1")) {
-    wrong_headers <- header[header != "1"]
-    wrong_headers <- paste0("     ", names(wrong_headers), ": ", wrong_headers, collapse = "\n")
-    stop(paste0("Metadata indicates that the following data files do not contain either zero or more than one header row:\n", wrong_headers))
+  tbl_metadata <- EML::eml_get(metadata, "dataTable")
+  if ("entityName" %in% names(tbl_metadata)) {
+    tbl_metadata <- list(tbl_metadata)  # Handle single data table case
+  }
+  bad_headers <- sapply(tbl_metadata, function(tbl) {
+    header_lines <- arcticdatautils::eml_get_simple(tbl, "numHeaderLines")
+    return(tibble::tibble(table_name = tbl$entityName,
+                          header_lines = ifelse(is.null(header_lines), NA, header_lines)))
+  },
+  simplify = FALSE)
+  bad_headers$`@context` <- NULL
+  bad_headers <- do.call(rbind, bad_headers)
+  bad_headers <- dplyr::filter(bad_headers, is.na(header_lines) | header_lines != "1")
+
+  if(nrow(bad_headers) == 0) {
+    cli::cli_inform(c("v" = "Metadata indicates that each data file contains exactly one header row."))
+  } else if (all(is.na(bad_headers$header_lines))) {
+    cli::cli_abort(c("x" = "Metadata does not contain information about number of header rows"))
   } else {
-    message("PASSED header Check: Metadata indicates that each data file contains exactly one header row")
+    wrong_headers <- paste0(bad_headers$table_name, ": ", bad_headers$header_lines)
+    names(wrong_headers) <- rep("*", length(wrong_headers))
+    cli::cli_abort(c("x" = "Metadata indicates that the following data files contain either zero or more than one header row:", wrong_headers))
   }
 
   return(invisible(metadata))
@@ -191,19 +247,40 @@ test_header_num <- function(metadata = load_metadata(here::here())) {
 #' @export
 #'
 #' @examples
-#' test_delimiter()
+
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_delimiter(meta)
 test_delimiter <- function(metadata = load_metadata(here::here())) {
 
-  delimit <- arcticdatautils::eml_get_simple(metadata, "fieldDelimiter")
-  names(delimit) <- arcticdatautils::eml_get_simple(metadata, "entityName")
-  if (is.null(delimit) == TRUE) {
+  tbl_metadata <- EML::eml_get(metadata, "dataTable")
+  if ("entityName" %in% names(tbl_metadata)) {
+    tbl_metadata <- list(tbl_metadata)  # Handle single data table case
+  }
+  bad_delimit <- sapply(tbl_metadata, function(tbl) {
+    delimit <- tryCatch(arcticdatautils::eml_get_simple(tbl, "fieldDelimiter"),
+                        error = function(e) {
+                          if (grepl("not recognized", e$message)) {
+                            "[INVALID]"
+                          } else {
+                            e
+                          }
+                        })
+    return(tibble::tibble(table_name = tbl$entityName,
+                          delimiter = ifelse(is.null(delimit), NA, delimit)))
+  },
+  simplify = FALSE)
+  bad_delimit$`@context` <- NULL
+  bad_delimit <- do.call(rbind, bad_delimit)
+  bad_delimit <- dplyr::filter(bad_delimit, is.na(delimiter) | nchar(delimiter) != 1 | delimiter == "[INVALID]")
+
+  if (nrow(bad_delimit) == 0) {
+    cli::cli_inform(c("v" = "Metadata indicates that each data file contains a field delimiter that is a single character"))
+  } else if (all(is.na(bad_delimit$delimiter))) {
     stop("Metadata does not contain information about the field delimiter for data files")
-  } else if (any(nchar(delimit) != 1)) {
-    wrong_delimiters <- delimit[nchar(delimit) != 1]
-    wrong_delimiters <- paste0("     ", names(wrong_delimiters), collapse = "\n")
-    stop(paste0("Metadata indicates that the following data files do not contain valid delimiters:\n", wrong_delimiters))
   } else {
-    message("PASSED: field delimiter check passed: Metadata indicates that each data file contains a field delimiter that is a single character")
+    wrong_delimiters <- bad_delimit$table_name
+    names(wrong_delimiters) <- rep("*", length(wrong_delimiters))
+    cli::cli_abort(c("x" = "Metadata indicates that the following data files do not contain valid delimiters:", wrong_delimiters))
   }
 
   return(invisible(metadata))
@@ -213,14 +290,16 @@ test_delimiter <- function(metadata = load_metadata(here::here())) {
 #'
 #' @description test_dup_meta_entries test to see whether there are duplicate filenames listed for the data files in (EML) metadata.
 #'
-#' @details specifically, test_dup_meta_entries looks at the 'physical' elements of a metadata file, which describe each data file, and asks whether there are duplicates entries under the objectName child element, which is where the file name for each data file is stored. If your files are not in your working directory and you specified their location, reverts back to your working directory on exit.
+#' @details specifically, test_dup_meta_entries looks at the 'physical' elements of a metadata file, which describe each data file, and asks whether there are duplicates entries under the objectName child element, which is where the file name for each data file is stored.
 #'
 #' @inheritParams test_metadata_version
 #'
 #' @return Invisibly returns `metadata`.
 #' @export
 #'
-#' @examples test_dup_meta_entries()
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_dup_meta_entries(meta)
 test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 
 
@@ -235,42 +314,13 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 
   # if no duplicates, test passed:
   if (length(dups) == 0) {
-    message("PASSED: Each data file name is used exactly once in the metadata file.")
+    cli::cli_inform(c("v" = "Each data file name is used exactly once in the metadata file."))
   } else if (length(dups > 0)) {  # if duplicates, test failed:
-    stop(paste0("Metadata file name check failed. Some filenames are used more than once in the metadata:\n", crayon::red$bold(dups)))
+    names(dups) <- rep("*", length(dups))
+    cli::cli_abort(c("x" = "Metadata file name check failed. Some filenames are used more than once in the metadata:", dups))
   }
-
 
   return(invisible(metadata))
-}
-
-#' Test Data Files for Duplicate Names
-#'
-#' @description test_dup_data_files looks at the file names of .csv files within a specified directory and tests whether there are any duplicates.
-#'
-#' @details not sure why you'd ever need this function. Seems that most file systems won't let you have duplicate file names, but here it is for the sake of completeness. If you specify a directory other than your current working directory, it will return to the current working directory on exit.
-#'
-#' @inheritParams load_data
-#'
-#' @return Invisibly returns `metadata`.
-#' @export
-#'
-#' @examples test_dup_data_files()
-#'
-test_dup_data_files <- function(directory = here::here()) {
-  # get data file filenames (only .csv supported for now):
-  data_files <- list.files(path = directory, pattern = ".csv")
-
-  # find duplicate entries:
-  dups <- data_files[duplicated(data_files)]
-  # if no duplicates, test passed:
-  if (length(dups) == 0) {
-    message("PASSED: Each data file name is used exactly once.")
-  } else if (length(dups > 0)) {  # if duplicates, test failed:
-    dups_msg <- paste0("The following data filenames are duplicated:\n", dups)
-    stop(paste0("Data file name check failed. Some filenames are used more than once.\n", dups_msg))
-  }
-  return(invisible(data_files))
 }
 
 #' File Name Match
@@ -284,7 +334,9 @@ test_dup_data_files <- function(directory = here::here()) {
 #'
 #' @return Invisibly returns `metadata`.
 #' @export
-#' @examples test_file_name_match()
+#' @examples
+#' dir <- DPchecker_example("BICY_veg")
+#' test_file_name_match(dir)
 test_file_name_match <- function(directory = here::here(), metadata = load_metadata(directory)) {
 
   # get physical elements (and all children elements)
@@ -303,13 +355,16 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
   dir_only <- setdiff(files_in_dir, files_in_metadata)
 
   if (length(meta_only) == 0 && length(dir_only) == 0) {
-    message("PASSED: file name congruence check. All data files are listed in metadata and all metadata files names refer to data files.")
+    cli::cli_inform(c("v" = "All data files are listed in metadata and all metadata files names refer to data files."))
   } else if (length(meta_only) > 0 || length(dir_only) > 0) {
-    meta_txt <- paste("\n", crayon::red$bold(meta_only), collapse = "")
-    dat_txt <- paste("\n", crayon::red$bold(dir_only), collapse = "")
-    msg <- paste0(length(meta_only), " files listed in metadata and missing from data folder", meta_txt,
-                  "\n", length(dir_only), " files present in data folder and missing from metadata", dat_txt)
-    stop(msg)
+    if (length(meta_only > 0)) {
+      names(meta_only) <- "*"
+    }
+    if (length(dir_only) > 0) {
+      names(dir_only) <- "*"
+    }
+    cli::cli_abort(c("x" = "{length(meta_only)} file{?s} listed in metadata and missing from data folder", meta_only,
+                  "x" = "{length(dir_only)} file{?s} present in data folder and missing from metadata", dir_only))
   }
 
   return(invisible(metadata))
@@ -328,7 +383,8 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
 #' @export
 #'
 #' @examples
-#' test_fields_match()
+#' dir <- DPchecker_example("BICY_veg")
+#' test_fields_match(dir)
 test_fields_match <- function(directory = here::here(), metadata = load_metadata(directory)) {
 
   # get dataTable and all children elements
@@ -336,6 +392,422 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
   # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
   if ("attributeList" %in% names(data_tbl)) {
     data_tbl <- list(data_tbl)
+  }
+
+  # Get list of attributes for each table in the metadata
+  metadata_attrs <- lapply(data_tbl, function(tbl) {arcticdatautils::eml_get_simple(tbl, "attributeName")})
+  metadata_attrs$`@context` <- NULL
+  names(metadata_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  # Get list of column names for each table in the csv data
+  data_files <- list.files(path = directory, pattern = ".csv")
+  data_colnames <- sapply(data_files, function(data_file) {names(readr::read_csv(file.path(directory, data_file), n_max = 1, show_col_types = FALSE))}, USE.NAMES = TRUE, simplify = FALSE)
+
+  # Quick check that tables match
+  if (!(all(names(data_colnames) %in% names(metadata_attrs)) & all(names(metadata_attrs) %in% names(data_colnames)))) {
+    cli::cli_abort(c("x" = "Mismatch in data filenames and files listed in metadata. You must resolve this issue before you can verify that fields match. Call {.fn test_file_name_match} for more info."))
+  }
+
+  # Check each CSV. If column and attributes are a mismatch, describe the issue
+  mismatches <- sapply(data_files, function(data_file) {
+    meta_cols <- metadata_attrs[[data_file]]
+    data_cols <- data_colnames[[data_file]]
+    if (length(meta_cols) == length(data_cols) && all(meta_cols == data_cols)) {  # Columns match and are in right order
+      return(NULL)
+    } else if (all(meta_cols %in% data_cols) && all(data_cols %in% meta_cols)) {  # Columns match and are in wrong order
+      return(c(" " = paste0("--> {.file ", data_file, "}: Metadata column order does not match data column order")))
+    } else {  # Columns don't match
+      missing_from_meta <- data_cols[!(data_cols %in% meta_cols)]
+      if (length(missing_from_meta) > 0) {
+        missing_from_meta <- paste0("----Missing from metadata: ", paste0("{.field ", missing_from_meta, "}", collapse = ", "))
+        names(missing_from_meta) <- " "
+      }
+      missing_from_data <- meta_cols[!(meta_cols %in% data_cols)]
+      if (length(missing_from_data) > 0) {
+        missing_from_data <- paste0("----Missing from data file: ", paste0("{.field ", missing_from_data, "}", collapse = ", "))
+        names(missing_from_data) <- " "
+      }
+      msg <- c(" " = paste0("--> {.file ", data_file, "}:"), missing_from_meta, missing_from_data)
+      return(msg)
+    }
+  }, USE.NAMES = FALSE, simplify = FALSE)
+
+  # Remove tables from list that pass the test, and convert it to a named vector
+  mismatches <- purrr::discard(mismatches, is.null) %>%
+    unlist()
+
+  # If there are mismatches, throw an error, otherwise, print a message indicating passed test
+  if (!is.null(mismatches)) {
+    cli::cli_abort(c("x" = "Column mismatch between data and metadata.", mismatches))
+  } else {
+    cli::cli_inform(c("v" = "All columns in data match all columns in metadata."))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Test Numeric Fields
+#'
+#' @description test_numeric_fields verifies that all columns listed as numeric in the metadata are free of non-numeric data.
+#'
+#' @details "NA" and missing data codes documented in the metadata will *not* cause this test to fail. Note that this test assumes that the column types that are in the metadata are the intended types, i.e., if your metadata says a column is text and it should actually be numeric, it will not be caught by this test.
+#'
+#' @inheritParams load_data
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' dir <- DPchecker_example("BICY_veg")
+#' test_numeric_fields(dir)
+test_numeric_fields <- function(directory = here::here(), metadata = load_metadata(directory)) {
+
+  # get dataTable and all children elements
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  data_tbl$`@context` <- NULL
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  # Get list of attributes for each table in the metadata
+  numeric_attrs <- lapply(data_tbl, function(tbl) {
+    attrs <- suppressMessages(EML::get_attributes(tbl$attributeList))
+    attrs <- attrs$attributes
+    attrs <- dplyr::filter(attrs, domain == "numericDomain")
+    return(attrs)
+  })
+  numeric_attrs$`@context` <- NULL
+  names(numeric_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  # Get list of column names for each table in the csv data
+  data_files <- list.files(path = directory, pattern = ".csv")
+  data_non_numeric <- sapply(data_files, function(data_file) {
+    num_col_names <- numeric_attrs[[data_file]]$attributeName
+    # If the table doesn't have any numeric columns listed in the metadata, it automatically passes
+    if (length(num_col_names) == 0) {
+      return(NULL)
+    }
+    na_strings <- c("", "NA")
+    if ("missingValueCode" %in% names(numeric_attrs[[data_file]])) {
+      na_strings <- c(na_strings, unique(numeric_attrs[[data_file]]$missingValueCode))
+    }
+    # Read everything as character, then see if it fails when converting to number
+    num_data <- readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(num_col_names), na = na_strings, col_types = rep("c", length(num_col_names)), show_col_types = FALSE)
+    non_numeric <- sapply(names(num_data), function(col) {
+      col_data <- num_data[[col]]
+      col_data <- col_data[!is.na(col_data)]
+      col_data <- suppressWarnings(as.numeric(col_data))
+      if (any(is.na(col_data))) {
+        return(col)
+      } else {
+        return(NULL)
+      }
+    }, simplify = FALSE, USE.NAMES = TRUE)
+    non_numeric <- purrr::discard(non_numeric, is.null)
+    if (length(names(non_numeric)) > 0) {
+      return(paste0("{.field ", non_numeric, "}", collapse = ", "))  # List non-numeric columns
+    } else {
+      return(NULL)
+    }
+  },
+  USE.NAMES = TRUE, simplify = FALSE)
+
+  # This will be null unless supposedly numeric columns read in as non-numeric
+  data_non_numeric <- purrr::discard(data_non_numeric, is.null)
+  data_non_numeric <- unlist(data_non_numeric)
+
+  # If numeric cols contain non-numeric values, throw an error, otherwise, print a message indicating passed test
+  if (!is.null(data_non_numeric)) {
+    msg <- paste0("--> {.file ", names(data_non_numeric), "}:  ", data_non_numeric)
+    names(msg) <- rep(" ", length(msg))
+    msg <- c("x" = "Columns indicated as numeric in metadata contain non-numeric values:", msg)
+    cli::cli_abort(msg)
+  } else {
+    cli::cli_inform(c("v" = "Columns indicated as numeric in metadata contain only numeric values and valid missing value codes."))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Test Date Range
+#'
+#' @description test_date_range verifies that dates in the dataset are consistent with the date range in the metadata.
+#'
+#' @details This function checks columns that are identified as date/time in the metadata. It throws a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and throw an error.
+#'
+#' @inheritParams load_data
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' dir <- DPchecker_example("BICY_veg")
+#' test_date_range(dir)
+test_date_range <- function(directory = here::here(), metadata = load_metadata(directory)) {
+
+  # get dataTable and all children elements
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  data_tbl$`@context` <- NULL
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  # Get begin date from metadata
+  meta_begin_date <- readr::parse_datetime(EMLeditor::get_begin_date(metadata), format = "%d %B %Y")
+  meta_end_date <- readr::parse_datetime(EMLeditor::get_end_date(metadata), format = "%d %B %Y")
+  meta_date_range <- c(begin = meta_begin_date, end = meta_end_date)
+
+  # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
+  # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
+  if (all(is.na(meta_date_range))) {
+    cli::cli_warn(c("!" = "Metadata does not contain temporal coverage information."))
+    return(metadata)
+  } else if (any(is.na(meta_date_range))) {
+    missing_date <- names(meta_date_range[is.na(meta_date_range)])
+    present_date <- names(meta_date_range[!is.na(meta_date_range)])
+    cli::cli_warn(c("!" = paste("Metadata temporal coverage is missing", missing_date, "date.")))
+  }
+
+  # Get list of date/time attributes for each table in the metadata
+  dttm_attrs <- lapply(data_tbl, function(tbl) {
+    attrs <- suppressMessages(EML::get_attributes(tbl$attributeList))
+    attrs <- attrs$attributes
+    attrs <- dplyr::filter(attrs, domain == "dateTimeDomain")
+    return(attrs)
+  })
+  dttm_attrs$`@context` <- NULL
+  names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
+  data_files <- list.files(path = directory, pattern = ".csv")
+  dataset_out_of_range <- sapply(data_files, function(data_file) {
+    dttm_col_names <- dttm_attrs[[data_file]]$attributeName
+    # If the table doesn't have any date/time columns listed in the metadata, it automatically passes
+    if (length(dttm_col_names) == 0) {
+      return(NULL)
+    }
+    # Get format string for each date/time column and filter out anything that doesn't have a year associated with it
+    dttm_formats <- dttm_attrs[[data_file]]$formatString
+    dttm_formats <- dttm_formats[grepl("Y", dttm_formats)]
+    dttm_col_names <- dttm_col_names[grepl("Y", dttm_formats)]
+    # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
+    dttm_formats_r <- convert_datetime_format(dttm_formats)
+    dttm_col_spec <- dttm_formats_r %>%
+      as.list() %>%
+      lapply(readr::col_datetime)
+    names(dttm_col_spec) <- dttm_col_names
+    names(dttm_formats_r) <- dttm_col_names
+    names(dttm_formats) <- dttm_col_names
+
+    # Read date/time columns, find max/min, and compare with max and min dates in metadata
+    na_strings <- c("", "NA")
+    if ("missingValueCode" %in% names(dttm_attrs[[data_file]])) {
+      na_strings <- c(na_strings, unique(dttm_attrs[[data_file]]$missingValueCode))
+    }
+    dttm_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(dttm_col_names), na = na_strings, col_types = do.call(readr::cols, dttm_col_spec), show_col_types = FALSE))
+    char_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(dttm_col_names), na = na_strings, col_types = rep("c", length(dttm_col_names)), show_col_types = FALSE))
+
+    tbl_out_of_range <- sapply(names(dttm_data), function(col) {
+      col_data <- dttm_data[[col]]
+      orig_na_count <- sum(is.na(char_data[[col]]))
+      if (all(is.na(col_data))) {
+        return(paste0("{.field ", col, "} (failed to parse)"))
+      } else if (sum(is.na(col_data)) > orig_na_count) {
+        return(paste0("{.field ", col, "} (partially failed to parse)"))
+      }
+      max_date <- max(col_data, na.rm = TRUE)
+      min_date <- min(col_data, na.rm = TRUE)
+      format_str_r <- dttm_formats_r[col]
+      bad_cols <- NULL
+
+      # Compare years first, and only compare months and days if they are included in the format string
+      if (lubridate::year(max_date) > lubridate::year(meta_end_date) || lubridate::year(min_date) < lubridate::year(meta_begin_date)) {
+        bad_cols <- paste0("{.field ", col, "} [{.val ", format(min_date, format_str_r), "}, {.val ", format(max_date, format_str_r), "}]") # column name and actual date range
+      } else if (grepl("%m", format_str_r) && (lubridate::month(max_date) > lubridate::month(meta_end_date) || lubridate::month(min_date) < lubridate::month(meta_begin_date))) {
+        bad_cols <- paste0("{.field ", col, "} [{.val ", format(min_date, format_str_r), "}, {.val ", format(max_date, format_str_r), "}]") # column name and actual date range
+      } else if (grepl("%d", format_str_r) && (lubridate::day(max_date) > lubridate::day(meta_end_date) || lubridate::day(min_date) < lubridate::day(meta_begin_date))) {
+        bad_cols <- paste0("{.field ", col, "} [{.val ", format(min_date, format_str_r), "}, {.val ", format(max_date, format_str_r), "}]") # column name and actual date range
+      }
+      return(bad_cols)
+    }, simplify = FALSE, USE.NAMES = TRUE)
+    tbl_out_of_range <- purrr::discard(tbl_out_of_range, is.null)
+    if (length(names(tbl_out_of_range)) > 0) {
+      return(paste(tbl_out_of_range, collapse = ", "))  # List out of range date columns
+    } else {
+      return(NULL)
+    }
+  },
+  USE.NAMES = TRUE, simplify = FALSE)
+
+  # This will be null unless supposedly numeric columns read in as non-numeric
+  dataset_out_of_range <- purrr::discard(dataset_out_of_range, is.null)
+  dataset_out_of_range <- unlist(dataset_out_of_range)
+
+  # If numeric cols contain non-numeric values, throw an error, otherwise, print a message indicating passed test
+  if (!is.null(dataset_out_of_range)) {
+    msg <- paste0("--> {.file ", names(dataset_out_of_range), "}:  ", dataset_out_of_range)
+    names(msg) <- rep(" ", length(msg))
+    err <- paste0("The following date/time columns are out of the range [{.val ", meta_begin_date, "}, {.val ", meta_end_date, "}] specified in the metadata:")
+    if (any(grepl("failed to parse", msg))) {
+      cli::cli_abort(c("x" = err, msg))  # Throw an error if some dates won't parse
+    } else {
+      cli::cli_warn(c("!" = err, msg))  # If dates all parse but are out of range, just throw a warning.
+    }
+
+  } else {
+    cli::cli_inform(c("v" = "Columns indicated as date/time in metadata are within the stated temporal coverage range."))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Run all congruence checks
+#'
+#' @inheritParams load_data
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' dir <- DPchecker_example("BICY_veg")
+#' run_congruence_tests(dir)
+#'
+run_congruence_checks <- function(directory = here::here(), metadata = load_metadata(directory)) {
+  err_count <- 0
+  warn_count <- 0
+  total_count <- 10  # Don't forget to update this number when adding more checks!
+
+  cli::cli_h1("Running all congruence checks")
+  cli::cli_h2("Checking metadata compliance")
+  tryCatch(test_validate_schema(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_alert_danger("Schema validation failed. Run {.fn test_validate_schema} for details.")
+             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))},
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_alert_warning("Schema validation warnings exist. Run {.fn test_validate_schema} for details.")
+           })
+  tryCatch(test_dup_meta_entries(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))},
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+  tryCatch(test_metadata_version(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_delimiter(metadata),
+           error = function(e) {
+             cli::cli_bullets(c(e$message, e$body))
+             err_count <<- err_count + 1
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_header_num(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_footer(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+
+  cli::cli_h2("Checking that metadata is consistent with data file(s)")
+  tryCatch(test_file_name_match(directory, metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))
+             },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_fields_match(directory, metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))
+             },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_numeric_fields(directory, metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+  tryCatch(test_date_range(directory, metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+  cli::cli_h2("Summary")
+  if (err_count > 0) {
+    cli::cli_alert_danger("{err_count} errors to address")
+  }
+  if (warn_count > 0) {
+    cli::cli_alert_warning("{warn_count} warnings to look into")
+  }
+  if (warn_count + err_count == 0) {
+    cli::cli_alert_success("Success! All congruence checks passed.")
+  }
+
+  return(invisible(c("errors" = err_count, "warnings" = warn_count)))
+}
+
+#' Generate path to example data
+#'
+#' @param dp_name Name of data package. If omitted, this function will list all available example data packages.
+#'
+#' @return Path to example data, if dp_name is specified, or all available example data if not.
+#' @export
+#'
+#' @examples
+#' DPchecker_example()
+#' DPchecker_example("BUIS_herps")
+DPchecker_example <- function(dp_name = NULL) {
+  if (is.null(dp_name)) {
+    dir(system.file("extdata", package = "DPchecker"))
+  } else {
+    message("Data are provided for example use only. Do not assume that they are complete, accurate, or up to date.")
+    system.file("extdata", dp_name, package = "DPchecker", mustWork = TRUE)
   }
 
   # Get list of attributes for each table in the metadata
@@ -391,4 +863,32 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
   }
 
   return(invisible(metadata))
+}
+
+
+#' Convert EML date/time format string to one that R can parse
+#'
+#' @details This is not a sophisticated function. If the EML format string is not valid, it will happily and without complaint return an R format string that will break your code. You have been warned.
+#'
+#' @param eml_format_string A character vector of EML date/time format strings. This function understands the following codes: YYYY = four digit year, YY = two digit year, MMM = three letter month abbrev., MM = two digit month, DD = two digit day, hh or HH = 24 hour time, mm = minutes, ss or SS = seconds.
+#'
+#' @return A character vector of date/time format strings that can be parsed by `readr` or `strptime`.
+#' @export
+#'
+#' @examples
+#' convert_datetime_format("MM/DD/YYYY")
+#' convert_datetime_format(c("MM/DD/YYYY", "YY-MM-DD"))
+#'
+convert_datetime_format <- function(eml_format_string) {
+  r_format_string <- eml_format_string %>%
+    stringr::str_replace_all("YYYY", "%Y") %>%
+    stringr::str_replace_all("YY", "%y") %>%
+    stringr::str_replace_all("MMM", "%b") %>%
+    stringr::str_replace_all("MM", "%m") %>%
+    stringr::str_replace_all("DD", "%d") %>%
+    stringr::str_replace_all("(hh)|(HH)", "%H") %>%
+    stringr::str_replace_all("mm", "%M") %>%
+    stringr::str_replace_all("(ss)|(SS)", "%S")
+
+  return(r_format_string)
 }

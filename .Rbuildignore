@@ -2,3 +2,7 @@
 ^\.Rproj\.user$
 ^DPchecker\.Rproj$
 ^LICENSE\.md$
+^\.github$
+^_pkgdown\.yml$
+^docs$
+^pkgdown$
