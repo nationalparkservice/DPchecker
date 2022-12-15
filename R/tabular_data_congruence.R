@@ -664,6 +664,133 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   return(invisible(metadata))
 }
 
+#' Run all congruence checks
+#'
+#' @inheritParams load_data
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' dir <- DPchecker_example("BICY_veg")
+#' run_congruence_tests(dir)
+#'
+run_congruence_checks <- function(directory = here::here(), metadata = load_metadata(directory)) {
+  err_count <- 0
+  warn_count <- 0
+  total_count <- 10  # Don't forget to update this number when adding more checks!
+
+  cli::cli_h1("Running all congruence checks")
+  cli::cli_h2("Checking metadata compliance")
+  tryCatch(test_validate_schema(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_alert_danger("Schema validation failed. Run {.fn test_validate_schema} for details.")
+             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))},
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_alert_warning("Schema validation warnings exist. Run {.fn test_validate_schema} for details.")
+           })
+  tryCatch(test_dup_meta_entries(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))},
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+  tryCatch(test_metadata_version(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_delimiter(metadata),
+           error = function(e) {
+             cli::cli_bullets(c(e$message, e$body))
+             err_count <<- err_count + 1
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_header_num(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_footer(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+
+  cli::cli_h2("Checking that metadata is consistent with data file(s)")
+  tryCatch(test_file_name_match(directory, metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))
+             },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_fields_match(directory, metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))
+             },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_numeric_fields(directory, metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+  tryCatch(test_date_range(directory, metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+  cli::cli_h2("Summary")
+  if (err_count > 0) {
+    cli::cli_alert_danger("{err_count} errors to address")
+  }
+  if (warn_count > 0) {
+    cli::cli_alert_warning("{warn_count} warnings to look into")
+  }
+  if (warn_count + err_count == 0) {
+    cli::cli_alert_success("Success! All congruence checks passed.")
+  }
+
+  return(invisible(c("errors" = err_count, "warnings" = warn_count)))
+}
+
 #' Generate path to example data
 #'
 #' @param dp_name Name of data package. If omitted, this function will list all available example data packages.
