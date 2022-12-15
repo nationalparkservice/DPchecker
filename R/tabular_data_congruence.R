@@ -520,7 +520,7 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
   # If numeric cols contain non-numeric values, throw an error, otherwise, print a message indicating passed test
   if (!is.null(data_non_numeric)) {
     msg <- paste0("--> {.file ", names(data_non_numeric), "}:  ", data_non_numeric)
-    names(msg) <- " "
+    names(msg) <- rep(" ", length(msg))
     msg <- c("x" = "Columns indicated as numeric in metadata contain non-numeric values:", msg)
     cli::cli_abort(msg)
   } else {
@@ -649,7 +649,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   # If numeric cols contain non-numeric values, throw an error, otherwise, print a message indicating passed test
   if (!is.null(dataset_out_of_range)) {
     msg <- paste0("--> {.file ", names(dataset_out_of_range), "}:  ", dataset_out_of_range)
-    names(msg) <- " "
+    names(msg) <- rep(" ", length(msg))
     err <- paste0("The following date/time columns are out of the range [{.val ", meta_begin_date, "}, {.val ", meta_end_date, "}] specified in the metadata:")
     if (any(grepl("failed to parse", msg))) {
       cli::cli_abort(c("x" = err, msg))  # Throw an error if some dates won't parse
