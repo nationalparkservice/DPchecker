@@ -1,10 +1,7 @@
-# good_dir <- here::here("tests", "testthat", "good")
-# bad_dir <- here::here("tests", "testthat", "bad")
-good_dir <- "good"
-bad_dir <- "bad"
+good_dir <- here::here("tests", "testthat", "good")
+bad_dir <- here::here("tests", "testthat", "bad")
 
 # ---- load_metadata ----
-
 test_that("load_metadata works on valid EML file", {
   expect_message(load_metadata(here::here(good_dir, "BICY_good"), inform_success = TRUE),
                  ".*Metadata check passed.*")
@@ -36,6 +33,15 @@ test_that("load_metadata throws an error when there is no xml file with '_metada
 test_that("load_metadata throws an error when there are multiple xml files with '_metadata' in the name", {
   expect_error(load_metadata(here::here(bad_dir, "multiple_xml")),
                "Metadata check failed. The data package format only allows one metadata file per data package.")
+})
+
+# ---- run_congruence_checks ----
+cli::test_that_cli("run_congruence_checks works", configs = "plain", {
+  expect_error(run_congruence_checks(here::here(bad_dir, "BICY_bad")),
+               "You must correct the above error")
+  expect_error(run_congruence_checks(here::here(bad_dir, "data_metadata_mismatch", "BICY_files")),
+               "You must correct the above error")
+  expect_snapshot(run_congruence_checks(here::here(good_dir, "BICY_good")))
 })
 
 # ---- test_metadata_version ----
