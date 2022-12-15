@@ -1,9 +1,8 @@
 Package: DPchecker
 Title: Checks Data Packages for Congruence
-Version: 0.0.0.9000
+Version: 0.1.0
 Authors@R: c(
-    person("Rob", "Baker", email = "robert_baker@nps.gov", role = "cre"),
-    person("Rob", "Baker", email = "robert_baker@nps.gov", role = "aut", comment = c(ORCID = "0000-0001-7591-5035")),
+    person("Rob", "Baker", email = "robert_baker@nps.gov", role = c("cre", "aut"), comment = c(ORCID = "0000-0001-7591-5035")),
     person(c("Sarah", "E."), "Wright", email = "sarah_wright@nps.gov", role = "aut"),
     person("Issac", "Quevedo", role = "ctb"),
     person("Amelia", "Sherman", role = "ctb"))
@@ -28,7 +27,7 @@ Imports:
     purrr,
     stringr,
     tibble
-Remotes:  
+Remotes: 
     nationalparkservice/EMLeditor,
     https://github.com/NCEAS/arcticdatautils
 URL: https://nationalparkservice.github.io/DPchecker/
