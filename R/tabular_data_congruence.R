@@ -675,7 +675,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
 #'
 #' @examples
 #' dir <- DPchecker_example("BICY_veg")
-#' run_congruence_tests(dir)
+#' run_congruence_checks(dir)
 #'
 run_congruence_checks <- function(directory = here::here(), metadata = load_metadata(directory)) {
   err_count <- 0
