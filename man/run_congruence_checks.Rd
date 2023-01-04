@@ -22,6 +22,6 @@ Run all congruence checks
 }
 \examples{
 dir <- DPchecker_example("BICY_veg")
-run_congruence_tests(dir)
+run_congruence_checks(dir)
 
 }
