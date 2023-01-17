@@ -4,13 +4,13 @@
 \alias{DPchecker_example}
 \title{Generate path to example data}
 \usage{
-DPchecker_example(dp_name = NULL)
+DPchecker_example(dp_name = c("BICY_veg", "BUIS_herps"))
 }
 \arguments{
-\item{dp_name}{Name of data package. If omitted, this function will list all available example data packages.}
+\item{dp_name}{Name of data package.}
 }
 \value{
-Path to example data, if dp_name is specified, or all available example data if not.
+Path to example data, if dp_name is specified.
 }
 \description{
 Generate path to example data
