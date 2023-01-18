@@ -42,6 +42,7 @@ cli::test_that_cli("run_congruence_checks works", configs = "plain", {
   expect_error(run_congruence_checks(here::here(bad_dir, "data_metadata_mismatch", "BICY_files")),
                "You must correct the above error")
   expect_snapshot(run_congruence_checks(here::here(good_dir, "BICY_good")))
+  expect_snapshot(run_congruence_checks(here::here(good_dir, "BICY_good"), check_metadata_only = TRUE))
 })
 
 # ---- test_metadata_version ----

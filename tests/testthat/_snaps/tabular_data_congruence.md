@@ -30,3 +30,26 @@
       
       v Success! All congruence checks passed.
 
+---
+
+    Code
+      run_congruence_checks(here::here(good_dir, "BICY_good"), check_metadata_only = TRUE)
+    Message <cliMessage>
+      
+      -- Running metadata-only checks (skipping checks against data files) -----------
+      
+      -- Checking metadata compliance --
+      
+    Message <rlang_message>
+      v Your metadata is schema valid.
+      v Each data file name is used exactly once in the metadata file.
+      v Your EML version is supported.
+      v Metadata indicates that each data file contains a field delimiter that is a single character
+      v Metadata indicates that each data file contains exactly one header row.
+      v Metadata indicates data files do not have footers.
+    Message <cliMessage>
+      
+      -- Summary --
+      
+      v Success! All metadata checks passed.
+

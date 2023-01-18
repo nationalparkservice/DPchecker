@@ -6,13 +6,16 @@
 \usage{
 run_congruence_checks(
   directory = here::here(),
-  metadata = load_metadata(directory)
+  metadata = load_metadata(directory),
+  check_metadata_only = FALSE
 )
 }
 \arguments{
 \item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
 
 \item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
+
+\item{check_metadata_only}{Only run checks on the metadata and skip anything involving data files.}
 }
 \value{
 Invisibly returns \code{metadata}.
