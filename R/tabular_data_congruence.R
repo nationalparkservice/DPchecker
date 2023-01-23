@@ -668,6 +668,8 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
 #' Run all congruence checks
 #'
 #' @param check_metadata_only Only run checks on the metadata and skip anything involving data files.
+#' @param output_filename Optional. If specified, saves results of congruence checks to this file. If omitted, prints results to console. If the file already exists, results will be appended to the existing file.
+#' @param output_dir Location in which to save the output file, if using.
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
 #'
@@ -678,11 +680,29 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
 #' dir <- DPchecker_example("BICY_veg")
 #' run_congruence_checks(dir)
 #'
-run_congruence_checks <- function(directory = here::here(), metadata = load_metadata(directory), check_metadata_only = FALSE) {
+run_congruence_checks <- function(directory = here::here(), metadata = load_metadata(directory), check_metadata_only = FALSE, output_filename, output_dir = here::here()) {
 
   err_count <- 0
   warn_count <- 0
   total_count <- 10  # Don't forget to update this number when adding more checks!
+
+  if (!missing(output_filename)) {
+    output_dir <- normalizePath(output_dir, winslash = .Platform$file.sep, mustWork = TRUE)
+    output_path <- file.path(output_dir, output_filename)
+    open_mode <- if (file.exists(output_path)) {
+      "at"  # if file exists, use append mode
+    } else {
+      "wt"  # If the file doesn't already exist, use write mode
+    }
+    file <- file(output_path, open = open_mode)
+    sink(file)
+    sink(file, type = "message")
+    if (open_mode == "at") {
+      cli::cli_verbatim("\n\n\n")  # If appending to existing log, add a few newlines to make it more readable
+    }
+    cli::cli_rule(center = "{Sys.time()}")
+    cli::cli_inform("The following checks were run using DPchecker version {packageVersion('DPchecker')}.")
+  }
 
   if (check_metadata_only) {
     cli::cli_h1("Running metadata-only checks (skipping checks against data files)")
@@ -803,6 +823,12 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
     cli::cli_alert_success("Success! All {check_type} checks passed.")
   }
 
+  if (!missing(output_filename)) {
+    sink(type = "message")
+    sink()
+    close(file)
+    file.show(output_path)  # Opens log file. May want to add option in future to not do this
+  }
   return(invisible(c("errors" = err_count, "warnings" = warn_count)))
 }
 
