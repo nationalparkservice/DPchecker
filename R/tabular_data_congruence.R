@@ -271,13 +271,17 @@ test_delimiter <- function(metadata = load_metadata(here::here())) {
   simplify = FALSE)
   bad_delimit$`@context` <- NULL
   bad_delimit <- do.call(rbind, bad_delimit)
-  bad_delimit <- dplyr::filter(bad_delimit, is.na(delimiter) | nchar(delimiter) != 1 | delimiter == "[INVALID]")
+  if (!is.null(bad_delimit)) {
+    bad_delimit <- dplyr::filter(bad_delimit, is.na(delimiter) | nchar(delimiter) != 1 | delimiter == "[INVALID]")
+  }
 
-  if (nrow(bad_delimit) == 0) {
+  if (is.null(bad_delimit) || all(is.na(bad_delimit$delimiter))) {
+    cli::cli_abort(c("x" = "Metadata does not contain information about the field delimiter for data files"))
+  }
+  else if (nrow(bad_delimit) == 0) {
     cli::cli_inform(c("v" = "Metadata indicates that each data file contains a field delimiter that is a single character"))
-  } else if (all(is.na(bad_delimit$delimiter))) {
-    stop("Metadata does not contain information about the field delimiter for data files")
-  } else {
+  }
+  else {
     wrong_delimiters <- bad_delimit$table_name
     names(wrong_delimiters) <- rep("*", length(wrong_delimiters))
     cli::cli_abort(c("x" = "Metadata indicates that the following data files do not contain valid delimiters:", wrong_delimiters))
@@ -308,6 +312,10 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 
   # list all file names held in "objectName"
   fn <- unlist(attribs)[grepl("objectName", names(unlist(attribs)), fixed = T)]
+
+  if (length(fn) == 0) {
+    cli::cli_abort(c("x" = "Metadata file name check failed. No file names found in metadata."))
+  }
 
   # find duplicate entries:
   dups <- fn[duplicated(fn)]
