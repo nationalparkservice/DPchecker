@@ -556,6 +556,15 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #' test_date_range(dir)
 test_date_range <- function(directory = here::here(), metadata = load_metadata(directory)) {
 
+  missing_temporal <- is.null(arcticdatautils::eml_get_simple(metadata, "temporalCoverage"))
+
+  # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
+  # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
+  if (missing_temporal) {
+    cli::cli_warn(c("!" = "Could not check date range. Metadata does not contain temporal coverage information."))
+    return(invisible(metadata))
+  }
+
   # get dataTable and all children elements
   data_tbl <- EML::eml_get(metadata, "dataTable")
   data_tbl$`@context` <- NULL
@@ -569,12 +578,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   meta_end_date <- readr::parse_datetime(EMLeditor::get_end_date(metadata), format = "%d %B %Y")
   meta_date_range <- c(begin = meta_begin_date, end = meta_end_date)
 
-  # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
-  # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
-  if (all(is.na(meta_date_range))) {
-    cli::cli_warn(c("!" = "Metadata does not contain temporal coverage information."))
-    return(metadata)
-  } else if (any(is.na(meta_date_range))) {
+  if (any(is.na(meta_date_range))) {
     missing_date <- names(meta_date_range[is.na(meta_date_range)])
     present_date <- names(meta_date_range[!is.na(meta_date_range)])
     cli::cli_warn(c("!" = paste("Metadata temporal coverage is missing", missing_date, "date.")))
@@ -665,9 +669,108 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
     } else {
       cli::cli_warn(c("!" = err, msg))  # If dates all parse but are out of range, just throw a warning.
     }
-
   } else {
     cli::cli_inform(c("v" = "Columns indicated as date/time in metadata are within the stated temporal coverage range."))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Check for Taxonomic Coverage
+#' Checks if taxonomic coverage element is present in metadata. Does not perform any validation of taxonomic coverage information.
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_taxonomic_cov(meta)
+test_taxonomic_cov <- function(metadata = load_metadata(directory)) {
+
+  missing_taxonomic <- is.null(arcticdatautils::eml_get_simple(metadata, "taxonomicCoverage"))
+
+  if (missing_taxonomic) {
+    cli::cli_warn(c("!" = "Metadata does not contain taxonomic coverage information."))
+  } else {
+    cli::cli_inform(c("v" = "Metadata contains taxonomic coverage element"))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Check for Geographic Coverage
+#' Checks if geographic coverage element is present in metadata. Does not perform any validation of geographic coverage information.
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_geographic_cov(meta)
+test_geographic_cov <- function(metadata = load_metadata(directory)) {
+
+  missing_geographic <- is.null(arcticdatautils::eml_get_simple(metadata, "geographicCoverage"))
+
+  if (missing_geographic) {
+    cli::cli_warn(c("!" = "Metadata does not contain geographic coverage information."))
+  } else {
+    cli::cli_inform(c("v" = "Metadata contains geographic coverage element"))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Check for Publisher
+#' Checks if publisher information is present in metadata, with option to require valid NPS publisher information.
+#'
+#' @inheritParams test_publisher
+#' @param require_nps If TRUE, throw an error if publisher information is not correct for NPS published data.
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_publisher(meta)
+test_publisher <- function(metadata = load_metadata(directory), require_nps = FALSE) {
+
+  pub <- EML::eml_get(metadata, "publisher")
+  # Convert to a vector for easier comparison
+  if (!is.null(pub)) {
+    pub$`@context` <- NULL
+    pub <- unlist(pub) %>%
+      sort()
+  }
+
+  valid_nps_pub <- list(
+    organizationName =
+      "National Park Service",
+    address = list(
+      deliveryPoint = "1201 Oakridge Drive, Suite 150",
+      city = "Fort Collins",
+      administrativeArea = "CO",
+      postalCode = "80525",
+      country = "USA"
+    ),
+    onlineUrl = "http://www.nps.gov",
+    electronicMailAddress = "irma@nps.gov",
+    userId = list(directory = "https://ror.org/", userId = "https://ror.org/044zqqy65")
+  ) %>%
+    unlist() %>% # Convert to vector for easier comparison
+    sort()
+
+  if (is.null(pub)) {
+    cli::cli_abort(c("x" = "Metadata does not contain publisher information."))
+  } else if (!require_nps) {
+    cli::cli_inform(c("v" = "Metadata contains publisher element."))
+  } else if (identical(valid_nps_pub, pub)) {
+    cli::cli_inform(c("v" = "Metadata contains publisher element and correctly designates NPS as the publisher."))
+  } else {
+    cli::cli_abort(c("x" = "Metadata contains publisher element but does not correctly designate NPS as the publisher."))
   }
 
   return(invisible(metadata))
