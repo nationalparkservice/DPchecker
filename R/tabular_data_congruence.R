@@ -724,6 +724,30 @@ test_geographic_cov <- function(metadata = load_metadata(directory)) {
   return(invisible(metadata))
 }
 
+#' Check for DOI
+#' Checks if DOI is present in metadata. Does not currently validate DOI.
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_geographic_cov(meta)
+test_doi <- function(metadata = load_metadata(directory)) {
+
+  missing_doi <- is.null(arcticdatautils::eml_get_simple(eml_object, "alternateIdentifier"))
+
+  if (missing_doi) {
+    cli::cli_warn(c("!" = "Metadata does not contain a digital object identifier."))
+  } else {
+    cli::cli_inform(c("v" = "Metadata contains a digital object identifier"))
+  }
+
+  return(invisible(metadata))
+}
+
 #' Check for Publisher
 #' Checks if publisher information is present in metadata, with option to require valid NPS publisher information.
 #'
@@ -771,6 +795,106 @@ test_publisher <- function(metadata = load_metadata(directory), require_nps = FA
     cli::cli_inform(c("v" = "Metadata contains publisher element and correctly designates NPS as the publisher."))
   } else {
     cli::cli_abort(c("x" = "Metadata contains publisher element but does not correctly designate NPS as the publisher."))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Test Field Names for Invalid Characters
+#'
+#' @description test_valid_fieldnames checks for field names in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter.
+#'
+#' @details You should run `test_fields_match()` before you run this function, since this function only checks the field names in the metadata.
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_valid_fieldnames(meta)
+test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
+
+  # get dataTable and all children elements
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  # Get list of columns for each table in the metadata
+  metadata_attrs <- lapply(data_tbl, function(tbl) {arcticdatautils::eml_get_simple(tbl, "attributeName")})
+  metadata_attrs$`@context` <- NULL
+  names(metadata_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  # Check each table. Throw a warning if they contain special characters
+  bad_fieldnames <- sapply(names(metadata_attrs), function(tbl) {
+    cols <- metadata_attrs[[tbl]]
+    bad_start <- grepl("^[^a-zA-Z]", cols)  # Col names must start with a letter
+    special_chars <- grepl("[^a-zA-Z0-9_\\.]", cols)  # No special characters in col names (only alphanumeric and underscores allowed)
+
+    bad_cols <- cols[bad_start | special_chars]
+
+    if (length(bad_cols) == 0) {  # No problems
+      return(NULL)
+    } else {
+      msg <- c(" " = paste0("--> {.file ", data_file, "}: ", paste0("{.field ", bad_cols, "}", collapse = ", ")))
+      return(msg)
+    }
+  }, USE.NAMES = FALSE, simplify = FALSE)
+
+  # Remove tables from list that pass the test, and convert it to a named vector
+  bad_fieldnames <- purrr::discard(bad_fieldnames, is.null) %>%
+    unlist()
+
+  # If there are mismatches, throw an error, otherwise, print a message indicating passed test
+  if (!is.null(bad_fieldnames)) {
+    cli::cli_warn(c("x" = "Some column names contain special characters and/or do not begin with a letter:", mismatches))
+  } else {
+    cli::cli_inform(c("v" = "Column names begin with a letter and do not contain spaces or special characters."))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Test File Names for Invalid Characters
+#'
+#' @description test_valid_filenames checks for file names in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter.
+#'
+#' @details You should run `test_file_name_match()` before you run this function, since this function only checks the file names in the metadata.
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_valid_filenames(meta)
+test_valid_filenames <- function(metadata = load_metadata(here::here())) {
+
+  # get dataTable and all children elements
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  # Get vector of filenames from the metadata
+  file_names <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  # Check each file name. Throw a warning if any contain special characters
+  bad_start <- grepl("^[^a-zA-Z]", file_names)  # File names must start with a letter
+  special_chars <- grepl("[^a-zA-Z0-9_\\.]", file_names)  # No special characters in file names (only alphanumeric and underscores allowed)
+
+  bad_names <- file_names[bad_start | special_chars]
+
+  # If there are mismatches, throw an error, otherwise, print a message indicating passed test
+  if (length(bad_names) > 0) {
+    cli::cli_warn(c("x" = paste("Some file names contain special characters and/or do not begin with a letter:", paste0("{.file ", bad_names, "}", collapse = ", "))))
+  } else {
+    cli::cli_inform(c("v" = "File names begin with a letter and do not contain spaces or special characters."))
   }
 
   return(invisible(metadata))
