@@ -365,14 +365,16 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
   if (length(meta_only) == 0 && length(dir_only) == 0) {
     cli::cli_inform(c("v" = "All data files are listed in metadata and all metadata files names refer to data files."))
   } else if (length(meta_only) > 0 || length(dir_only) > 0) {
+    msg <- c()
     if (length(meta_only > 0)) {
-      names(meta_only) <- "*"
+      names(meta_only) <- rep("*", length(meta_only))
+      msg <- c("x" = "{length(meta_only)} file{?s} listed in metadata and missing from data folder", meta_only)
     }
     if (length(dir_only) > 0) {
-      names(dir_only) <- "*"
+      names(dir_only) <- rep("*", length(dir_only))
+      msg <- c(msg, "x" = "{length(dir_only)} file{?s} present in data folder and missing from metadata", dir_only)
     }
-    cli::cli_abort(c("x" = "{length(meta_only)} file{?s} listed in metadata and missing from data folder", meta_only,
-                  "x" = "{length(dir_only)} file{?s} present in data folder and missing from metadata", dir_only))
+    cli::cli_abort(msg)
   }
 
   return(invisible(metadata))
@@ -949,16 +951,16 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            error = function(e) {
              err_count <<- err_count + 1
              cli::cli_alert_danger("Schema validation failed. Run {.fn test_validate_schema} for details.")
-             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))},
+             cli::cli_abort(c("x" = "Metadata schema must validate before the rest of the congruence checks can run."), call = NULL)},
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_alert_warning("Schema validation warnings exist. Run {.fn test_validate_schema} for details.")
+             cli::cli_alert_warning("Schema validation warnings exist. Run {.fn test_validate_schema} for details.", call = NULL)
            })
   tryCatch(test_dup_meta_entries(metadata),
            error = function(e) {
              err_count <<- err_count + 1
              cli::cli_bullets(c(e$message, e$body))
-             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))},
+             cli::cli_abort(c("x" = "You must remove duplicate data table names from metadata before the rest of the congruence checks can run."), call = NULL)},
            warning = function(w) {
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(w$message, w$body))
@@ -1006,7 +1008,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
              error = function(e) {
                err_count <<- err_count + 1
                cli::cli_bullets(c(e$message, e$body))
-               cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))
+               cli::cli_abort(c("x" = "Files documented in metadata must match files present in package before the rest of the congruence checks can run."), call = NULL)
              },
              warning = function(w) {
                warn_count <<- warn_count + 1
@@ -1016,7 +1018,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
              error = function(e) {
                err_count <<- err_count + 1
                cli::cli_bullets(c(e$message, e$body))
-               cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))
+               cli::cli_abort(c("x" = "Columns documented in metadata must match columns present in data files before the rest of the congruence checks can run."), call = NULL)
              },
              warning = function(w) {
                warn_count <<- warn_count + 1
