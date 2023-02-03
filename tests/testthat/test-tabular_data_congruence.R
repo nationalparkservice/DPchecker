@@ -1,5 +1,18 @@
+# There must be a more elegant way to do this...R CMD check only works if
+# you treat testthat as the working directory, but running tests any other way
+# expects the package dir (DPchecker) to be the working dir.
+
 good_dir <- here::here("tests", "testthat", "good")
 bad_dir <- here::here("tests", "testthat", "bad")
+bicy_meta <- load_metadata(here::here("tests", "testthat", "good", "BICY_good"))
+buis_meta <- load_metadata(here::here("tests", "testthat", "good", "BUIS_good"))
+
+# Comment out the block above and use this block instead if running R CMD check
+# good_dir <- "good"
+# bad_dir <- "bad"
+# bicy_meta <- load_metadata("good/BICY_good")
+# buis_meta <- load_metadata("good/BUIS_good")
+
 
 # ---- load_metadata ----
 test_that("load_metadata works on valid EML file", {
@@ -38,9 +51,9 @@ test_that("load_metadata throws an error when there are multiple xml files with 
 # ---- run_congruence_checks ----
 cli::test_that_cli("run_congruence_checks works", configs = "plain", {
   expect_error(run_congruence_checks(here::here(bad_dir, "BICY_bad")),
-               "You must correct the above error")
+               "Metadata schema must validate")
   expect_error(run_congruence_checks(here::here(bad_dir, "data_metadata_mismatch", "BICY_files")),
-               "You must correct the above error")
+               "You must remove duplicate data table names")
   expect_snapshot(run_congruence_checks(here::here(good_dir, "BICY_good")))
   expect_snapshot(run_congruence_checks(here::here(good_dir, "BICY_good"), check_metadata_only = TRUE))
 })
@@ -125,7 +138,6 @@ test_that("test_delimiter displays success message if metadata indicates that da
                  "Metadata indicates that each data file contains a field delimiter that is a single character")
   expect_message(test_delimiter(load_metadata(here::here(good_dir, "BUIS_good"))),
                  "Metadata indicates that each data file contains a field delimiter that is a single character")
-
 })
 
 test_that("test_delimiter throws error if metadata does not contain delimiter info", {
@@ -166,9 +178,9 @@ test_that("test_file_name_match displays success message if files in data dir an
 
 test_that("test_file_name_match displays error message if metadata contains filenames not in data dir and vice versa", {
   expect_error(test_file_name_match(here::here(bad_dir,"data_metadata_mismatch", "BICY_files")),
-                 "1 file listed in metadata and missing from data folder.*1 file present in data folder and missing from metadata")
+                 "1 file listed in metadata but missing from data folder.*1 file present in data folder but missing from metadata")
   expect_error(test_file_name_match(here::here(bad_dir, "data_metadata_mismatch", "BUIS_files")),
-                 "1 file listed in metadata and missing from data folder.*0 files present in data folder and missing from metadata")
+                 "1 file listed in metadata but missing from data folder.")
 
 })
 
@@ -223,6 +235,108 @@ test_that("test_date_range displays error message if dates in data fail to parse
 test_that("test_date_range displays warning message if dates in data are outside temporal coverage range", {
   expect_warning(test_date_range(here::here(bad_dir,"bad_data_types", "BUIS")),
                "The following date/time columns are out of the range \\W*2001-06-20\\W*2001-10-20\\W* specified in the metadata:\\W*BUIS_herps.csv\\W*: eventDate \\W*2001-06-20\\W*2020-10-18\\W*$")
+})
+
+# ---- test_taxonomic_cov ----
+test_that("test_taxonomic_cov displays success message if taxonomic coverage element is present", {
+  expect_message(test_taxonomic_cov(load_metadata(here::here(good_dir, "BICY_good"))),
+                                    "Metadata contains taxonomic coverage element")
+  expect_message(test_taxonomic_cov(load_metadata(here::here(good_dir, "BUIS_good"))),
+                                    "Metadata contains taxonomic coverage element")
+})
+
+test_that("test_taxonomic_cov throws warning if taxonomic coverage element is missing", {
+  bicy_meta$dataset$coverage$taxonomicCoverage <- NULL
+  buis_meta$dataset$coverage$taxonomicCoverage <- NULL
+  expect_warning(test_taxonomic_cov(bicy_meta),
+                                    "Metadata does not contain taxonomic coverage information")
+  expect_warning(test_taxonomic_cov(buis_meta),
+                                    "Metadata does not contain taxonomic coverage information")
+})
+
+# ---- test_geographic_cov ----
+test_that("test_geographic_cov displays success message if geographic coverage element is present", {
+  expect_message(test_geographic_cov(load_metadata(here::here(good_dir, "BICY_good"))),
+                                    "Metadata contains geographic coverage element")
+  expect_message(test_geographic_cov(load_metadata(here::here(good_dir, "BUIS_good"))),
+                                    "Metadata contains geographic coverage element")
+})
+
+test_that("test_geographic_cov throws warning if geographic coverage element is missing", {
+  bicy_meta$dataset$coverage$geographicCoverage <- NULL
+  buis_meta$dataset$coverage$geographicCoverage <- NULL
+  expect_warning(test_geographic_cov(bicy_meta),
+                 "Metadata does not contain geographic coverage information")
+  expect_warning(test_geographic_cov(buis_meta),
+                 "Metadata does not contain geographic coverage information")
+})
+
+# ---- test_doi ----
+test_that("test_doi displays success message if DOI is present", {
+  expect_message(test_doi(load_metadata(here::here(good_dir, "BICY_good"))),
+                 "Metadata contains a digital object identifier")
+  expect_message(test_doi(load_metadata(here::here(good_dir, "BUIS_good"))),
+                 "Metadata contains a digital object identifier")
+})
+
+test_that("test_doi throws warning if DOI is missing", {
+  bicy_meta$dataset$alternateIdentifier <- NULL
+  buis_meta$dataset$alternateIdentifier <- NULL
+  expect_warning(test_doi(bicy_meta),
+                 "Metadata does not contain a digital object identifier")
+  expect_warning(test_doi(buis_meta),
+                 "Metadata does not contain a digital object identifier")
+})
+
+# ---- test_publisher ----
+test_that("test_publisher displays success message if publisher element is present", {
+  expect_message(test_publisher(load_metadata(here::here(good_dir, "BICY_good"))),
+                 "Metadata contains publisher element")
+  expect_message(test_publisher(load_metadata(here::here(good_dir, "BUIS_good"))),
+                 "Metadata contains publisher element")
+})
+
+test_that("test_publisher throws error if publisher element is missing", {
+  bicy_meta$dataset$publisher <- NULL
+  buis_meta$dataset$publisher <- NULL
+  expect_error(test_publisher(bicy_meta),
+                 "Metadata does not contain publisher information")
+  expect_error(test_publisher(buis_meta),
+                 "Metadata does not contain publisher information")
+})
+
+# ---- test_valid_filenames ----
+test_that("test_valid_filenames displays success message if filenames do not contain special characters", {
+  expect_message(test_valid_filenames(load_metadata(here::here(good_dir, "BICY_good"))),
+                 "File names begin with a letter and do not contain spaces or special characters")
+  expect_message(test_valid_filenames(load_metadata(here::here(good_dir, "BUIS_good"))),
+                 "File names begin with a letter and do not contain spaces or special characters")
+})
+
+test_that("test_valid_filenames throws warning if filenames contain special characters", {
+  bicy_meta$dataset$dataTable[[2]]$physical$objectName <- "0ops_bad_filename.csv"
+  buis_meta$dataset$dataTable$physical$objectName <- "als*o bad.csv"
+  expect_warning(test_valid_filenames(bicy_meta),
+               "Some file names contain special characters and/or do not begin with a letter")
+  expect_warning(test_valid_filenames(buis_meta),
+               "Some file names contain special characters and/or do not begin with a letter")
+})
+
+# ---- test_valid_fieldnames ----
+test_that("test_valid_fieldnames displays success message if filenames do not contain special characters", {
+  expect_message(test_valid_fieldnames(load_metadata(here::here(good_dir, "BICY_good"))),
+                 "Field names begin with a letter and do not contain spaces or special characters")
+  expect_message(test_valid_fieldnames(load_metadata(here::here(good_dir, "BUIS_good"))),
+                 "Field names begin with a letter and do not contain spaces or special characters")
+})
+
+test_that("test_valid_fieldnames throws warning if filenames contain special characters", {
+  bicy_meta$dataset$dataTable[[2]]$attributeList$attribute[[3]]$attributeName <- "_weird_col_name"
+  buis_meta$dataset$dataTable$attributeList$attribute[[4]]$attributeName <- "poor choices were made!"
+  expect_warning(test_valid_fieldnames(bicy_meta),
+                 "Some field names contain special characters and/or do not begin with a letter")
+  expect_warning(test_valid_fieldnames(buis_meta),
+                 "Some field names contain special characters and/or do not begin with a letter")
 })
 
 # ---- convert_datetime_format ----

@@ -15,6 +15,12 @@
       v Metadata indicates that each data file contains a field delimiter that is a single character
       v Metadata indicates that each data file contains exactly one header row.
       v Metadata indicates data files do not have footers.
+      v Metadata contains taxonomic coverage element.
+      v Metadata contains geographic coverage element
+      v Metadata contains a digital object identifier.
+      v Metadata contains publisher element.
+      v Field names begin with a letter and do not contain spaces or special characters.
+      v File names begin with a letter and do not contain spaces or special characters.
     Message <cliMessage>
       
       -- Checking that metadata is consistent with data file(s) --
@@ -47,6 +53,12 @@
       v Metadata indicates that each data file contains a field delimiter that is a single character
       v Metadata indicates that each data file contains exactly one header row.
       v Metadata indicates data files do not have footers.
+      v Metadata contains taxonomic coverage element.
+      v Metadata contains geographic coverage element
+      v Metadata contains a digital object identifier.
+      v Metadata contains publisher element.
+      v Field names begin with a letter and do not contain spaces or special characters.
+      v File names begin with a letter and do not contain spaces or special characters.
     Message <cliMessage>
       
       -- Summary --

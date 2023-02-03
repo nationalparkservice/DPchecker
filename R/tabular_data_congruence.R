@@ -1002,6 +1002,60 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(e$message, e$body))
            })
+  tryCatch(test_taxonomic_cov(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_geographic_cov(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_doi(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_publisher(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_valid_fieldnames(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_valid_filenames(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
 
   if (!check_metadata_only) {
     cli::cli_h2("Checking that metadata is consistent with data file(s)")
