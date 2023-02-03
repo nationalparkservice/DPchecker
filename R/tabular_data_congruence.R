@@ -271,13 +271,17 @@ test_delimiter <- function(metadata = load_metadata(here::here())) {
   simplify = FALSE)
   bad_delimit$`@context` <- NULL
   bad_delimit <- do.call(rbind, bad_delimit)
+
+  if (is.null(bad_delimit) || all(is.na(bad_delimit$delimiter))) {
+    cli::cli_abort(c("x" = "Metadata does not contain information about the field delimiter for data files"))
+  }
+
   bad_delimit <- dplyr::filter(bad_delimit, is.na(delimiter) | nchar(delimiter) != 1 | delimiter == "[INVALID]")
 
   if (nrow(bad_delimit) == 0) {
     cli::cli_inform(c("v" = "Metadata indicates that each data file contains a field delimiter that is a single character"))
-  } else if (all(is.na(bad_delimit$delimiter))) {
-    stop("Metadata does not contain information about the field delimiter for data files")
-  } else {
+  }
+  else {
     wrong_delimiters <- bad_delimit$table_name
     names(wrong_delimiters) <- rep("*", length(wrong_delimiters))
     cli::cli_abort(c("x" = "Metadata indicates that the following data files do not contain valid delimiters:", wrong_delimiters))
@@ -308,6 +312,10 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 
   # list all file names held in "objectName"
   fn <- unlist(attribs)[grepl("objectName", names(unlist(attribs)), fixed = T)]
+
+  if (length(fn) == 0) {
+    cli::cli_abort(c("x" = "Metadata file name check failed. No file names found in metadata."))
+  }
 
   # find duplicate entries:
   dups <- fn[duplicated(fn)]
@@ -357,14 +365,16 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
   if (length(meta_only) == 0 && length(dir_only) == 0) {
     cli::cli_inform(c("v" = "All data files are listed in metadata and all metadata files names refer to data files."))
   } else if (length(meta_only) > 0 || length(dir_only) > 0) {
+    msg <- c()
     if (length(meta_only > 0)) {
-      names(meta_only) <- "*"
+      names(meta_only) <- rep("*", length(meta_only))
+      msg <- c("x" = "{length(meta_only)} file{?s} listed in metadata but missing from data folder", meta_only)
     }
     if (length(dir_only) > 0) {
-      names(dir_only) <- "*"
+      names(dir_only) <- rep("*", length(dir_only))
+      msg <- c(msg, "x" = "{length(dir_only)} file{?s} present in data folder but missing from metadata", dir_only)
     }
-    cli::cli_abort(c("x" = "{length(meta_only)} file{?s} listed in metadata and missing from data folder", meta_only,
-                  "x" = "{length(dir_only)} file{?s} present in data folder and missing from metadata", dir_only))
+    cli::cli_abort(msg)
   }
 
   return(invisible(metadata))
@@ -548,6 +558,15 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #' test_date_range(dir)
 test_date_range <- function(directory = here::here(), metadata = load_metadata(directory)) {
 
+  missing_temporal <- is.null(arcticdatautils::eml_get_simple(metadata, "temporalCoverage"))
+
+  # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
+  # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
+  if (missing_temporal) {
+    cli::cli_warn(c("!" = "Could not check date range. Metadata does not contain temporal coverage information."))
+    return(invisible(metadata))
+  }
+
   # get dataTable and all children elements
   data_tbl <- EML::eml_get(metadata, "dataTable")
   data_tbl$`@context` <- NULL
@@ -561,12 +580,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   meta_end_date <- readr::parse_datetime(EMLeditor::get_end_date(metadata), format = "%d %B %Y")
   meta_date_range <- c(begin = meta_begin_date, end = meta_end_date)
 
-  # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
-  # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
-  if (all(is.na(meta_date_range))) {
-    cli::cli_warn(c("!" = "Metadata does not contain temporal coverage information."))
-    return(metadata)
-  } else if (any(is.na(meta_date_range))) {
+  if (any(is.na(meta_date_range))) {
     missing_date <- names(meta_date_range[is.na(meta_date_range)])
     present_date <- names(meta_date_range[!is.na(meta_date_range)])
     cli::cli_warn(c("!" = paste("Metadata temporal coverage is missing", missing_date, "date.")))
@@ -657,9 +671,233 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
     } else {
       cli::cli_warn(c("!" = err, msg))  # If dates all parse but are out of range, just throw a warning.
     }
-
   } else {
     cli::cli_inform(c("v" = "Columns indicated as date/time in metadata are within the stated temporal coverage range."))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Check for Taxonomic Coverage
+#' Checks if taxonomic coverage element is present in metadata. Does not perform any validation of taxonomic coverage information.
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_taxonomic_cov(meta)
+test_taxonomic_cov <- function(metadata = load_metadata(directory)) {
+
+  missing_taxonomic <- is.null(arcticdatautils::eml_get_simple(metadata, "taxonomicCoverage"))
+
+  if (missing_taxonomic) {
+    cli::cli_warn(c("!" = "Metadata does not contain taxonomic coverage information."))
+  } else {
+    cli::cli_inform(c("v" = "Metadata contains taxonomic coverage element."))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Check for Geographic Coverage
+#' Checks if geographic coverage element is present in metadata. Does not perform any validation of geographic coverage information.
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_geographic_cov(meta)
+test_geographic_cov <- function(metadata = load_metadata(directory)) {
+
+  missing_geographic <- is.null(arcticdatautils::eml_get_simple(metadata, "geographicCoverage"))
+
+  if (missing_geographic) {
+    cli::cli_warn(c("!" = "Metadata does not contain geographic coverage information."))
+  } else {
+    cli::cli_inform(c("v" = "Metadata contains geographic coverage element"))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Check for DOI
+#' Checks if DOI is present in metadata. Does not currently validate DOI.
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_geographic_cov(meta)
+test_doi <- function(metadata = load_metadata(directory)) {
+
+  doi <- arcticdatautils::eml_get_simple(metadata, "alternateIdentifier")
+  missing_doi <- is.null(doi) || !any(grepl("^doi\\:", doi))
+
+  if (missing_doi) {
+    cli::cli_warn(c("!" = "Metadata does not contain a digital object identifier."))
+  } else {
+    cli::cli_inform(c("v" = "Metadata contains a digital object identifier."))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Check for Publisher
+#' Checks if publisher information is present in metadata, with option to require valid NPS publisher information.
+#'
+#' @inheritParams test_metadata_version
+#' @param require_nps If TRUE, throw an error if publisher information is not correct for NPS published data.
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_publisher(meta)
+test_publisher <- function(metadata = load_metadata(directory), require_nps = FALSE) {
+
+  pub <- EML::eml_get(metadata, "publisher")
+  # Convert to a vector for easier comparison
+  if (!is.null(pub)) {
+    pub$`@context` <- NULL
+    pub <- unlist(pub) %>%
+      sort()
+  }
+
+  valid_nps_pub <- list(
+    organizationName =
+      "National Park Service",
+    address = list(
+      deliveryPoint = "1201 Oakridge Drive, Suite 150",
+      city = "Fort Collins",
+      administrativeArea = "CO",
+      postalCode = "80525",
+      country = "USA"
+    ),
+    onlineUrl = "http://www.nps.gov",
+    electronicMailAddress = "irma@nps.gov",
+    userId = list(directory = "https://ror.org/", userId = "https://ror.org/044zqqy65")
+  ) %>%
+    unlist() %>% # Convert to vector for easier comparison
+    sort()
+
+  if (is.null(pub)) {
+    cli::cli_abort(c("x" = "Metadata does not contain publisher information."))
+  } else if (!require_nps) {
+    cli::cli_inform(c("v" = "Metadata contains publisher element."))
+  } else if (identical(valid_nps_pub, pub)) {
+    cli::cli_inform(c("v" = "Metadata contains publisher element and correctly designates NPS as the publisher."))
+  } else {
+    cli::cli_abort(c("x" = "Metadata contains publisher element but does not correctly designate NPS as the publisher."))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Test Field Names for Invalid Characters
+#'
+#' @description test_valid_fieldnames checks for field names in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter.
+#'
+#' @details You should run `test_fields_match()` before you run this function, since this function only checks the field names in the metadata.
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_valid_fieldnames(meta)
+test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
+
+  # get dataTable and all children elements
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  # Get list of columns for each table in the metadata
+  metadata_attrs <- lapply(data_tbl, function(tbl) {arcticdatautils::eml_get_simple(tbl, "attributeName")})
+  metadata_attrs$`@context` <- NULL
+  names(metadata_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  # Check each table. Throw a warning if they contain special characters
+  bad_fieldnames <- sapply(names(metadata_attrs), function(tbl) {
+    cols <- metadata_attrs[[tbl]]
+    bad_start <- grepl("^[^a-zA-Z]", cols)  # Col names must start with a letter
+    special_chars <- grepl("[^a-zA-Z0-9_\\.]", cols)  # No special characters in col names (only alphanumeric and underscores allowed)
+
+    bad_cols <- cols[bad_start | special_chars]
+
+    if (length(bad_cols) == 0) {  # No problems
+      return(NULL)
+    } else {
+      msg <- c(" " = paste0("--> {.file ", tbl, "}: ", paste0("{.field ", bad_cols, "}", collapse = ", ")))
+      return(msg)
+    }
+  }, USE.NAMES = FALSE, simplify = FALSE)
+
+  # Remove tables from list that pass the test, and convert it to a named vector
+  bad_fieldnames <- purrr::discard(bad_fieldnames, is.null) %>%
+    unlist()
+
+  # If there are mismatches, throw an error, otherwise, print a message indicating passed test
+  if (!is.null(bad_fieldnames)) {
+    cli::cli_warn(c("!" = "Some field names contain special characters and/or do not begin with a letter:", bad_fieldnames))
+  } else {
+    cli::cli_inform(c("v" = "Field names begin with a letter and do not contain spaces or special characters."))
+  }
+
+  return(invisible(metadata))
+}
+
+#' Test File Names for Invalid Characters
+#'
+#' @description test_valid_filenames checks for file names in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter.
+#'
+#' @details You should run `test_file_name_match()` before you run this function, since this function only checks the file names in the metadata.
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- load_metadata(DPchecker_example("BICY_veg"))
+#' test_valid_filenames(meta)
+test_valid_filenames <- function(metadata = load_metadata(here::here())) {
+
+  # get dataTable and all children elements
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  # Get vector of filenames from the metadata
+  file_names <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  # Check each file name. Throw a warning if any contain special characters
+  bad_start <- grepl("^[^a-zA-Z]", file_names)  # File names must start with a letter
+  special_chars <- grepl("[^a-zA-Z0-9_\\.]", file_names)  # No special characters in file names (only alphanumeric and underscores allowed)
+
+  bad_names <- file_names[bad_start | special_chars]
+
+  # If there are mismatches, throw an error, otherwise, print a message indicating passed test
+  if (length(bad_names) > 0) {
+    cli::cli_warn(c("!" = paste("Some file names contain special characters and/or do not begin with a letter:", paste0("{.file ", bad_names, "}", collapse = ", "))))
+  } else {
+    cli::cli_inform(c("v" = "File names begin with a letter and do not contain spaces or special characters."))
   }
 
   return(invisible(metadata))
@@ -668,6 +906,8 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
 #' Run all congruence checks
 #'
 #' @param check_metadata_only Only run checks on the metadata and skip anything involving data files.
+#' @param output_filename Optional. If specified, saves results of congruence checks to this file. If omitted, prints results to console. If the file already exists, results will be appended to the existing file.
+#' @param output_dir Location in which to save the output file, if using.
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
 #'
@@ -678,11 +918,29 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
 #' dir <- DPchecker_example("BICY_veg")
 #' run_congruence_checks(dir)
 #'
-run_congruence_checks <- function(directory = here::here(), metadata = load_metadata(directory), check_metadata_only = FALSE) {
+run_congruence_checks <- function(directory = here::here(), metadata = load_metadata(directory), check_metadata_only = FALSE, output_filename, output_dir = here::here()) {
 
   err_count <- 0
   warn_count <- 0
   total_count <- 10  # Don't forget to update this number when adding more checks!
+
+  if (!missing(output_filename)) {
+    output_dir <- normalizePath(output_dir, winslash = .Platform$file.sep, mustWork = TRUE)
+    output_path <- file.path(output_dir, output_filename)
+    open_mode <- if (file.exists(output_path)) {
+      "at"  # if file exists, use append mode
+    } else {
+      "wt"  # If the file doesn't already exist, use write mode
+    }
+    file <- file(output_path, open = open_mode)
+    sink(file)
+    sink(file, type = "message")
+    if (open_mode == "at") {
+      cli::cli_verbatim("\n\n\n")  # If appending to existing log, add a few newlines to make it more readable
+    }
+    cli::cli_rule(center = "{Sys.time()}")
+    cli::cli_inform("The following checks were run using DPchecker version {packageVersion('DPchecker')}.")
+  }
 
   if (check_metadata_only) {
     cli::cli_h1("Running metadata-only checks (skipping checks against data files)")
@@ -694,16 +952,16 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            error = function(e) {
              err_count <<- err_count + 1
              cli::cli_alert_danger("Schema validation failed. Run {.fn test_validate_schema} for details.")
-             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))},
+             cli::cli_abort(c("x" = "Metadata schema must validate before the rest of the congruence checks can run."), call = NULL)},
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_alert_warning("Schema validation warnings exist. Run {.fn test_validate_schema} for details.")
+             cli::cli_alert_warning("Schema validation warnings exist. Run {.fn test_validate_schema} for details.", call = NULL)
            })
   tryCatch(test_dup_meta_entries(metadata),
            error = function(e) {
              err_count <<- err_count + 1
              cli::cli_bullets(c(e$message, e$body))
-             cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))},
+             cli::cli_abort(c("x" = "You must remove duplicate data table names from metadata before the rest of the congruence checks can run."), call = NULL)},
            warning = function(w) {
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(w$message, w$body))
@@ -744,6 +1002,60 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(e$message, e$body))
            })
+  tryCatch(test_taxonomic_cov(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_geographic_cov(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_doi(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_publisher(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_valid_fieldnames(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
+  tryCatch(test_valid_filenames(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           })
 
   if (!check_metadata_only) {
     cli::cli_h2("Checking that metadata is consistent with data file(s)")
@@ -751,7 +1063,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
              error = function(e) {
                err_count <<- err_count + 1
                cli::cli_bullets(c(e$message, e$body))
-               cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))
+               cli::cli_abort(c("x" = "Files documented in metadata must match files present in package before the rest of the congruence checks can run."), call = NULL)
              },
              warning = function(w) {
                warn_count <<- warn_count + 1
@@ -761,7 +1073,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
              error = function(e) {
                err_count <<- err_count + 1
                cli::cli_bullets(c(e$message, e$body))
-               cli::cli_abort(c("x" = "You must correct the above error before the rest of the congruence checks can run."))
+               cli::cli_abort(c("x" = "Columns documented in metadata must match columns present in data files before the rest of the congruence checks can run."), call = NULL)
              },
              warning = function(w) {
                warn_count <<- warn_count + 1
@@ -803,6 +1115,12 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
     cli::cli_alert_success("Success! All {check_type} checks passed.")
   }
 
+  if (!missing(output_filename)) {
+    sink(type = "message")
+    sink()
+    close(file)
+    file.show(output_path)  # Opens log file. May want to add option in future to not do this
+  }
   return(invisible(c("errors" = err_count, "warnings" = warn_count)))
 }
 

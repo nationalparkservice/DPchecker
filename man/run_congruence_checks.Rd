@@ -7,7 +7,9 @@
 run_congruence_checks(
   directory = here::here(),
   metadata = load_metadata(directory),
-  check_metadata_only = FALSE
+  check_metadata_only = FALSE,
+  output_filename,
+  output_dir = here::here()
 )
 }
 \arguments{
@@ -16,6 +18,10 @@ run_congruence_checks(
 \item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 
 \item{check_metadata_only}{Only run checks on the metadata and skip anything involving data files.}
+
+\item{output_filename}{Optional. If specified, saves results of congruence checks to this file. If omitted, prints results to console. If the file already exists, results will be appended to the existing file.}
+
+\item{output_dir}{Location in which to save the output file, if using.}
 }
 \value{
 Invisibly returns \code{metadata}.
