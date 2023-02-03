@@ -8,6 +8,8 @@ Checks if publisher information is present in metadata, with option to require v
 test_publisher(metadata = load_metadata(directory), require_nps = FALSE)
 }
 \arguments{
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
+
 \item{require_nps}{If TRUE, throw an error if publisher information is not correct for NPS published data.}
 }
 \value{
