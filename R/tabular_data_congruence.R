@@ -271,14 +271,14 @@ test_delimiter <- function(metadata = load_metadata(here::here())) {
   simplify = FALSE)
   bad_delimit$`@context` <- NULL
   bad_delimit <- do.call(rbind, bad_delimit)
-  if (!is.null(bad_delimit)) {
-    bad_delimit <- dplyr::filter(bad_delimit, is.na(delimiter) | nchar(delimiter) != 1 | delimiter == "[INVALID]")
-  }
 
   if (is.null(bad_delimit) || all(is.na(bad_delimit$delimiter))) {
     cli::cli_abort(c("x" = "Metadata does not contain information about the field delimiter for data files"))
   }
-  else if (nrow(bad_delimit) == 0) {
+
+  bad_delimit <- dplyr::filter(bad_delimit, is.na(delimiter) | nchar(delimiter) != 1 | delimiter == "[INVALID]")
+
+  if (nrow(bad_delimit) == 0) {
     cli::cli_inform(c("v" = "Metadata indicates that each data file contains a field delimiter that is a single character"))
   }
   else {
@@ -368,11 +368,11 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
     msg <- c()
     if (length(meta_only > 0)) {
       names(meta_only) <- rep("*", length(meta_only))
-      msg <- c("x" = "{length(meta_only)} file{?s} listed in metadata and missing from data folder", meta_only)
+      msg <- c("x" = "{length(meta_only)} file{?s} listed in metadata but missing from data folder", meta_only)
     }
     if (length(dir_only) > 0) {
       names(dir_only) <- rep("*", length(dir_only))
-      msg <- c(msg, "x" = "{length(dir_only)} file{?s} present in data folder and missing from metadata", dir_only)
+      msg <- c(msg, "x" = "{length(dir_only)} file{?s} present in data folder but missing from metadata", dir_only)
     }
     cli::cli_abort(msg)
   }
@@ -696,7 +696,7 @@ test_taxonomic_cov <- function(metadata = load_metadata(directory)) {
   if (missing_taxonomic) {
     cli::cli_warn(c("!" = "Metadata does not contain taxonomic coverage information."))
   } else {
-    cli::cli_inform(c("v" = "Metadata contains taxonomic coverage element"))
+    cli::cli_inform(c("v" = "Metadata contains taxonomic coverage element."))
   }
 
   return(invisible(metadata))
@@ -739,12 +739,13 @@ test_geographic_cov <- function(metadata = load_metadata(directory)) {
 #' test_geographic_cov(meta)
 test_doi <- function(metadata = load_metadata(directory)) {
 
-  missing_doi <- is.null(arcticdatautils::eml_get_simple(eml_object, "alternateIdentifier"))
+  doi <- arcticdatautils::eml_get_simple(metadata, "alternateIdentifier")
+  missing_doi <- is.null(doi) || !any(grepl("^doi\\:", doi))
 
   if (missing_doi) {
     cli::cli_warn(c("!" = "Metadata does not contain a digital object identifier."))
   } else {
-    cli::cli_inform(c("v" = "Metadata contains a digital object identifier"))
+    cli::cli_inform(c("v" = "Metadata contains a digital object identifier."))
   }
 
   return(invisible(metadata))
@@ -753,7 +754,7 @@ test_doi <- function(metadata = load_metadata(directory)) {
 #' Check for Publisher
 #' Checks if publisher information is present in metadata, with option to require valid NPS publisher information.
 #'
-#' @inheritParams test_publisher
+#' @inheritParams test_metadata_version
 #' @param require_nps If TRUE, throw an error if publisher information is not correct for NPS published data.
 #'
 #' @return Invisibly returns `metadata`.
@@ -841,7 +842,7 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
     if (length(bad_cols) == 0) {  # No problems
       return(NULL)
     } else {
-      msg <- c(" " = paste0("--> {.file ", data_file, "}: ", paste0("{.field ", bad_cols, "}", collapse = ", ")))
+      msg <- c(" " = paste0("--> {.file ", tbl, "}: ", paste0("{.field ", bad_cols, "}", collapse = ", ")))
       return(msg)
     }
   }, USE.NAMES = FALSE, simplify = FALSE)
@@ -852,9 +853,9 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
 
   # If there are mismatches, throw an error, otherwise, print a message indicating passed test
   if (!is.null(bad_fieldnames)) {
-    cli::cli_warn(c("x" = "Some column names contain special characters and/or do not begin with a letter:", mismatches))
+    cli::cli_warn(c("!" = "Some field names contain special characters and/or do not begin with a letter:", bad_fieldnames))
   } else {
-    cli::cli_inform(c("v" = "Column names begin with a letter and do not contain spaces or special characters."))
+    cli::cli_inform(c("v" = "Field names begin with a letter and do not contain spaces or special characters."))
   }
 
   return(invisible(metadata))
@@ -894,7 +895,7 @@ test_valid_filenames <- function(metadata = load_metadata(here::here())) {
 
   # If there are mismatches, throw an error, otherwise, print a message indicating passed test
   if (length(bad_names) > 0) {
-    cli::cli_warn(c("x" = paste("Some file names contain special characters and/or do not begin with a letter:", paste0("{.file ", bad_names, "}", collapse = ", "))))
+    cli::cli_warn(c("!" = paste("Some file names contain special characters and/or do not begin with a letter:", paste0("{.file ", bad_names, "}", collapse = ", "))))
   } else {
     cli::cli_inform(c("v" = "File names begin with a letter and do not contain spaces or special characters."))
   }
