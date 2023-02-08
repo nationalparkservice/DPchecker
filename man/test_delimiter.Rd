@@ -19,5 +19,6 @@ test_delimiter checks the metadata file and ensures that each data file has a fi
 test_delimiter examines the fieldDelimiter element from EML (currently only EML is supported) metadata to determine how many characters there are. If there is no fieldDelimiter element, the test returns an error. If the field delimiter is anything other than exactly one character in length, the test returns an error.
 }
 \examples{
-test_delimiter()
+meta <- load_metadata(DPchecker_example("BICY_veg"))
+test_delimiter(meta)
 }

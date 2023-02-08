@@ -19,5 +19,6 @@ test_header_num checks the metadata files to ensure that each data file contains
 test_header_num examines the numHeaderLines element from EML (currently only EML is supported) metadata to determine how many header rows there are. If there are no header rows or if there is more than one header row, the test fails. The test also fails if there is no information about the number of header rows.
 }
 \examples{
-test_header_num()
+meta <- load_metadata(DPchecker_example("BICY_veg"))
+test_header_num(meta)
 }
