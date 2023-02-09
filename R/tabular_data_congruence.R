@@ -952,7 +952,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
              err_count <<- err_count + 1
              cli::cli_bullets(c(e$message, e$body))
              try({
-               if (grepl("sewright", Sys.getenv("USERNAME"), ignore.case = TRUE)) {
+               if (grepl("rbaker", Sys.getenv("USERNAME"), ignore.case = TRUE)) {
                  rstudioapi::viewer(url = system.file("extdata", "pebkac.jpg", package = "DPchecker", mustWork = TRUE))
                }
              })
