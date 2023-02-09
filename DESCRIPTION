@@ -21,13 +21,11 @@ Imports:
     readr,
     magrittr,
     lubridate,
-    EMLeditor (>= 0.0.1.0),
     cli,
     dplyr,
     purrr,
     stringr,
     tibble
 Remotes: 
-    nationalparkservice/EMLeditor,
     https://github.com/NCEAS/arcticdatautils
 URL: https://nationalparkservice.github.io/DPchecker/
