@@ -29,10 +29,8 @@ load_metadata <- function(directory = here::here(), inform_success = FALSE) {
                                    TRUE ~ "UNKNOWN")
     # Read metadata
     if (metaformat == "fgdc") {
-      # stop(paste0("\nCongruence checking is not yet supported for ", metaformat, " metadata."))
       cli::cli_abort(c("x" = "Congruence checking is not yet supported for {metaformat} metadata."))
     } else if (metaformat == "ISO19915") {
-      # stop(paste0("\nCongruence checking is not yet supported for ", metaformat, " metadata."))
       cli::cli_abort(c("x" = "Congruence checking is not yet supported for {metaformat} metadata."))
     } else if (metaformat == "eml") {
       metadata <- EML::read_eml(metadata_file, from = "xml")
@@ -109,10 +107,10 @@ test_metadata_version <- function(metadata = load_metadata(here::here())) {
     stringr::str_replace("eml-", "")
 
   tryCatch({ns_ver <- numeric_version(vers[1])
-           schema_ver <- numeric_version(vers[2])},
-           error = function(err) {
-             cli::cli_abort(c("x" = err$message))
-           })
+  schema_ver <- numeric_version(vers[2])},
+  error = function(err) {
+    cli::cli_abort(c("x" = err$message))
+  })
 
   # Check that both namespace and schema versions are within accepted range
   if (ns_ver != schema_ver) {
@@ -947,6 +945,22 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
   } else {
     cli::cli_h1("Running all congruence checks")
   }
+
+  cli::cli_h2("Reading metadata")
+  tryCatch(invisible(metadata),  # load_metadata from the function args actually gets evaluated here
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+             try({
+               if (grepl("sewright", Sys.getenv("USERNAME"), ignore.case = TRUE)) {
+                 rstudioapi::viewer(url = system.file("extdata", "pebkac.jpg", package = "DPchecker", mustWork = TRUE))
+               }
+             })
+             cli::cli_abort(c("x" = "You must correct the above issue before the congruence checks can run."), call = NULL)},
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
   cli::cli_h2("Checking metadata compliance")
   tryCatch(test_validate_schema(metadata),
            error = function(e) {
