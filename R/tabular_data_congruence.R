@@ -94,6 +94,7 @@ load_data <- function(directory = here::here()) {
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_metadata_version(meta)
 test_metadata_version <- function(metadata = load_metadata(here::here())) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   # Declaring oldest and newest accepted versions here so that they're easier to update
   oldest_accepted_ver <- "2.2.0"
@@ -143,6 +144,7 @@ test_metadata_version <- function(metadata = load_metadata(here::here())) {
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_validate_schema(meta)
 test_validate_schema <- function(metadata = load_metadata(here::here())) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   val <- EML::eml_validate(metadata)
   if (val == TRUE) {
@@ -179,6 +181,7 @@ test_validate_schema <- function(metadata = load_metadata(here::here())) {
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_footer(meta)
 test_footer <- function(metadata = load_metadata(here::here())) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   if (is.null(arcticdatautils::eml_get_simple(metadata, "numFooterLines"))) {
     cli::cli_inform(c("v" = "Metadata indicates data files do not have footers."))
@@ -205,6 +208,7 @@ test_footer <- function(metadata = load_metadata(here::here())) {
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_header_num(meta)
 test_header_num <- function(metadata = load_metadata(here::here())) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   tbl_metadata <- EML::eml_get(metadata, "dataTable")
   if ("entityName" %in% names(tbl_metadata)) {
@@ -249,6 +253,7 @@ test_header_num <- function(metadata = load_metadata(here::here())) {
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_delimiter(meta)
 test_delimiter <- function(metadata = load_metadata(here::here())) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   tbl_metadata <- EML::eml_get(metadata, "dataTable")
   if ("entityName" %in% names(tbl_metadata)) {
@@ -303,7 +308,7 @@ test_delimiter <- function(metadata = load_metadata(here::here())) {
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_dup_meta_entries(meta)
 test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
-
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   # get physical elements (and all children elements)
   attribs <- EML::eml_get(metadata, "physical")
@@ -344,6 +349,7 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 #' dir <- DPchecker_example("BICY_veg")
 #' test_file_name_match(dir)
 test_file_name_match <- function(directory = here::here(), metadata = load_metadata(directory)) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   # get physical elements (and all children elements)
   phys <- EML::eml_get(metadata, "physical")
@@ -394,6 +400,7 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
 #' dir <- DPchecker_example("BICY_veg")
 #' test_fields_match(dir)
 test_fields_match <- function(directory = here::here(), metadata = load_metadata(directory)) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   # get dataTable and all children elements
   data_tbl <- EML::eml_get(metadata, "dataTable")
@@ -470,6 +477,7 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 #' dir <- DPchecker_example("BICY_veg")
 #' test_numeric_fields(dir)
 test_numeric_fields <- function(directory = here::here(), metadata = load_metadata(directory)) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   # get dataTable and all children elements
   data_tbl <- EML::eml_get(metadata, "dataTable")
@@ -555,6 +563,7 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #' dir <- DPchecker_example("BICY_veg")
 #' test_date_range(dir)
 test_date_range <- function(directory = here::here(), metadata = load_metadata(directory)) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   missing_temporal <- is.null(arcticdatautils::eml_get_simple(metadata, "temporalCoverage"))
 
@@ -688,6 +697,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_taxonomic_cov(meta)
 test_taxonomic_cov <- function(metadata = load_metadata(directory)) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   missing_taxonomic <- is.null(arcticdatautils::eml_get_simple(metadata, "taxonomicCoverage"))
 
@@ -712,6 +722,7 @@ test_taxonomic_cov <- function(metadata = load_metadata(directory)) {
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_geographic_cov(meta)
 test_geographic_cov <- function(metadata = load_metadata(directory)) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   missing_geographic <- is.null(arcticdatautils::eml_get_simple(metadata, "geographicCoverage"))
 
@@ -736,6 +747,7 @@ test_geographic_cov <- function(metadata = load_metadata(directory)) {
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_geographic_cov(meta)
 test_doi <- function(metadata = load_metadata(directory)) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   doi <- arcticdatautils::eml_get_simple(metadata, "alternateIdentifier")
   missing_doi <- is.null(doi) || !any(grepl("^doi\\:", doi))
@@ -762,6 +774,7 @@ test_doi <- function(metadata = load_metadata(directory)) {
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_publisher(meta)
 test_publisher <- function(metadata = load_metadata(directory), require_nps = FALSE) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   pub <- EML::eml_get(metadata, "publisher")
   # Convert to a vector for easier comparison
@@ -816,6 +829,7 @@ test_publisher <- function(metadata = load_metadata(directory), require_nps = FA
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_valid_fieldnames(meta)
 test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   # get dataTable and all children elements
   data_tbl <- EML::eml_get(metadata, "dataTable")
@@ -874,6 +888,7 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
 #' test_valid_filenames(meta)
 test_valid_filenames <- function(metadata = load_metadata(here::here())) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   # get dataTable and all children elements
   data_tbl <- EML::eml_get(metadata, "dataTable")
@@ -917,6 +932,7 @@ test_valid_filenames <- function(metadata = load_metadata(here::here())) {
 #' run_congruence_checks(dir)
 #'
 run_congruence_checks <- function(directory = here::here(), metadata = load_metadata(directory), check_metadata_only = FALSE, output_filename, output_dir = here::here()) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   err_count <- 0
   warn_count <- 0
@@ -987,7 +1003,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            },
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_bullets(c(w$message, w$body))
            })
   tryCatch(test_delimiter(metadata),
            error = function(e) {
@@ -996,7 +1012,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            },
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_bullets(c(w$message, w$body))
            })
   tryCatch(test_header_num(metadata),
            error = function(e) {
@@ -1005,7 +1021,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            },
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_bullets(c(w$message, w$body))
            })
   tryCatch(test_footer(metadata),
            error = function(e) {
@@ -1014,7 +1030,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            },
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_bullets(c(w$message, w$body))
            })
   tryCatch(test_taxonomic_cov(metadata),
            error = function(e) {
@@ -1023,7 +1039,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            },
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_bullets(c(w$message, w$body))
            })
   tryCatch(test_geographic_cov(metadata),
            error = function(e) {
@@ -1032,7 +1048,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            },
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_bullets(c(w$message, w$body))
            })
   tryCatch(test_doi(metadata),
            error = function(e) {
@@ -1041,7 +1057,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            },
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_bullets(c(w$message, w$body))
            })
   tryCatch(test_publisher(metadata),
            error = function(e) {
@@ -1050,7 +1066,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            },
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_bullets(c(w$message, w$body))
            })
   tryCatch(test_valid_fieldnames(metadata),
            error = function(e) {
@@ -1059,7 +1075,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            },
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_bullets(c(w$message, w$body))
            })
   tryCatch(test_valid_filenames(metadata),
            error = function(e) {
@@ -1068,7 +1084,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            },
            warning = function(w) {
              warn_count <<- warn_count + 1
-             cli::cli_bullets(c(e$message, e$body))
+             cli::cli_bullets(c(w$message, w$body))
            })
 
   if (!check_metadata_only) {
@@ -1081,7 +1097,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
              },
              warning = function(w) {
                warn_count <<- warn_count + 1
-               cli::cli_bullets(c(e$message, e$body))
+               cli::cli_bullets(c(w$message, w$body))
              })
     tryCatch(test_fields_match(directory, metadata),
              error = function(e) {
@@ -1091,7 +1107,7 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
              },
              warning = function(w) {
                warn_count <<- warn_count + 1
-               cli::cli_bullets(c(e$message, e$body))
+               cli::cli_bullets(c(w$message, w$body))
              })
     tryCatch(test_numeric_fields(directory, metadata),
              error = function(e) {
@@ -1180,4 +1196,16 @@ convert_datetime_format <- function(eml_format_string) {
     stringr::str_replace_all("(ss)|(SS)", "%S")
 
   return(r_format_string)
+}
+
+#' Check if metadata is eml object
+#'
+#' Helper function to validate that an argument belongs to the `emld` class.
+#'
+#' @inheritParams test_metadata_version
+#'
+is_eml <- function(metadata) {
+  if (!any("emld" %in% class(metadata))) {
+    cli::cli_abort(c("x" = "{.arg metadata} must be an EML object."), call = NULL)
+  }
 }
