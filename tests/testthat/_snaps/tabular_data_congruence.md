@@ -6,6 +6,8 @@
       
       -- Running all congruence checks -----------------------------------------------
       
+      -- Reading metadata --
+      
       -- Checking metadata compliance --
       
     Message <rlang_message>
@@ -43,6 +45,8 @@
     Message <cliMessage>
       
       -- Running metadata-only checks (skipping checks against data files) -----------
+      
+      -- Reading metadata --
       
       -- Checking metadata compliance --
       

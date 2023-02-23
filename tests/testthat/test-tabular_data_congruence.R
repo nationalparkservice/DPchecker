@@ -1,18 +1,7 @@
-# There must be a more elegant way to do this...R CMD check only works if
-# you treat testthat as the working directory, but running tests any other way
-# expects the package dir (DPchecker) to be the working dir.
-
-good_dir <- here::here("tests", "testthat", "good")
-bad_dir <- here::here("tests", "testthat", "bad")
-bicy_meta <- load_metadata(here::here("tests", "testthat", "good", "BICY_good"))
-buis_meta <- load_metadata(here::here("tests", "testthat", "good", "BUIS_good"))
-
-# Comment out the block above and use this block instead if running R CMD check
-# good_dir <- "good"
-# bad_dir <- "bad"
-# bicy_meta <- load_metadata("good/BICY_good")
-# buis_meta <- load_metadata("good/BUIS_good")
-
+good_dir <- test_path("good")
+bad_dir <- test_path("bad")
+bicy_meta <- load_metadata(test_path("good", "BICY_good"))
+buis_meta <- load_metadata(test_path("good", "BUIS_good"))
 
 # ---- load_metadata ----
 test_that("load_metadata works on valid EML file", {
