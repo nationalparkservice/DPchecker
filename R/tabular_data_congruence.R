@@ -583,7 +583,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   }
 
   # Get begin date from metadata
-  firstDate <- arcticdatautils::eml_get_simple(metadata)
+  firstDate <- arcticdatautils::eml_get_simple(metadata, "beginDate")
   if (is.null(firstDate)) {
     warning("Your metadata lacks a begining date.")
     firstDate <- NA
@@ -594,7 +594,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   }
   meta_begin_date <- readr::parse_datetime(firstDate, format = "%d %B %Y")
 
-  lastDate<- arcticdatautils::eml_get_simple(eml_object, "endDate")
+  lastDate<- arcticdatautils::eml_get_simple(metadata, "endDate")
     if (is.null(lastDate)) {
       warning("Your metadata lacks an ending date.")
       LastDate <- NA
