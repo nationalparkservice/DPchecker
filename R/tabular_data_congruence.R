@@ -588,7 +588,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
     warning("Your metadata lacks a begining date.")
     firstDate <- NA
   } else {
-    firstDate %>%
+    firstDate <- firstDate %>%
       as.Date() %>%
       format("%d %B %Y")
   }
@@ -599,7 +599,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
       warning("Your metadata lacks an ending date.")
       LastDate <- NA
     } else {
-      lastDate %>%
+      lastDate <- lastDate %>%
         as.Date() %>%
         format("%d %B %Y")
     }
