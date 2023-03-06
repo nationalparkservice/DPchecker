@@ -10,7 +10,7 @@ Description: Allows the user (and reviewer) to check a data package and test whe
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.1
+RoxygenNote: 7.2.3
 Suggests: 
     here,
     rstudioapi,
@@ -26,7 +26,8 @@ Imports:
     dplyr,
     purrr,
     stringr,
-    tibble
+    tibble,
+    crayon
 Remotes: 
     https://github.com/NCEAS/arcticdatautils
 URL: https://nationalparkservice.github.io/DPchecker/
