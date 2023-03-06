@@ -28,6 +28,9 @@
     <loc>/reference/index.html</loc>
   </url>
   <url>
+    <loc>/reference/is_eml.html</loc>
+  </url>
+  <url>
     <loc>/reference/load_data.html</loc>
   </url>
   <url>
@@ -35,6 +38,9 @@
   </url>
   <url>
     <loc>/reference/run_congruence_checks.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_by_for_nps.html</loc>
   </url>
   <url>
     <loc>/reference/test_date_range.html</loc>
@@ -46,10 +52,19 @@
     <loc>/reference/test_doi.html</loc>
   </url>
   <url>
+    <loc>/reference/test_dp_abstract.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_dp_title.html</loc>
+  </url>
+  <url>
     <loc>/reference/test_dup_meta_entries.html</loc>
   </url>
   <url>
     <loc>/reference/test_fields_match.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_file_descriptions.html</loc>
   </url>
   <url>
     <loc>/reference/test_file_name_match.html</loc>
@@ -71,6 +86,18 @@
   </url>
   <url>
     <loc>/reference/test_publisher.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_publisher_city.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_publisher_name.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_publisher_state.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_pub_date.html</loc>
   </url>
   <url>
     <loc>/reference/test_taxonomic_cov.html</loc>
