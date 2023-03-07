@@ -420,7 +420,7 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 
   # Quick check that tables match
   if (!(all(names(data_colnames) %in% names(metadata_attrs)) & all(names(metadata_attrs) %in% names(data_colnames)))) {
-    cli::cli_abort(c("x" = "Mismatch in data filenames and files listed in metadata. You must resolve this issue before you can verify that fields match. Call {.fn test_file_name_match} for more info."))
+    cli::cli_abort(c("x" = "Mismatch in data file column names and the attributes listed in metadata."))
   }
 
   # Check each CSV. If column and attributes are a mismatch, describe the issue
