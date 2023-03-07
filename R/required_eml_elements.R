@@ -90,7 +90,7 @@ test_pub_date <- function(directory = here::here(),
 
 #' Test data package title
 #'
-#' @description tests EML metadata for presence of a data package title. Warns if the title is > 10 words.
+#' @description tests EML metadata for presence of a data package title. Warns if the title is > 15 words.
 #'
 #' @param directory the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.
 #' @param metadata The metadata object returned by `load_metadata`. If parameter not provided, defaults to calling `load_metadata` in current project directory.
@@ -299,7 +299,7 @@ test_dp_abstract <- function(directory = here::here(),
   missing_abstract <- is.null(abstract)
   if(missing_abstract){
     cli::cli_alert_danger(
-      "Metadata does not contain an abstract for the data package")
+      "Metadata does not contain an abstract for the data package.")
   }
   if(!missing_abstract){
     x <- sapply(strsplit(title, " "), length)
@@ -356,19 +356,152 @@ test_file_descriptions <- function(directory = here::here(),
   is_eml(metadata)
   # get dataTable and all children elements
   data_tbl <- EML::eml_get(metadata, "dataTable")
+  data_tbl$`@context` <- NULL
   # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
   if ("attributeList" %in% names(data_tbl)) {
     data_tbl <- list(data_tbl)
   }
-  metadata_file_desc <- lapply(data_tbl, function(tbl)
-    {arcticdatautils::eml_get_simple(tbl, "entityDescription")})
+
+  metadata_file_desc <- NULL
+  for(i in seq_along(data_tbl)){
+    metadata_file_desc <- append(metadata_file_desc,
+                                 data_tbl[[i]][["entityDescription"]])
+  }
   if(is.null(metadata_file_desc)){
     cli::cli_alert_danger("Metadata does not contain data file descriptions (<entityDescription>")
   }
   if(!is.null(metadata_file_desc)){
-    metadata_file_desc$`@context` <- NULL
-    file_desc<-unlist(metadata_file_desc)
-
-
+    csvs<-list.files(directory, pattern=".csv")
+    if(identical(seq_along(csvs), seq_along(metadata_file_desc))){
+      cli::cli_inform(c(
+        "v" = "All .csv files contain file descriptions in metadata"))
+    }
+    else{
+      cli::cli_alert_danger(
+        "Not all .csv files contain file descriptions in the metadata")
+    }
+    for(i in seq_along(metadata_file_desc)){
+      x <- stringr::str_count(metadata_file_desc[i], '\\w+')
+      if(x < 3){
+        cli::cli_warn(c(
+          "!" = "Data file {i} description is less than 3 words long. Consider a more informative descrption."))
+      }
+      if(x > 10){
+        cli::cli_warn(c("!" = "Data file {i} description is greater than 10 words. Consider a more concise description"))
+      }
+    }
   }
+  return(invisible(metadata))
+}
+
+#' Test for CUI dissemination coe
+#'
+#' @description `test_cui_dissemination()` examines EML metadata for the presence of a Controlled Unclassified Information (CUI) dissemination code. The function returns an error if the code does not exist or does not match a list of valid codes. A present, valid code results in a pass.  however, if the code is not "PUBLIC" the user is warned. Otherwise the
+#'
+#' @param directory the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.
+#' @param metadata The metadata object returned by `load_metadata`. If parameter not provided, defaults to calling `load_metadata` in current project directory.
+#'
+#' @return invisibly returns `metadata`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_cui_dissemination()
+#' }
+test_CUI_dissemination <- function(directory = here::here(),
+                                   metadata = load_metadata(directory)) {
+  is_eml(metadata)
+  valid_codes <- c("PUBLIC", "NOCON", "DL ONLY", "FEDCON", "FED ONLY")
+  # get all additionalMetadata elelements and all children elements
+  diss_code <- arcticdatautils::eml_get_simple(metadata, "CUI")
+  if(is.null(diss_code)){
+    cli::cli_alert_danger("Metadata does not contain a CUI dissemination code")
+  }
+  if(!is.null(diss_code)){
+    if(!diss_code %in% valid_codes){
+      cli::cli_alert_danger(
+        "The CUI dissemination code {diss_code} is not a valid code")
+    }
+    if(diss_code %in% valid_codes){
+      cli::cli_inform(c("v" = "Metadata contains the valid CUI dissemination code {diss_code}"))
+    if(diss_code != "PUBLIC"){
+      cli::cli_inform(c("!" = "Metadata CUI dissemination code {diss_code} indicates the data package is NOT public. Are you sure?"))
+    }
+
+    }
+  }
+  return(invisible(metadata))
+}
+
+#' Test for presence of a license name
+#'
+#' @description `test_license()` examines the licenseName element of EML metadata. If there is no license name, the test fails. If the license name does not match a list of valid license names, the test fails. If the metadata contain a valid license name, but the license name and CUI dissemination code do not agree, the test fails. Otherwise, the test passes.  Additionally, if the license name is not "Public Domain" or "CC0 1.0 Universal", the function throws a warning that the data package is not public.
+#'
+#' @param directory the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.
+#' @param metadata The metadata object returned by `load_metadata`. If parameter not provided, defaults to calling `load_metadata` in current project directory.
+#'
+#' @return invisibly returns `metadata`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_license()
+#' }
+test_license <- function(directory = here::here(),
+                        metadata = load_metadata(directory)) {
+  is_eml(metadata)
+  license_list <- c("Public Domain", "CC0 1.0 Universal", "No License/Controlled Unclassified Information")
+
+  license <- metadata$dataset$licensed$licenseName
+  if(is.null(license)){
+    cli::cli_alert_danger("Metadata does not contain a license name")
+  }
+  if(!is.null(license)){
+    if(!license %in% license_list){
+      cli::cli_alert_danger("The metadata does not contain a valid license name")
+    }
+    if(license %in% license_list){
+      diss_code <- arcticdatautils::eml_get_simple(metadata, "CUI")
+      if(diss_code == "PUBLIC" & license == "No License/Controlled Unclassified Information"){
+        cli_alert_danger("Metadata license and CUI dissemination code do not agree")
+      }
+      else if(diss_code != "PUBLIC" & license != "No Licnese/Controlled Unclassified Information"){
+        cli_alert_danger("Metadata license and CUI dissemination code do not agree")
+      }
+      else {
+        cli::cli_inform(c("v" = "Metadata contains a valid license name"))
+      }
+      if(license == "NO License/Controlled Unlcassified Information"){
+      cli::cli_inform(c("!" = "Metadata license name indicates that the data package is NOT public. Are you sure?"))
+      }
+    }
+  }
+  return(invisible(metadata))
+}
+
+#' Test for presence of Intellectual Rights
+#'
+#' @description `test_int_rights()` test for the presence of text within the intellectualRights element in EML formatted metadata. If text if present, the test passes. Otherwise, the test fails. `test_int_rights()` makes no attempt to parse the text or test whether it properly coincides with the CUI dissemination codes or licenseName in the metadata. This is a simple presence/absence test.
+#'
+#' @param directory the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.
+#' @param metadata The metadata object returned by `load_metadata`. If parameter not provided, defaults to calling `load_metadata` in current project directory.
+#'
+#' @return invisibly returns `metadata`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_int_rigths()
+#' }
+test_int_rights <- function(directory = here::here(),
+                            metadata = load_metadata(directory)) {
+  is_eml(metadata)
+  int_rights <- metadata$dataset$intellectualRights
+  if(is.null(int_rights)){
+    cli::cli_alert_danger("Metadata lacks an Intellectual Rights statemet")
+  }
+  else {
+    cli::cli_inform(c("v" = "Metadata contains an Intellectual Rights statement"))
+  }
+  return(invisible(metadata))
 }
