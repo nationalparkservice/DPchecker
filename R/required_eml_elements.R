@@ -50,23 +50,23 @@ test_pub_date <- function(directory = here::here(),
     }
     if(!identical(dash1, "-")){
       cli::cli_alert_danger(c(
-        "Publication date sepearator, \"-\",",
+        "Publication date separator, \"-\",",
         " is not in the correct ISO 8601 format (YYYY-MM-DD)"))
     }
     if(is.na(pub_month)){
       cli::cli_alert_danger(c(
-        "Publication month is not in the correct ISO 8601 format (YYY-MM-DD"))
+        "Publication month is not in the correct ISO 8601 format (YYY-MM-DD)"))
     }
     if(!is.na(pub_monty)){
       if(pub_month > 12){
-        cli::cli_alert_danger(c(
-          "Publication month, ", crayon::red$bold(pub_month), ",
-          is >12 and is not in the correct ISO 8601 format (YYYY-MM-DD)"))
+        cli::cli_alert_danger(c("Publication month, ",
+                                crayon::red$bold(pub_month),
+                                ", is >12 and is not in the correct ISO 8601 format (YYYY-MM-DD)"))
       }
     }
     if(!identical(dash2, "-")){
       cli::cli_alert_danger(c(
-        "Publication date sepearator, \"-\",",
+        "Publication date separator, \"-\",",
         " is not in the correct ISO 8601 format (YYYY-MM-DD)"))
     }
     if(is.na(pub_day)){
@@ -77,7 +77,7 @@ test_pub_date <- function(directory = here::here(),
       if(pub_day > 31){
       cli::cli_alert_danger(c(
         "Publication day, ", crayon::red$bold(pub_day),
-        " is >31 and is not in the correct ISO 8601 format (YYYY-MM-DD)"))
+        ", is >31 and is not in the correct ISO 8601 format (YYYY-MM-DD)"))
       }
     }
     else {
@@ -120,8 +120,7 @@ test_dp_title <- function(directory = here::here(),
     }
     if(x < 5){
       cli::cli_warn(c(
-        "!" = "Data package title is <5 words.",
-        " Consider a more informative title"))
+        "!" = "Data package title is <5 words. Consider a more informative title"))
     }
     else {
       cli::cli_inform(c(
@@ -161,11 +160,11 @@ test_by_for_nps <- function(directory = here::here(),
     }
     else if(nps=="FALSE"){
       cli::cli_warn(c(
-        "!" = "Metadata states data was NOT created by or for NPS"))
+        "!" = "Metadata states data was NOT created by or for NPS. Are you sure this is correct?"))
     }
     else if(nps=="NULL"){
       cli::cli_alert_danger(
-        'Metadata indicates "by or for NPS" field set to NULL')
+        'Metadata indicates "by or for NPS" field set to NULL. This must be fixed.')
     }
   }
   return(invisible(metadata))
@@ -236,7 +235,7 @@ test_publisher_state <- function(directory = here::here(),
     }
     else if(pub_state != "CO"){
       cli::cli_warn(c("!" = "Metadata indicates the publisher state, {
-                      crayon::bold$red(pub_state)}, is not CO"))
+                      crayon::bold$red(pub_state)}, is not CO. Are you sure?"))
     }
   }
   return(invisible(metadata))
@@ -293,7 +292,7 @@ test_publisher_city <- function(directory = here::here(),
 #' test_dp_abstract()
 #' }
 test_dp_abstract <- function(directory = here::here(),
-                          metadata = load_metadata(directory)) {
+                          metadata = load_metadata(directory)){
   is_eml(metadata)
   abstract <- metadata$dataset$abstract
   missing_abstract <- is.null(abstract)
@@ -302,36 +301,51 @@ test_dp_abstract <- function(directory = here::here(),
       "Metadata does not contain an abstract for the data package.")
   }
   if(!missing_abstract){
-    x <- sapply(strsplit(title, " "), length)
+    #get rid of <para> tags, empty paragraphs, etc
+    abstract <- unlist(abstract)
+    abs<-NULL
+    for(i in seq_along(abstract)){
+      if(nchar(abstract[i])>0){
+        abs <- append(abs, abstract[[i]])
+      }
+    }
+    x <- sapply(strsplit(abs, "" ), length)
+    x <- sum(x) #sums up all words across potential multiple paragraphs
+    z <- NULL #tracking for warnings
     if(x < 20){
       cli::cli_warn(c(
-        "!" = "The data package abstract is less than",
-        "20 words. Are you sure this is informative enough?"))
+        "!" = "The data package abstract is less than 20 words. Are you sure this is informative enough?"))
+      z <- "warn"
     }
     if(x > 250){
       cli::cli_warn(c(
-        "!" = "The data package abstract is longer than 250",
-        " words. Consider revising for a more concise abstract"))
+        "!" = "The data package abstract is longer than 250 words. Consider revising for a more concise abstract"))
+      z <- "warn"
     }
-    if(stringr::str_detect(abstract, "&amp;#13;")){
+    if(sum(stringr::str_detect(abs, "&amp;#13;"))>0){
       cli::cli_warn(c(
         "!" = "The data package abstract contains non-standard characters: {
                       crayon::bold$red('&amp;#13;')}"))
+      z <- "warn"
     }
-    if(grepl("[\r?\n|\r]", abstract)){
+    if(sum(grepl("[\r?\n|\r]", abs))>0){
+      cli::cli_warn(c("!" = "The data package abstract contains non-standard end of line characters such as \\r, \\n, or \\n\\r"))
+      z <- "warn"
+    }
+    if(sum(grepl("   ", abs))>0){
       cli::cli_warn(c(
-        "!" = "The data package abstract contains non-standard end of line",
-        " characters such as \\r, \\n, or \\n\\r"))
+        "!" = "The data package abstract contains extra (more than two in a row) spaces"))
+      z <- "warn"
     }
-    if(grepl("   ", abstract)){
+    if(length(seq_along(abs))>3){
       cli::cli_warn(c(
-        "!" = "The data package abstract contains extra",
-        " (more than two in a row) spaces"))
+        "!" = "The data package abstract contains more than three paragraphs. Consider revising."
+      ))
     }
-    else{
+    #if no other warnings generated:
+    if(is.null(z)){
       cli::cli_inform(c(
-        "v" = "The Metadata contains a well formatted abstract",
-        " for the data package"))
+        "v" = "The Metadata contains a well formatted abstract for the data package"))
     }
   }
   return(invisible(metadata))
@@ -368,7 +382,7 @@ test_file_descriptions <- function(directory = here::here(),
                                  data_tbl[[i]][["entityDescription"]])
   }
   if(is.null(metadata_file_desc)){
-    cli::cli_alert_danger("Metadata does not contain data file descriptions (<entityDescription>")
+    cli::cli_alert_danger("Metadata does not contain data file descriptions (<entityDescription>)")
   }
   if(!is.null(metadata_file_desc)){
     csvs<-list.files(directory, pattern=".csv")
@@ -394,7 +408,7 @@ test_file_descriptions <- function(directory = here::here(),
   return(invisible(metadata))
 }
 
-#' Test for CUI dissemination coe
+#' Test for CUI dissemination code
 #'
 #' @description `test_cui_dissemination()` examines EML metadata for the presence of a Controlled Unclassified Information (CUI) dissemination code. The function returns an error if the code does not exist or does not match a list of valid codes. A present, valid code results in a pass.  however, if the code is not "PUBLIC" the user is warned. Otherwise the
 #'
@@ -491,7 +505,7 @@ test_license <- function(directory = here::here(),
 #'
 #' @examples
 #' \dontrun{
-#' test_int_rigths()
+#' test_int_rights()
 #' }
 test_int_rights <- function(directory = here::here(),
                             metadata = load_metadata(directory)) {
@@ -505,3 +519,110 @@ test_int_rights <- function(directory = here::here(),
   }
   return(invisible(metadata))
 }
+
+#' Test metadata for attribute definitions
+#'
+#' @description `test_attribute_defs()` extracts all attributeNames and attributeDefinitions from EML metadata. It tests to make sure there are the same number of attributeNames and attributeDefinitions. If true, the test passes. If not, it produces an error. Note bene: this test ONLY looks at the metadata, it does NOT look at the data files. Passing this test does not mean that all data columns have attributes in the metadata associated with them. To test that, see `test_fields_match()`.
+#'
+#' @param directory the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.
+#' @param metadata The metadata object returned by `load_metadata`. If parameter not provided, defaults to calling `load_metadata` in current project directory.
+#'
+#' @return invisibly returns `metadata`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_attribute_defs()
+#' }
+test_attribute_defs <- function(directory = here::here(),
+                                 metadata = load_metadata(directory)) {
+  is_eml(metadata)
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  # Get list of columns for each table in the metadata
+  metadata_attrs <- lapply(data_tbl,
+                           function(tbl)
+                             {arcticdatautils::eml_get_simple(tbl,
+                                                              "attributeName")})
+  metadata_attrs$`@context` <- NULL
+  #get attribute definitions:
+  attr_defs <- lapply(data_tbl,
+                      function (tbl)
+                        {list(arcticdatautils::eml_get_simple(tbl,
+                                                      "attributeDefinition"))})
+  attr_defs$`@context` <- NULL
+  #unlist:
+  metadata_attrs <- unlist(metadata_attrs)
+  attr_defs <- unlist(attr_defs)
+  #comparisons:
+  if(identical(seq_along(metadata_attrs), seq_along(attr_defs))){
+    cli::cli_inform(c("v" = "All attributes listed in metadata have attribute definitions"))
+  }
+  if(seq_along(metadata_attrs) == seq_along(attr_defs)){
+    cli::cli_alert_danger("Some metadata attributes are missing definitions (or vice versa)")
+  }
+  return(invisible(metadata))
+}
+
+#' Tests for attribute storage type
+#'
+#' @description `test_storage_type()` checks to see if there are the same number of attributes (attributeName) and storageTypes in the metadata. Equal numbers of elements will pass; unequal will generate an error. `test_storage_type()` does NOT attempt to verify if the number of storageType elements matches the number of columns in the data package data files (for that functionality, use `test_fields_match()`). `test_storage_type()` does verify that the storageType is valid; i.e. is a member of an accepted list of possible storage types. Currently: string, float, date, factor, or characters. Valid is based just on ezEML/EAL output: any string in storageType is schema-valid. `test_storage_type()` does NOT attempt to verify that the value in storageType logically matches the type data in the corresponding column.
+#'
+#' @param directory the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.
+#' @param metadata The metadata object returned by `load_metadata`. If parameter not provided, defaults to calling `load_metadata` in current project directory.
+#'
+#' @return invisibly returns `metadata`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_storage_type()
+#' }
+test_storage_type <- function(directory = here::here(),
+                              metadata = load_metadata(directory)) {
+  is_eml(metadata)
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  # Get list of columns for each table in the metadata
+  metadata_attrs <- lapply(data_tbl,
+                           function(tbl)
+                           {arcticdatautils::eml_get_simple(tbl,
+                                                            "attributeName")})
+  metadata_attrs$`@context` <- NULL
+  #get attribute storage types:
+  attr_storage_type <- lapply(data_tbl,
+                      function (tbl)
+                      {list(arcticdatautils::eml_get_simple(tbl,
+                                                            "storageType"))})
+  attr_storage_type$`@context` <- NULL
+  #unlist:
+  metadata_attrs <- unlist(metadata_attrs)
+  attr_storage_type <- unlist(attr_storage_type)
+  #comparisons:
+  if(identical(seq_along(metadata_attrs), seq_along(attr_storage_type))){
+    cli::cli_inform(c("v" = "All attributes listed in metadata have storage types associated with them."))
+  }
+  else {
+    cli::cli_alert_danger("Some metadata attributes are missing definitions (or vice versa)")
+  }
+  attr_storage_list <- c("string", "float", "date", "factor", "character")
+  if(sum(!attr_storage_type %in% attr_storage_list) > 0){
+    cli::cli_inform(c("!" = "Some attribute storage types are not accepted values"))
+  }
+  else{
+    cli::cli_inform(c("v" = "All attribute storage types are valid values"))
+  }
+  return(invisible(metadata))
+}
+
+
+
+
