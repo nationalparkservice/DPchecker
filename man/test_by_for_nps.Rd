@@ -4,12 +4,10 @@
 \alias{test_by_for_nps}
 \title{Test for "by or for NPS"}
 \usage{
-test_by_for_nps(directory = here::here(), metadata = load_metadata(directory))
+test_by_for_nps(metadata = load_metadata(directory))
 }
 \arguments{
-\item{directory}{the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.}
-
-\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.#'}
 }
 \value{
 invisibly returns \code{metadata}

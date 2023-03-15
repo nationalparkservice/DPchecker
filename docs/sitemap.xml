@@ -40,7 +40,13 @@
     <loc>/reference/run_congruence_checks.html</loc>
   </url>
   <url>
+    <loc>/reference/test_attribute_defs.html</loc>
+  </url>
+  <url>
     <loc>/reference/test_by_for_nps.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_cui_dissemination.html</loc>
   </url>
   <url>
     <loc>/reference/test_date_range.html</loc>
@@ -64,7 +70,7 @@
     <loc>/reference/test_fields_match.html</loc>
   </url>
   <url>
-    <loc>/reference/test_file_descriptions.html</loc>
+    <loc>/reference/test_file_descript.html</loc>
   </url>
   <url>
     <loc>/reference/test_file_name_match.html</loc>
@@ -77,6 +83,12 @@
   </url>
   <url>
     <loc>/reference/test_header_num.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_int_rights.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_license.html</loc>
   </url>
   <url>
     <loc>/reference/test_metadata_version.html</loc>
@@ -98,6 +110,9 @@
   </url>
   <url>
     <loc>/reference/test_pub_date.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_storage_type.html</loc>
   </url>
   <url>
     <loc>/reference/test_taxonomic_cov.html</loc>
