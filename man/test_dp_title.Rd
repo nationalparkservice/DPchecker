@@ -4,18 +4,16 @@
 \alias{test_dp_title}
 \title{Test data package title}
 \usage{
-test_dp_title(directory = here::here(), metadata = load_metadata(directory))
+test_dp_title(metadata = load_metadata(directory))
 }
 \arguments{
-\item{directory}{the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.}
-
-\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.#'}
 }
 \value{
 invisibly returns \code{metadata}
 }
 \description{
-tests EML metadata for presence of a data package title. Warns if the title is > 10 words.
+tests EML metadata for presence of a data package title. Warns if the title is > 15 words.
 }
 \examples{
 \dontrun{
