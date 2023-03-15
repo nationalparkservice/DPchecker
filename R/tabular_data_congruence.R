@@ -491,6 +491,7 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
   numeric_attrs <- lapply(data_tbl, function(tbl) {
     attrs <- suppressMessages(EML::get_attributes(tbl$attributeList))
     attrs <- attrs$attributes
+    #filter for just numeric attributes:
     attrs <- dplyr::filter(attrs, domain == "numericDomain")
     return(attrs)
   })
@@ -499,18 +500,29 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 
   # Get list of column names for each table in the csv data
   data_files <- list.files(path = directory, pattern = ".csv")
+
   data_non_numeric <- sapply(data_files, function(data_file) {
     num_col_names <- numeric_attrs[[data_file]]$attributeName
+
     # If the table doesn't have any numeric columns listed in the metadata, it automatically passes
     if (length(num_col_names) == 0) {
-      return(NULL)
+      return(NULL) #no numeric columns; go to next iteration in loop
     }
+    #get missing data codes (so missing values to be ignored on data import)
     na_strings <- c("", "NA")
     if ("missingValueCode" %in% names(numeric_attrs[[data_file]])) {
-      na_strings <- c(na_strings, unique(numeric_attrs[[data_file]]$missingValueCode))
+      miss_values <- unique(numeric_attrs[[data_file]]$missingValueCode)
+      if(!is.null(miss_values)){
+          na_strings <- c(na_strings, miss_values)
+      }
     }
+    #only keep unique missingValueCodes
+    na_strings <- unique(na_strings)
+    #get rid of instances when value was actually not there in attribs.
+    #Note: this still keeps the missingValueCode "NA".
+    na_strings <- na_strings[!is.na(na_strings)]
     # Read everything as character, then see if it fails when converting to number
-    num_data <- readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(num_col_names), na = na_strings, col_types = rep("c", length(num_col_names)), show_col_types = FALSE)
+    num_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(num_col_names), na = na_strings, col_types = rep("c", length(num_col_names)), show_col_types = FALSE))
     non_numeric <- sapply(names(num_data), function(col) {
       col_data <- num_data[[col]]
       col_data <- col_data[!is.na(col_data)]
@@ -633,8 +645,16 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
     }
     # Get format string for each date/time column and filter out anything that doesn't have a year associated with it
     dttm_formats <- dttm_attrs[[data_file]]$formatString
-    dttm_formats <- dttm_formats[grepl("Y", dttm_formats)]
-    dttm_col_names <- dttm_col_names[grepl("Y", dttm_formats)]
+
+    is_time <- grepl("Y", dttm_formats)
+
+    #commenting out this next line fixes one error and causes about a dozen more!
+    dttm_formats <- dttm_formats[is_time]
+
+
+
+    dttm_col_names <- dttm_col_names[is_time]
+
     # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
     dttm_formats_r <- convert_datetime_format(dttm_formats)
     dttm_col_spec <- dttm_formats_r %>%
@@ -935,261 +955,6 @@ test_valid_filenames <- function(metadata = load_metadata(here::here())) {
 
   return(invisible(metadata))
 }
-
-#' Run all congruence checks
-#'
-#' @param check_metadata_only Only run checks on the metadata and skip anything involving data files.
-#' @param output_filename Optional. If specified, saves results of congruence checks to this file. If omitted, prints results to console. If the file already exists, results will be appended to the existing file.
-#' @param output_dir Location in which to save the output file, if using.
-#' @inheritParams load_data
-#' @inheritParams test_metadata_version
-#'
-#' @return Invisibly returns `metadata`.
-#' @export
-#'
-#' @examples
-#' dir <- DPchecker_example("BICY_veg")
-#' run_congruence_checks(dir)
-#'
-run_congruence_checks <- function(directory = here::here(), metadata = load_metadata(directory), check_metadata_only = FALSE, output_filename, output_dir = here::here()) {
-  is_eml(metadata)  # Throw an error if metadata isn't an emld object
-
-  err_count <- 0
-  warn_count <- 0
-  total_count <- 10  # Don't forget to update this number when adding more checks!
-
-  if (!missing(output_filename)) {
-    output_dir <- normalizePath(output_dir, winslash = .Platform$file.sep, mustWork = TRUE)
-    output_path <- file.path(output_dir, output_filename)
-    open_mode <- if (file.exists(output_path)) {
-      "at"  # if file exists, use append mode
-    } else {
-      "wt"  # If the file doesn't already exist, use write mode
-    }
-    file <- file(output_path, open = open_mode)
-    sink(file)
-    sink(file, type = "message")
-    if (open_mode == "at") {
-      cli::cli_verbatim("\n\n\n")  # If appending to existing log, add a few newlines to make it more readable
-    }
-    cli::cli_rule(center = "{Sys.time()}")
-    cli::cli_inform("The following checks were run using DPchecker version {packageVersion('DPchecker')}.")
-  }
-
-  if (check_metadata_only) {
-    cli::cli_h1("Running metadata-only checks (skipping checks against data files)")
-  } else {
-    cli::cli_h1("Running all congruence checks")
-  }
-
-  cli::cli_h2("Reading metadata")
-  tryCatch(invisible(metadata),  # load_metadata from the function args actually gets evaluated here
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_bullets(c(e$message, e$body))
-             try({
-               if (grepl("rbaker", Sys.getenv("USERNAME"), ignore.case = TRUE)) {
-                 rstudioapi::viewer(url = system.file("extdata", "pebkac.jpg", package = "DPchecker", mustWork = TRUE))
-               }
-             })
-             cli::cli_abort(c("x" = "You must correct the above issue before the congruence checks can run."), call = NULL)},
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-  cli::cli_h2("Checking metadata compliance")
-  tryCatch(test_validate_schema(metadata),
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_alert_danger("Schema validation failed. Run {.fn test_validate_schema} for details.")
-             cli::cli_abort(c("x" = "Metadata schema must validate before the rest of the congruence checks can run."), call = NULL)},
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_alert_warning("Schema validation warnings exist. Run {.fn test_validate_schema} for details.", call = NULL)
-           })
-  tryCatch(test_dup_meta_entries(metadata),
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_bullets(c(e$message, e$body))
-             cli::cli_abort(c("x" = "You must remove duplicate data table names from metadata before the rest of the congruence checks can run."), call = NULL)},
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-  tryCatch(test_metadata_version(metadata),
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_bullets(c(e$message, e$body))
-           },
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-  tryCatch(test_delimiter(metadata),
-           error = function(e) {
-             cli::cli_bullets(c(e$message, e$body))
-             err_count <<- err_count + 1
-           },
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-  tryCatch(test_header_num(metadata),
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_bullets(c(e$message, e$body))
-           },
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-  tryCatch(test_footer(metadata),
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_bullets(c(e$message, e$body))
-           },
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-  tryCatch(test_taxonomic_cov(metadata),
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_bullets(c(e$message, e$body))
-           },
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-  tryCatch(test_geographic_cov(metadata),
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_bullets(c(e$message, e$body))
-           },
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-  tryCatch(test_doi(metadata),
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_bullets(c(e$message, e$body))
-           },
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-  tryCatch(test_publisher(metadata),
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_bullets(c(e$message, e$body))
-           },
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-  tryCatch(test_valid_fieldnames(metadata),
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_bullets(c(e$message, e$body))
-           },
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-  tryCatch(test_valid_filenames(metadata),
-           error = function(e) {
-             err_count <<- err_count + 1
-             cli::cli_bullets(c(e$message, e$body))
-           },
-           warning = function(w) {
-             warn_count <<- warn_count + 1
-             cli::cli_bullets(c(w$message, w$body))
-           })
-
-  if (!check_metadata_only) {
-    cli::cli_h2("Checking that metadata is consistent with data file(s)")
-    tryCatch(test_file_name_match(directory, metadata),
-             error = function(e) {
-               err_count <<- err_count + 1
-               cli::cli_bullets(c(e$message, e$body))
-               cli::cli_abort(c("x" = "Files documented in metadata must match files present in package before the rest of the congruence checks can run."), call = NULL)
-             },
-             warning = function(w) {
-               warn_count <<- warn_count + 1
-               cli::cli_bullets(c(w$message, w$body))
-             })
-    tryCatch(test_fields_match(directory, metadata),
-             error = function(e) {
-               err_count <<- err_count + 1
-               cli::cli_bullets(c(e$message, e$body))
-               cli::cli_abort(c("x" = "Columns documented in metadata must match columns present in data files before the rest of the congruence checks can run."), call = NULL)
-             },
-             warning = function(w) {
-               warn_count <<- warn_count + 1
-               cli::cli_bullets(c(w$message, w$body))
-             })
-    tryCatch(test_numeric_fields(directory, metadata),
-             error = function(e) {
-               err_count <<- err_count + 1
-               cli::cli_bullets(c(e$message, e$body))
-             },
-             warning = function(w) {
-               warn_count <<- warn_count + 1
-               cli::cli_bullets(c(w$message, w$body))
-             })
-    tryCatch(test_date_range(directory, metadata),
-             error = function(e) {
-               err_count <<- err_count + 1
-               cli::cli_bullets(c(e$message, e$body))
-             },
-             warning = function(w) {
-               warn_count <<- warn_count + 1
-               cli::cli_bullets(c(w$message, w$body))
-             })
-  }
-
-  cli::cli_h2("Summary")
-  if (err_count > 0) {
-    cli::cli_alert_danger("{err_count} errors to address")
-  }
-  if (warn_count > 0) {
-    cli::cli_alert_warning("{warn_count} warnings to look into")
-  }
-  if (warn_count + err_count == 0) {
-    check_type <- if (check_metadata_only) {
-      "metadata"
-    } else {
-      "congruence"
-    }
-    cli::cli_alert_success("Success! All {check_type} checks passed.")
-  }
-
-  if (!missing(output_filename)) {
-    sink(type = "message")
-    sink()
-    close(file)
-    file.show(output_path)  # Opens log file. May want to add option in future to not do this
-  }
-  return(invisible(c("errors" = err_count, "warnings" = warn_count)))
-}
-
-#' Generate path to example data
-#'
-#' @param dp_name Name of data package.
-#'
-#' @return Path to example data, if dp_name is specified.
-#' @export
-#'
-#' @examples
-#' DPchecker_example()
-#' DPchecker_example("BUIS_herps")
-DPchecker_example <- function(dp_name = c("BICY_veg", "BUIS_herps")) {
-  dp_name <- match.arg(dp_name)
-  message("Data are provided for example use only. Do not assume that they are complete, accurate, or up to date.")
-  system.file("extdata", dp_name, package = "DPchecker", mustWork = TRUE)
-}
-
 
 #' Convert EML date/time format string to one that R can parse
 #'
