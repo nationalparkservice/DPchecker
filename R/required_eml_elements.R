@@ -184,7 +184,7 @@ test_publisher_name <- function(metadata = load_metadata(directory)) {
   if(!missing_name){
     if(publisher_name == "National Park Service"){
       cli::cli_inform(c(
-        "v" = "Metata indicates the publisher is the National Park Service."))
+        "v" = "Metadata indicates the publisher is the National Park Service."))
     }
     else if(publisher_name != "National Park Service"){
       cli::cli_warn(c("!" = "Metadata indicates the publisher is {
@@ -263,7 +263,7 @@ test_publisher_city <- function(metadata = load_metadata(directory)) {
 
 #' Test EML abstract
 #'
-#' @description inspects EML for presence of a data package abstract. FAils if abseent. If present, warns if the abstract is <20 words, >250 words, or contains a subset of common characters that indicate improper formatting.
+#' @description Inspects EML for presence of a data package abstract. Fails if absent. If present, warns if the abstract is <20 words, >250 words, or contains a subset of common characters that indicate improper formatting. Otherwise passes.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -334,7 +334,7 @@ test_dp_abstract <- function(metadata = load_metadata(directory)){
 
 #' Test presence of file descriptions
 #'
-#' @description `test_file_descriptions()` tests for the presence of file descriptions (<entityDescription>) fields. It fails if any one or all of the <entityDescription> fields are empty in a dataTable. It fails if any two or more file descriptions are identical. Otherwise the test passes. The test generates a warnign for each file description that is longer than 10 words or shorter than three words.
+#' @description Tests for the presence of file descriptions (entityDescription) fields. It fails if any one or all of the \<entityDescription\> fields are empty in a dataTable. It fails if any two or more file descriptions are identical. Otherwise the test passes. The test generates a warning for each file description that is longer than 10 words or shorter than three words.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -557,7 +557,7 @@ test_attribute_defs <- function(metadata = load_metadata(directory)) {
 
 #' Tests for attribute storage type
 #'
-#' @description `test_storage_type()` checks to see if there are the same number of attributes (attributeName) and storageTypes in the metadata. Equal numbers of elements will pass; unequal will generate an error. `test_storage_type()` does NOT attempt to verify if the number of storageType elements matches the number of columns in the data package data files (for that functionality, use `test_fields_match()`). `test_storage_type()` does verify that the storageType is valid; i.e. is a member of an accepted list of possible storage types. Currently: string, float, date, factor, or characters. Valid is based just on ezEML/EAL output: any string in storageType is schema-valid. `test_storage_type()` does NOT attempt to verify that the value in storageType logically matches the type data in the corresponding column.
+#' @description `test_storage_type()` checks to see if there are the same number of attributes (attributeName) and storageTypes in the metadata. Equal numbers of elements will pass; unequal will generate an error. `test_storage_type()` does NOT attempt to verify if the number of storageType elements matches the number of columns in the data package data files (for that functionality, use `test_fields_match()`). `test_storage_type()` does verify that the storageType is valid; i.e. is a member of an accepted list of possible storage types. Currently: string, float, date, factor, or characters. Validity for this test is based solely on observed ezEML/EAL output (in theory any string in storageType is schema-valid). `test_storage_type()` does NOT attempt to verify that the value in storageType logically matches the type data in the corresponding column.
 #'
 #' @inheritParams test_pub_date
 #'

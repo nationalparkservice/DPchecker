@@ -336,9 +336,9 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 
 #' File Name Match
 #'
-#' @description test_file_name_match checks to see whether all data files (.csv) within a specified directory are listed under the objectName (child of physical) element in an EML metadata file in the same directory, and vice versa. Mismatches will result in an error message.
+#' @description `test_file_name_match()` checks to see whether all data files (.csv) within a specified directory are listed under the objectName (child of physical) element in an EML metadata file in the same directory, and vice versa. Mismatches will result in an error message.
 #'
-#' @details If a directory other than the current working directory is specified, test.fileNameMatch returns to the current working directory on exit. Note that the metadata file must follow NPS naming conventions, specifically ending in *_metadata.xml. test.fileNameMatch assumes there are the same number of data files in the directory as dataTables in the metadata file.
+#' @details If a directory other than the current working directory is specified, `test.file_name_match()` returns to the current working directory on exit. Note that the metadata file must follow NPS naming conventions, specifically ending in *_metadata.xml. `test.file_name_match()` assumes there are the same number of data files in the directory as dataTables in the metadata file.
 #'
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
@@ -386,7 +386,7 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
 
 #' Test Matching Data/Metadata Fields
 #'
-#' @description test_fields_match compares the attributes of each dataTable within the EML metadata to the columns in the corresponding .csv. If the columns have the same names and order, the test passes. If the columns differ, the test fails.
+#' @description `test_fields_match()` compares the attributes of each dataTable within the EML metadata to the columns in the corresponding .csv. If the columns have the same names and order, the test passes. If the columns differ, the test fails.
 #'
 #' @details test_fields_match briefly checks that data files match, but you should really run `test_file_name_match()` before you run this test.
 #'
@@ -463,9 +463,9 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 
 #' Test Numeric Fields
 #'
-#' @description test_numeric_fields verifies that all columns listed as numeric in the metadata are free of non-numeric data.
+#' @description `test_numeric_fields()` verifies that all columns listed as numeric in the metadata are free of non-numeric data.
 #'
-#' @details "NA" and missing data codes documented in the metadata will *not* cause this test to fail. Note that this test assumes that the column types that are in the metadata are the intended types, i.e., if your metadata says a column is text and it should actually be numeric, it will not be caught by this test.
+#' @details "NA" and missing data codes documented in the metadata will *not* cause this test to fail. Note that this test assumes that the column types that are in the metadata are the intended types, i.e., if your metadata says a column is text and it should actually be numeric, it will not be caught by this test. On the other hand, if your metadata indicates a text column is numeric, the function will generate an error.
 #'
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
@@ -561,7 +561,7 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 
 #' Test Date Range
 #'
-#' @description test_date_range verifies that dates in the dataset are consistent with the date range in the metadata.
+#' @description `test_date_range()` verifies that dates in the dataset are consistent with the date range in the metadata.
 #'
 #' @details This function checks columns that are identified as date/time in the metadata. It throws a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and throw an error.
 #'
@@ -726,7 +726,8 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
 }
 
 #' Check for Taxonomic Coverage
-#' Checks if taxonomic coverage element is present in metadata. Does not perform any validation of taxonomic coverage information.
+#'
+#' @description Checks if taxonomic coverage element is present in metadata. Does not perform any validation of taxonomic coverage information.
 #'
 #' @inheritParams test_metadata_version
 #'
@@ -751,7 +752,8 @@ test_taxonomic_cov <- function(metadata = load_metadata(directory)) {
 }
 
 #' Check for Geographic Coverage
-#' Checks if geographic coverage element is present in metadata. Does not perform any validation of geographic coverage information.
+#'
+#' @description Checks if geographic coverage element is present in metadata. Does not perform any validation of geographic coverage information.
 #'
 #' @inheritParams test_metadata_version
 #'
