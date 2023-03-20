@@ -13,10 +13,10 @@ test_dup_meta_entries(metadata = load_metadata(here::here()))
 Invisibly returns \code{metadata}.
 }
 \description{
-test_dup_meta_entries test to see whether there are duplicate filenames listed for the data files in (EML) metadata.
+\code{test_dup_meta_entries()} tests to see whether there are duplicate filenames listed for the data files in (EML) metadata.
 }
 \details{
-specifically, test_dup_meta_entries looks at the 'physical' elements of a metadata file, which describe each data file, and asks whether there are duplicates entries under the objectName child element, which is where the file name for each data file is stored.
+specifically, \code{test_dup_meta_entries()} looks at the 'physical' elements of a metadata file, which describe each data file, and asks whether there are duplicates entries under the objectName child element, which is where the file name for each data file is stored. Duplicate entries will result in the test failing with an error.
 }
 \examples{
 meta <- load_metadata(DPchecker_example("BICY_veg"))

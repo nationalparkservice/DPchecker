@@ -2,8 +2,7 @@
 % Please edit documentation in R/tabular_data_congruence.R
 \name{test_publisher}
 \alias{test_publisher}
-\title{Check for Publisher
-Checks if publisher information is present in metadata, with option to require valid NPS publisher information.}
+\title{Check for Publisher}
 \usage{
 test_publisher(metadata = load_metadata(directory), require_nps = FALSE)
 }
@@ -16,8 +15,7 @@ test_publisher(metadata = load_metadata(directory), require_nps = FALSE)
 Invisibly returns \code{metadata}.
 }
 \description{
-Check for Publisher
-Checks if publisher information is present in metadata, with option to require valid NPS publisher information.
+\code{test_publisher()} checks if publisher information is present in metadata, with option to require valid NPS publisher information. If the publisher information is present, the test passes. If the publisher information is absent, the test fails with an error. If require_nps is set to TRUE (defaults to FALSE), the test will also ensure that a valid NPS publisher information is present. In this case, even if the publisher element is present, the test will fail with an error unless the publisher is the NPS (and all the publisher fields exactly match the expected information for NPS data packages).
 }
 \examples{
 meta <- load_metadata(DPchecker_example("BICY_veg"))

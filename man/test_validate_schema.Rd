@@ -13,7 +13,7 @@ test_validate_schema(metadata = load_metadata(here::here()))
 Invisibly returns \code{metadata}.
 }
 \description{
-test_validate_schema inspects a metadata object loaded into R and determines whether it is schema-valid.
+\code{test_validate_schema()} inspects a metadata object loaded into R and determines whether it is schema-valid. If the test fails, the functio produces an error message.
 }
 \details{
 currently, only EML is supported. For now this is just a wrapper form EML::eml_validate().

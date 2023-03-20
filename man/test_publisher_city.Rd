@@ -7,13 +7,13 @@
 test_publisher_city(metadata = load_metadata(directory))
 }
 \arguments{
-\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.#'}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter is not provided, it defaults to calling \code{load_metadata} in the current project directory.#'}
 }
 \value{
 invisibly returns \code{metadata}
 }
 \description{
-Inspects the publisher address in EML metadata. Returns an error if the city element is empty. Returns a warning if it is not "Fort Collins". Passes test if it is "Fort Collins"
+\code{test_publisher_city()} inspects the publisher address in EML metadata. It fails with an an error if the city element is empty. It fails with a warning if it is not "Fort Collins". The test passes if it is "Fort Collins"
 }
 \examples{
 \dontrun{

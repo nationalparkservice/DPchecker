@@ -13,7 +13,7 @@ test_metadata_version(metadata = load_metadata(here::here()))
 Invisibly returns \code{metadata}.
 }
 \description{
-test_metadata_version determines whether the version of the metadata supplied meets the current criteria for an NPS data package.
+\code{test_metadata_version()} determines whether the version of the metadata supplied meets the current criteria for an NPS data package.
 }
 \details{
 currently only EML is supported. EML must be version >= 2.2.0.

@@ -2,8 +2,7 @@
 % Please edit documentation in R/tabular_data_congruence.R
 \name{test_doi}
 \alias{test_doi}
-\title{Check for DOI
-Checks if DOI is present in metadata. Does not currently validate DOI.}
+\title{Check for DOI}
 \usage{
 test_doi(metadata = load_metadata(directory))
 }
@@ -14,10 +13,9 @@ test_doi(metadata = load_metadata(directory))
 Invisibly returns \code{metadata}.
 }
 \description{
-Check for DOI
-Checks if DOI is present in metadata. Does not currently validate DOI.
+\code{test_doi()} checks whether a DOI for the data package is present in metadata. It does not currently validate DOI. If a DOI is present, the test passes. If a DOI is not present, the test fails with a warning.
 }
 \examples{
 meta <- load_metadata(DPchecker_example("BICY_veg"))
-test_geographic_cov(meta)
+test_doi(meta)
 }

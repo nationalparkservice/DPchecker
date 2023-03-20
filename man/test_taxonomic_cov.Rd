@@ -2,8 +2,7 @@
 % Please edit documentation in R/tabular_data_congruence.R
 \name{test_taxonomic_cov}
 \alias{test_taxonomic_cov}
-\title{Check for Taxonomic Coverage
-Checks if taxonomic coverage element is present in metadata. Does not perform any validation of taxonomic coverage information.}
+\title{Check for Taxonomic Coverage}
 \usage{
 test_taxonomic_cov(metadata = load_metadata(directory))
 }
@@ -14,8 +13,7 @@ test_taxonomic_cov(metadata = load_metadata(directory))
 Invisibly returns \code{metadata}.
 }
 \description{
-Check for Taxonomic Coverage
-Checks if taxonomic coverage element is present in metadata. Does not perform any validation of taxonomic coverage information.
+'test_taxnomomic_cov()` checks whether taxonomic coverage element is present in metadata. It does not perform any validation of taxonomic coverage information. If taxonomic coverage is present, the test passes. If it is absent, the test fails with a warning.
 }
 \examples{
 meta <- load_metadata(DPchecker_example("BICY_veg"))
