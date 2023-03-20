@@ -781,7 +781,8 @@ test_geographic_cov <- function(metadata = load_metadata(directory)) {
   return(invisible(metadata))
 }
 
-#' Check for DOI
+#' Check for presence of a Digital Object Identifier
+#'
 #' @description `test_doi()` checks whether a DOI for the data package is present in metadata. It does not currently validate DOI. If a DOI is present, the test passes. If a DOI is not present, the test fails with a warning.
 #'
 #' @inheritParams test_metadata_version
