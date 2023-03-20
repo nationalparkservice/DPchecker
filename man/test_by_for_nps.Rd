@@ -7,7 +7,7 @@
 test_by_for_nps(metadata = load_metadata(directory))
 }
 \arguments{
-\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.#'}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter is not provided, it defaults to calling \code{load_metadata} in the current project directory.#'}
 }
 \value{
 invisibly returns \code{metadata}
@@ -16,7 +16,7 @@ invisibly returns \code{metadata}
 Test for "by or for NPS"
 }
 \details{
-test for presence of the "by or for NPS" field. Error if data are missing from metadata. Warns if the metadata indicate that the data were not created by or for the NPS (as this is expected to be relatively rare)
+\code{test_by_for_nps()} test for presence of the "by or for NPS" field. The test fails with an error if the information is missing from metadata. The test fails with a warning if the metadata indicate that the data were not created by or for the NPS (as this is expected to be relatively rare). Otherwise the test passes.
 }
 \examples{
 \dontrun{

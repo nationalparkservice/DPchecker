@@ -146,19 +146,20 @@ data package reviewers.</p>
 <p>Passing a test is indicated with a green check mark (<span style="color: green;"><span class="math inline">\(\checkmark\)</span></span>). When a test fails, it
 may fail with an error (a red <span style="color: red;"><span class="math inline">\(\times\)</span></span>) or a warning (a yellow
 exclamation mark, <span style="color: yellow;">!</span>).</p>
-<p>Errors must be addressed prior to upload. Warnings are helpful
-indications that the data producer may want to look into something. It
-may not be wrong, but it might be unusual. For instance, if a data
-package lacked taxonomic or geographic coverage it would fail the
-taxonomic or geographic coverage test with a warning because while
-lacking taxonomy or geography is unusual, it may not be incorrect.
-Warnings may also be used to alert data package creators of best
-practices - for instance if an abstract is less than 20 words long the
-test it will produce a warning suggesting the data package creator
-consider writing a more informative abstract.</p>
+<p>Errors must be addressed prior to upload. <strong>Please modify your
+data package so that DPchecker does not return any errors.</strong></p>
+<p>Warnings are helpful indications that the data package creator may
+want to look into something. It may not be wrong, but it might be
+unusual. For instance, if a data package lacked taxonomic or geographic
+coverage it would fail the taxonomic or geographic coverage test with a
+warning because while lacking taxonomy or geography is unusual, it may
+not be incorrect. Warnings may also be used to alert data package
+creators of best practices - for instance if an abstract is less than 20
+words long the test will produce a warning suggesting the data package
+creator consider writing a more informative abstract.</p>
 </div>
 <div class="section level2">
-<h2 id="test-conducted">Test conducted<a class="anchor" aria-label="anchor" href="#test-conducted"></a>
+<h2 id="tests-conducted">Tests conducted<a class="anchor" aria-label="anchor" href="#tests-conducted"></a>
 </h2>
 <p>DPchecker v0.3.0 runs two types of tests: metadata only tests and
 tests to determine whether the metadata and data files are congruent.
@@ -170,7 +171,7 @@ which they are run are listed below.</p>
 </h3>
 <p>These tests determine whether the metadata is schema valid and
 adheres to some rules for data packages. They only require the
-*metadata.xml file to run and do not require that the data files be
+*_metadata.xml file to run and do not require that the data files be
 present. These include:</p>
 <ul>
 <li>The metadata file is schema valid (<a href="../reference/test_validate_schema.html"><code>test_validate_schema()</code></a>)</li>
@@ -203,7 +204,7 @@ repositories and search engines such as <a href="https://datacite.org/" class="e
 search</a>. Therefore, these checks may throw warnings with suggestions
 on best practices - such as removing stray characters from abstracts or
 suggesting a more informative title if your title is unusually short.
-Required EML element tests only require the *metadata.xml file to run
+Required EML element tests only require the *_metadata.xml file to run
 and do not require that the data files be present.</p>
 <ul>
 <li>Publication date is present and in the correct ISO-8601 format (<a href="../reference/test_pub_date.html"><code>test_pub_date()</code></a>)</li>
@@ -228,9 +229,9 @@ them (<a href="../reference/test_storage_type.html"><code>test_storage_type()</c
 <h3 id="metadata-and-data-congruence">Metadata and Data Congruence<a class="anchor" aria-label="anchor" href="#metadata-and-data-congruence"></a>
 </h3>
 <p>These files check to make sure the values and fields in the metadata
-files accurately correspond to the data files supplied. These test
+file accurately corresponds to the data files supplied. These test
 require the entire data package - both the *_metadata.xml file and all
-data files (*.csv) are present.</p>
+data files (*.csv) must be present.</p>
 <ul>
 <li>All data files are listed in metadata and all metadata file names
 refer to data files (<a href="../reference/test_file_name_match.html"><code>test_file_name_match()</code></a>)</li>

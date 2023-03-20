@@ -13,7 +13,7 @@ test_valid_fieldnames(metadata = load_metadata(here::here()))
 Invisibly returns \code{metadata}.
 }
 \description{
-test_valid_fieldnames checks for field names in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter.
+\code{test_valid_fieldnames()} checks for field names (e.g data column names) in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter. If invalid column names exist, the test will fail with a warning, otherwise the test passes.
 }
 \details{
 You should run \code{test_fields_match()} before you run this function, since this function only checks the field names in the metadata.

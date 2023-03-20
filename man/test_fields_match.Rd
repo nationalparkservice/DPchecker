@@ -18,7 +18,7 @@ test_fields_match(
 Invisibly returns \code{metadata}.
 }
 \description{
-test_fields_match compares the attributes of each dataTable within the EML metadata to the columns in the corresponding .csv. If the columns have the same names and order, the test passes. If the columns differ, the test fails.
+\code{test_fields_match()} compares the attributes of each dataTable within the EML metadata to the columns in the corresponding .csv. If the columns have the same names and order, the test passes. If the columns differ, the test fails with an error.
 }
 \details{
 test_fields_match briefly checks that data files match, but you should really run \code{test_file_name_match()} before you run this test.

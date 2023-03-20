@@ -51,7 +51,7 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>metadata</dt>
-<dd><p>The metadata object returned by <code>load_metadata</code>. If parameter not provided, defaults to calling <code>load_metadata</code> in current project directory.#'</p></dd>
+<dd><p>The metadata object returned by <code>load_metadata</code>. If parameter is not provided, it defaults to calling <code>load_metadata</code> in the current project directory.#'</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -64,13 +64,13 @@
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>error if the publisher name is missing, warning if the publisher name is not "National Park Service". Passes test if publisher name is "National Park Service"</p>
+    <p><code>test_publisher_name()</code> test for the presence of the data package publisher name. It fails with an error if the publisher name is missing, and fails with a warning if the publisher name is not "National Park Service" (as this is expected to be rare). Passes test if publisher name is "National Park Service"</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="cn">FALSE</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span><span class="fu">test_publishername</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">test_publisher_name</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>

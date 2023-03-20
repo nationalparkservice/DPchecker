@@ -15,10 +15,12 @@ load_metadata(directory = here::here(), inform_success = FALSE)
 an R-object formatted as EML metadata.
 }
 \description{
-load_metadata loads the metadata file from a given path or directory.
+\code{load_metadata()} loads the metadata file from a given path or directory.
 }
 \details{
-given a path or directory - default is the working directory -  load_metadata looks for files with the ending *_metadata.xml. The function quits and warns the user if no such files are found or if more than one such file is found. If only one metadata file is found, it checked for one of 3 formats: FGDC, ISO, or EML. Currently only EML is supported and the function will warn the user and quit if non-EML metadata is found. The EML metadata file is loaded into R's work space for future use during congruence checking.
+Given a path or directory - default is the working directory -  \code{load_metadata()} looks for files with the ending *_metadata.xml. The function quits with an error and tells the user if no such files are found or if more than one such file is found. If only one metadata file is found, it is checked for one of 3 formats: FGDC, ISO, or EML. Currently only EML is supported and the function will fail with an error, inform the user, and quit if non-EML metadata is found. The EML metadata file is loaded into R's work space for future use during congruence checking.
+
+In the context of National Park Service data packages, this function can be slightly easier to use for loading metadata into R than \code{EML::read_eml()} because it does require a filename or type be specified.
 }
 \examples{
 data_pkg_dir <- DPchecker_example("BICY_veg")

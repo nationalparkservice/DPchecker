@@ -7,13 +7,13 @@
 test_dp_title(metadata = load_metadata(directory))
 }
 \arguments{
-\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.#'}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter is not provided, it defaults to calling \code{load_metadata} in the current project directory.#'}
 }
 \value{
 invisibly returns \code{metadata}
 }
 \description{
-tests EML metadata for presence of a data package title. Warns if the title is > 15 words.
+\code{test_dp_title()} tests EML metadata for presence of a data package title. The test fails with an error if the title is absent. The test fails with a warning if the title is > 15 words. Otherwise, the test passes.
 }
 \examples{
 \dontrun{

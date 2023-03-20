@@ -7,7 +7,7 @@
 test_publisher_name(metadata = load_metadata(directory))
 }
 \arguments{
-\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.#'}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter is not provided, it defaults to calling \code{load_metadata} in the current project directory.#'}
 }
 \value{
 invisibly returns \code{metadata}
@@ -16,10 +16,10 @@ invisibly returns \code{metadata}
 Tests EML metadata for the publisher name
 }
 \details{
-error if the publisher name is missing, warning if the publisher name is not "National Park Service". Passes test if publisher name is "National Park Service"
+\code{test_publisher_name()} test for the presence of the data package publisher name. It fails with an error if the publisher name is missing, and fails with a warning if the publisher name is not "National Park Service" (as this is expected to be rare). Passes test if publisher name is "National Park Service"
 }
 \examples{
 \dontrun{
-test_publishername()
+test_publisher_name()
 }
 }

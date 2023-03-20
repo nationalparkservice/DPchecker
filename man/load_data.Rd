@@ -13,7 +13,7 @@ load_data(directory = here::here())
 a tibble of .csvs
 }
 \description{
-load_data inspects the working directory for data files. Loads all existing data files into a tibble.
+\code{load_data()} inspects the working directory for data files. Loads all existing data files into a tibble.
 }
 \details{
 loads all data files in a specified directory (default is the working directory) into a tibble for later use in congruence checking. Returns the user to the working directory upon exit. Currently only supports .csv files.

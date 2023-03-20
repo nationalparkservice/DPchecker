@@ -1,8 +1,8 @@
 #' Test publication date presence and ISO-8601 formatting
 #'
-#' @description tests for presence and ISO-8601 formatting of the publication date. Also tests whether the publication date is within a reasonable bounds; i.e. not a date prior to the beginning of the data package Reference Type (after 2022) and not in a future year.
+#' @description `test_pub_date()` tests for presence and ISO-8601 formatting of the publication date. Also tests whether the publication date is within a reasonable bounds; i.e. not a date prior to the beginning of the data package Reference Type (after 2022) and not in a future year. If the publication date is missing or improperly formatted, the test fails with an error. If the publication date is outside a reasonable range, the test fails with a warning. Otherwiset the test passes.
 #'
-#' @param metadata The metadata object returned by `load_metadata`. If parameter not provided, defaults to calling `load_metadata` in current project directory.#'
+#' @param metadata The metadata object returned by `load_metadata`. If parameter is not provided, it defaults to calling `load_metadata` in the current project directory.#'
 #' @return invisibly returns `metadata`
 #' @export
 #'
@@ -37,11 +37,11 @@ test_pub_date <- function(metadata = load_metadata(directory)) {
     }
     if(!is.na(pub_year)){
       if(pub_year <= 2022){
-        cli::cli_abort(c("x" = "Publication date, {pub_year}, predates the Data Package Reference Type."))
+        cli::cli_inform(c("!" = "Publication date, {pub_year}, predates the Data Package Reference Type."))
         z <- "error"
       }
       if(pub_year > curr_year){
-        cli::cli_abort(c("x" = "Publication date, {pub_year}, exceeds the current year."))
+        cli::cli_inform(c("!" = "Publication date, {pub_year}, exceeds the current year."))
         z <- "error"
       }
     }
@@ -88,7 +88,7 @@ test_pub_date <- function(metadata = load_metadata(directory)) {
 
 #' Test data package title
 #'
-#' @description tests EML metadata for presence of a data package title. Warns if the title is > 15 words.
+#' @description `test_dp_title()` tests EML metadata for presence of a data package title. The test fails with an error if the title is absent. The test fails with a warning if the title is > 15 words. Otherwise, the test passes.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -128,7 +128,7 @@ test_dp_title <- function(metadata = load_metadata(directory)) {
 
 #' Test for "by or for NPS"
 #'
-#' @details test for presence of the "by or for NPS" field. Error if data are missing from metadata. Warns if the metadata indicate that the data were not created by or for the NPS (as this is expected to be relatively rare)
+#' @details `test_by_for_nps()` test for presence of the "by or for NPS" field. The test fails with an error if the information is missing from metadata. The test fails with a warning if the metadata indicate that the data were not created by or for the NPS (as this is expected to be relatively rare). Otherwise the test passes.
 #'
 #' @inheritParams test_pub_date
 #' @return invisibly returns `metadata`
@@ -164,7 +164,7 @@ test_by_for_nps <- function(metadata = load_metadata(directory)) {
 
 #' Tests EML metadata for the publisher name
 #'
-#' @details error if the publisher name is missing, warning if the publisher name is not "National Park Service". Passes test if publisher name is "National Park Service"
+#' @details `test_publisher_name()` test for the presence of the data package publisher name. It fails with an error if the publisher name is missing, and fails with a warning if the publisher name is not "National Park Service" (as this is expected to be rare). Passes test if publisher name is "National Park Service"
 #'
 #' @inheritParams test_pub_date
 #'
@@ -172,7 +172,7 @@ test_by_for_nps <- function(metadata = load_metadata(directory)) {
 #'
 #' @examples
 #' \dontrun{
-#' test_publishername()
+#' test_publisher_name()
 #' }
 test_publisher_name <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)
@@ -196,9 +196,9 @@ test_publisher_name <- function(metadata = load_metadata(directory)) {
 }
 
 
-#' Test EML metadata for publisher state - made redundant by test_publisher
+#' Test EML metadata for publisher state
 #'
-#' @description Inspects the publisher address in EML metadata. Returns an error if the administrativeArea (state) element is empty. Returns a warning if it is not "CO". Passes test if it is "CO".
+#' @description `test_publisher_state()` inspects the publisher address in EML metadata. The test faisl with an error if the administrativeArea (state) element is empty. The test fails with a warning if it is not "CO" (again, because this is expected to be exceedingly rare). The test passes if it is "CO".
 #'
 #' @inheritParams test_pub_date
 #'
@@ -228,9 +228,9 @@ test_publisher_state <- function(metadata = load_metadata(directory)) {
   return(invisible(metadata))
 }
 
-#' Test EML metadata for publisher city - made redundant by test_publisher
+#' Test EML metadata for publisher city
 #'
-#' @description Inspects the publisher address in EML metadata. Returns an error if the city element is empty. Returns a warning if it is not "Fort Collins". Passes test if it is "Fort Collins"
+#' @description `test_publisher_city()` inspects the publisher address in EML metadata. It fails with an an error if the city element is empty. It fails with a warning if it is not "Fort Collins". The test passes if it is "Fort Collins"
 #'
 #' @inheritParams test_pub_date
 #'
@@ -263,7 +263,7 @@ test_publisher_city <- function(metadata = load_metadata(directory)) {
 
 #' Test EML abstract
 #'
-#' @description Inspects EML for presence of a data package abstract. Fails if absent. If present, warns if the abstract is <20 words, >250 words, or contains a subset of common characters that indicate improper formatting. Otherwise passes.
+#' @description `test_dp_abstract()` inspects EML for presence of a data package abstract. The test Fails with an error if the abstract is absent. If the abstract is present, the test fails with a warning if the abstract is <20 words, >250 words, or contains a subset of common characters that indicate improper formatting. Otherwise the test passes.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -334,7 +334,7 @@ test_dp_abstract <- function(metadata = load_metadata(directory)){
 
 #' Test presence of file descriptions
 #'
-#' @description Tests for the presence of file descriptions (entityDescription) fields. It fails if any one or all of the \<entityDescription\> fields are empty in a dataTable. It fails if any two or more file descriptions are identical. Otherwise the test passes. The test generates a warning for each file description that is longer than 10 words or shorter than three words.
+#' @description `test_file_descript()` tests for the presence of file descriptions (entityDescription) fields. It fails with an error if any one or all of the entityDescription fields are empty in a dataTable. It fails with an error if any two or more file descriptions are identical. The test fails with a warning if for each file description that is longer than 10 words or shorter than three words. Otherwise the test passes.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -401,7 +401,7 @@ test_file_descript <- function(metadata = load_metadata(directory)) {
 
 #' Test for CUI dissemination code
 #'
-#' @description `test_cui_dissemination()` examines EML metadata for the presence of a Controlled Unclassified Information (CUI) dissemination code. The function returns an error if the code does not exist or does not match a list of valid codes. A present, valid code results in a pass.  however, if the code is not "PUBLIC" the user is warned. Otherwise the
+#' @description `test_cui_dissemination()` examines EML metadata for the presence of a Controlled Unclassified Information (CUI) dissemination code. The function fails with an an error if the code does not exist or does not match a list of valid codes. If the valid code is not "PUBLIC" the test will produce a warning. A valid code results in a pass.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -436,7 +436,7 @@ test_cui_dissemination <- function(metadata = load_metadata(directory)) {
 
 #' Test for presence of a license name
 #'
-#' @description `test_license()` examines the licenseName element of EML metadata. If there is no license name, the test fails. If the license name does not match a list of valid license names, the test fails. If the metadata contain a valid license name, but the license name and CUI dissemination code do not agree, the test fails. Otherwise, the test passes.  Additionally, if the license name is not "Public Domain" or "CC0 1.0 Universal", the function throws a warning that the data package is not public.
+#' @description `test_license()` examines the licenseName element of EML metadata. If there is no license name, the test fails with ab error. If the license name does not match a list of valid license names, the test fails. If the metadata contain a valid license name, but the license name and CUI dissemination code do not agree, the test fails with an error. Otherwise, the test passes.  Additionally, if the license name is not "Public Domain" or "CC0 1.0 Universal", the function will produce a warning that the data package is not public.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -483,7 +483,7 @@ test_license <- function(metadata = load_metadata(directory)) {
 
 #' Test for presence of Intellectual Rights
 #'
-#' @description `test_int_rights()` test for the presence of text within the intellectualRights element in EML formatted metadata. If text if present, the test passes. Otherwise, the test fails. `test_int_rights()` makes no attempt to parse the text or test whether it properly coincides with the CUI dissemination codes or licenseName in the metadata. This is a simple presence/absence test.
+#' @description `test_int_rights()` tests for the presence of text within the intellectualRights element in EML formatted metadata. If text if present, the test passes. Otherwise, the test fails. `test_int_rights()` makes no attempt to parse the text or test whether it properly coincides with the CUI dissemination codes or licenseName in the metadata. This is a simple presence/absence test.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -509,7 +509,7 @@ test_int_rights <- function(metadata = load_metadata(directory)) {
 
 #' Test metadata for attribute definitions
 #'
-#' @description `test_attribute_defs()` extracts all attributeNames and attributeDefinitions from EML metadata. It tests to make sure there are the same number of attributeNames and attributeDefinitions. If true, the test passes. If not, it produces an error. Note bene: this test ONLY looks at the metadata, it does NOT look at the data files. Passing this test does not mean that all data columns have attributes in the metadata associated with them. To test that, see `test_fields_match()`.
+#' @description `test_attribute_defs()` extracts all attributeNames and attributeDefinitions from EML metadata. It tests to make sure there are the same number of attributeNames and attributeDefinitions. If true, the test passes. If not, it fails with an error. This test ONLY looks at the metadata, it does NOT look at the data files. Passing this test does not mean that all data columns have attributes in the metadata associated with them. To test that, see `test_fields_match()`.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -557,7 +557,11 @@ test_attribute_defs <- function(metadata = load_metadata(directory)) {
 
 #' Tests for attribute storage type
 #'
-#' @description `test_storage_type()` checks to see if there are the same number of attributes (attributeName) and storageTypes in the metadata. Equal numbers of elements will pass; unequal will generate an error. `test_storage_type()` does NOT attempt to verify if the number of storageType elements matches the number of columns in the data package data files (for that functionality, use `test_fields_match()`). `test_storage_type()` does verify that the storageType is valid; i.e. is a member of an accepted list of possible storage types. Currently: string, float, date, factor, or characters. Validity for this test is based solely on observed ezEML/EAL output (in theory any string in storageType is schema-valid). `test_storage_type()` does NOT attempt to verify that the value in storageType logically matches the type data in the corresponding column.
+#' @description `test_storage_type()` checks to see if there are the same number of attributes (attributeName) and storageTypes in the metadata. Equal numbers of elements will pass; unequal numbers will fail the test with an error. `test_storage_type()` does NOT attempt to verify if the number of storageType elements matches the number of columns in the data package data files (for that functionality, use `test_fields_match()`).
+#'
+#' `test_storage_type()` verifies that the storageType is valid; i.e. is a member of an accepted list of possible storage types. Currently these are: string, float, date, factor, or characters. Validity for this test is based solely on observed ezEML/EAL output (in theory any string in storageType is schema-valid). Invalid storageTypes will result in a warning.
+#'
+#' `test_storage_type()` does NOT attempt to verify that the value in storageType logically matches the type data in the corresponding column.
 #'
 #' @inheritParams test_pub_date
 #'

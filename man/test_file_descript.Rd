@@ -7,13 +7,13 @@
 test_file_descript(metadata = load_metadata(directory))
 }
 \arguments{
-\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.#'}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter is not provided, it defaults to calling \code{load_metadata} in the current project directory.#'}
 }
 \value{
 invisibly returns \code{metadata}
 }
 \description{
-\code{test_file_descriptions()} tests for the presence of file descriptions (\if{html}{\out{<entityDescription>}}) fields. It fails if any one or all of the \if{html}{\out{<entityDescription>}} fields are empty in a dataTable. It fails if any two or more file descriptions are identical. Otherwise the test passes. The test generates a warnign for each file description that is longer than 10 words or shorter than three words.
+\code{test_file_descript()} tests for the presence of file descriptions (entityDescription) fields. It fails with an error if any one or all of the entityDescription fields are empty in a dataTable. It fails with an error if any two or more file descriptions are identical. The test fails with a warning if for each file description that is longer than 10 words or shorter than three words. Otherwise the test passes.
 }
 \examples{
 \dontrun{

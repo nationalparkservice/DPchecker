@@ -16,7 +16,7 @@ A character vector of date/time format strings that can be parsed by \code{readr
 Convert EML date/time format string to one that R can parse
 }
 \details{
-This is not a sophisticated function. If the EML format string is not valid, it will happily and without complaint return an R format string that will break your code. You have been warned.
+\code{convert_datetime_format()} is not a sophisticated function. If the EML format string is not valid, it will happily and without complaint return an R format string that will break your code. You have been warned.
 }
 \examples{
 convert_datetime_format("MM/DD/YYYY")
