@@ -67,9 +67,11 @@ DPchecker tests are designed to help data package creators produce high quality,
 
 Passing a test is indicated with a green check mark (<span style="color: green;">$\checkmark$</span>). When a test fails, it may fail with an error (a red <span style="color: red;">$\times$</span>) or a warning (a yellow exclamation mark, <span style="color: yellow;">!</span>). 
 
-Errors must be addressed prior to upload. Warnings are helpful indications that the data producer may want to look into something. It may not be wrong, but it might be unusual. For instance, if a data package lacked taxonomic or geographic coverage it would fail the taxonomic or geographic coverage test with a warning because while lacking taxonomy or geography is unusual, it may not be incorrect. Warnings may also be used to alert data package creators of best practices - for instance if an abstract is less than 20 words long the test it will produce a warning suggesting the data package creator consider writing a more informative abstract.
+Errors must be addressed prior to upload. **Please modify your data package so that DPchecker does not return any errors.** 
 
-# Test conducted
+Warnings are helpful indications that the data package creator may want to look into something. It may not be wrong, but it might be unusual. For instance, if a data package lacked taxonomic or geographic coverage it would fail the taxonomic or geographic coverage test with a warning because while lacking taxonomy or geography is unusual, it may not be incorrect. Warnings may also be used to alert data package creators of best practices - for instance if an abstract is less than 20 words long the test it will produce a warning suggesting the data package creator consider writing a more informative abstract.
+
+# Tests conducted
 
 DPchecker v0.3.0 runs two types of tests: metadata only tests and tests to determine whether the metadata and data files are congruent.  Metadata tests can be broken down in to two sub-categories, metadata compliance and metadata completeness. The tests run and the order in which they are run are listed below.
 
@@ -108,7 +110,7 @@ These tests ensure that the EML elements necessary for DataStore to properly ext
 * All attribute storage types are valid values ([`test_storage_type()`](../reference/test_storage_type.html))
 
 ## Metadata and Data Congruence
-These files check to make sure the values and fields in the metadata files accurately correspond to the data files supplied. These test require the entire data package - both the \*_metadata.xml file and all data files (*.csv) are present.
+These files check to make sure the values and fields in the metadata file accurately corresponds to the data files supplied. These test require the entire data package - both the \*_metadata.xml file and all data files (*.csv) must be present.
 
 * All data files are listed in metadata and all metadata file names refer to data files ([`test_file_name_match()`](../reference/test_file_name_match.html))
 * All columns in data match all columns in metadata ([`test_fields_match()`](../reference/test_fields_match.html))
