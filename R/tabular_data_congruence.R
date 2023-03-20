@@ -1,8 +1,10 @@
 #' Load Metadata
 #'
-#' @description load_metadata loads the metadata file from a given path or directory.
+#' @description `load_metadata()` loads the metadata file from a given path or directory.
 #'
-#' @details given a path or directory - default is the working directory -  load_metadata looks for files with the ending *_metadata.xml. The function quits and warns the user if no such files are found or if more than one such file is found. If only one metadata file is found, it checked for one of 3 formats: FGDC, ISO, or EML. Currently only EML is supported and the function will warn the user and quit if non-EML metadata is found. The EML metadata file is loaded into R's work space for future use during congruence checking.
+#' @details Given a path or directory - default is the working directory -  `load_metadata()` looks for files with the ending *_metadata.xml. The function quits with an error and tells the user if no such files are found or if more than one such file is found. If only one metadata file is found, it is checked for one of 3 formats: FGDC, ISO, or EML. Currently only EML is supported and the function will fail with an error, inform the user, and quit if non-EML metadata is found. The EML metadata file is loaded into R's work space for future use during congruence checking.
+#'
+#' In the context of National Park Service data packages, this function can be slightly easier to use for loading metadata into R than `EML::read_eml()` because it does require a filename or type be specified.
 #'
 #' @param directory the directory where the metadata file is found - i.e. your data package. Defaults to your current project directory.
 #' @param inform_success Boolean indicating whether to display a message when metadata is successfully loaded.
@@ -56,7 +58,7 @@ load_metadata <- function(directory = here::here(), inform_success = FALSE) {
 
 #' Load Data
 #'
-#' @description load_data inspects the working directory for data files. Loads all existing data files into a tibble.
+#' @description `load_data()` inspects the working directory for data files. Loads all existing data files into a tibble.
 #'
 #' @details loads all data files in a specified directory (default is the working directory) into a tibble for later use in congruence checking. Returns the user to the working directory upon exit. Currently only supports .csv files.
 #'
@@ -81,7 +83,7 @@ load_data <- function(directory = here::here()) {
 
 #' EML Version Check
 #'
-#' @description test_metadata_version determines whether the version of the metadata supplied meets the current criteria for an NPS data package.
+#' @description `test_metadata_version()` determines whether the version of the metadata supplied meets the current criteria for an NPS data package.
 #'
 #' @details currently only EML is supported. EML must be version >= 2.2.0.
 #'
@@ -131,7 +133,7 @@ test_metadata_version <- function(metadata = load_metadata(here::here())) {
 
 #' Validate Metadata Schema
 #'
-#' @description test_validate_schema inspects a metadata object loaded into R and determines whether it is schema-valid.
+#' @description `test_validate_schema()` inspects a metadata object loaded into R and determines whether it is schema-valid. If the test fails, the functio produces an error message.
 #'
 #' @details currently, only EML is supported. For now this is just a wrapper form EML::eml_validate().
 #'
@@ -168,9 +170,9 @@ test_validate_schema <- function(metadata = load_metadata(here::here())) {
 
 #' Footer Check
 #'
-#' @description test_footer checks the metadata files to determine whether data files contain footer lines or not.
+#' @description `test_footer()` checks the metadata files to determine whether data files contain footer lines or not.
 #'
-#' @details If footer lines are not present, the data package passes the test. If footer lines are present, the data package fails the test and the user is instructed to remove footer lines prior to data package upload. Currently only EML metadata are supported.
+#' @details If footer lines are not present, the data package passes the test. If footer lines are present, the data package fails the test with an error and the user is instructed to remove footer lines prior to data package upload. Currently only EML metadata are supported.
 #'
 #' @inheritParams test_metadata_version
 #'
@@ -195,9 +197,9 @@ test_footer <- function(metadata = load_metadata(here::here())) {
 
 #' Header Check
 #'
-#' @description test_header_num checks the metadata files to ensure that each data file contains exactly one header row.
+#' @description `test_header_num()` checks the metadata files to ensure that each data file contains exactly one header row.
 #'
-#' @details test_header_num examines the numHeaderLines element from EML (currently only EML is supported) metadata to determine how many header rows there are. If there are no header rows or if there is more than one header row, the test fails. The test also fails if there is no information about the number of header rows.
+#' @details `test_header_num()` examines the numHeaderLines element from EML (currently only EML is supported) metadata to determine how many header rows there are. If there are no header rows or if there is more than one header row, the test fails with an error. The test also fails with an error if there is no information about the number of header rows.
 #'
 #' @inheritParams test_metadata_version
 #'
@@ -239,9 +241,9 @@ test_header_num <- function(metadata = load_metadata(here::here())) {
 
 #' Field Delimiter Check
 #'
-#' @description test_delimiter checks the metadata file and ensures that each data file has a field delimiter with exactly one character (e.g. ", ").
+#' @description `test_delimiter()` checks the metadata file and ensures that each data file has a field delimiter with exactly one character (e.g. ", ").
 #'
-#' @details test_delimiter examines the fieldDelimiter element from EML (currently only EML is supported) metadata to determine how many characters there are. If there is no fieldDelimiter element, the test returns an error. If the field delimiter is anything other than exactly one character in length, the test returns an error.
+#' @details `test_delimiter()` examines the fieldDelimiter element from EML (currently only EML is supported) metadata to determine how many characters there are. If there is no fieldDelimiter element, the test returns an error. If the field delimiter is anything other than exactly one character in length, the test returns an error.
 #'
 #' @inheritParams test_metadata_version
 #'
@@ -295,9 +297,9 @@ test_delimiter <- function(metadata = load_metadata(here::here())) {
 
 #' Test Metadata for Duplicate Filenames
 #'
-#' @description test_dup_meta_entries test to see whether there are duplicate filenames listed for the data files in (EML) metadata.
+#' @description `test_dup_meta_entries()` tests to see whether there are duplicate filenames listed for the data files in (EML) metadata.
 #'
-#' @details specifically, test_dup_meta_entries looks at the 'physical' elements of a metadata file, which describe each data file, and asks whether there are duplicates entries under the objectName child element, which is where the file name for each data file is stored.
+#' @details specifically, `test_dup_meta_entries()` looks at the 'physical' elements of a metadata file, which describe each data file, and asks whether there are duplicates entries under the objectName child element, which is where the file name for each data file is stored. Duplicate entries will result in the test failing with an error.
 #'
 #' @inheritParams test_metadata_version
 #'
@@ -336,7 +338,7 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 
 #' File Name Match
 #'
-#' @description `test_file_name_match()` checks to see whether all data files (.csv) within a specified directory are listed under the objectName (child of physical) element in an EML metadata file in the same directory, and vice versa. Mismatches will result in an error message.
+#' @description `test_file_name_match()` checks to see whether all data files (.csv) within a specified directory are listed under the objectName (child of physical) element in an EML metadata file in the same directory, and vice versa. Mismatches will result in the test failing with an error message.
 #'
 #' @details If a directory other than the current working directory is specified, `test.file_name_match()` returns to the current working directory on exit. Note that the metadata file must follow NPS naming conventions, specifically ending in *_metadata.xml. `test.file_name_match()` assumes there are the same number of data files in the directory as dataTables in the metadata file.
 #'
@@ -386,7 +388,7 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
 
 #' Test Matching Data/Metadata Fields
 #'
-#' @description `test_fields_match()` compares the attributes of each dataTable within the EML metadata to the columns in the corresponding .csv. If the columns have the same names and order, the test passes. If the columns differ, the test fails.
+#' @description `test_fields_match()` compares the attributes of each dataTable within the EML metadata to the columns in the corresponding .csv. If the columns have the same names and order, the test passes. If the columns differ, the test fails with an error.
 #'
 #' @details test_fields_match briefly checks that data files match, but you should really run `test_file_name_match()` before you run this test.
 #'
@@ -463,7 +465,7 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 
 #' Test Numeric Fields
 #'
-#' @description `test_numeric_fields()` verifies that all columns listed as numeric in the metadata are free of non-numeric data.
+#' @description `test_numeric_fields()` verifies that all columns listed as numeric in the metadata are free of non-numeric data. If non-numeric data are encountered, the test fails with an error.
 #'
 #' @details "NA" and missing data codes documented in the metadata will *not* cause this test to fail. Note that this test assumes that the column types that are in the metadata are the intended types, i.e., if your metadata says a column is text and it should actually be numeric, it will not be caught by this test. On the other hand, if your metadata indicates a text column is numeric, the function will generate an error.
 #'
@@ -563,7 +565,9 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #'
 #' @description `test_date_range()` verifies that dates in the dataset are consistent with the date range in the metadata.
 #'
-#' @details This function checks columns that are identified as date/time in the metadata. It throws a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and throw an error.
+#' @details This function checks columns that are identified as date/time in the metadata. If the metadata lacks a date range, the function fails with a warning. It fails with a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and result failing the test with an error.
+#'
+#' This test will also inform the user which file and columns are causing the test to fail and how it is failing (i.e. outside of the date range or failed to parse).
 #'
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
@@ -727,7 +731,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
 
 #' Check for Taxonomic Coverage
 #'
-#' @description Checks if taxonomic coverage element is present in metadata. Does not perform any validation of taxonomic coverage information.
+#' @description 'test_taxnomomic_cov()` checks whether taxonomic coverage element is present in metadata. It does not perform any validation of taxonomic coverage information. If taxonomic coverage is present, the test passes. If it is absent, the test fails with a warning.
 #'
 #' @inheritParams test_metadata_version
 #'
@@ -753,7 +757,7 @@ test_taxonomic_cov <- function(metadata = load_metadata(directory)) {
 
 #' Check for Geographic Coverage
 #'
-#' @description Checks if geographic coverage element is present in metadata. Does not perform any validation of geographic coverage information.
+#' @description `test_geographic_cov()` checks if geographic coverage element is present in metadata. It does not perform any validation of geographic coverage information. If the geographicCoverage element is present, the test passes. If it is absent, the test fails with a warning.
 #'
 #' @inheritParams test_metadata_version
 #'
@@ -778,7 +782,7 @@ test_geographic_cov <- function(metadata = load_metadata(directory)) {
 }
 
 #' Check for DOI
-#' Checks if DOI is present in metadata. Does not currently validate DOI.
+#' @description `test_doi()` checks whether a DOI for the data package is present in metadata. It does not currently validate DOI. If a DOI is present, the test passes. If a DOI is not present, the test fails with a warning.
 #'
 #' @inheritParams test_metadata_version
 #'
@@ -787,7 +791,7 @@ test_geographic_cov <- function(metadata = load_metadata(directory)) {
 #'
 #' @examples
 #' meta <- load_metadata(DPchecker_example("BICY_veg"))
-#' test_geographic_cov(meta)
+#' test_doi(meta)
 test_doi <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
@@ -804,7 +808,7 @@ test_doi <- function(metadata = load_metadata(directory)) {
 }
 
 #' Check for Publisher
-#' Checks if publisher information is present in metadata, with option to require valid NPS publisher information.
+#' @description `test_publisher()` checks if publisher information is present in metadata, with option to require valid NPS publisher information. If the publisher information is present, the test passes. If the publisher information is absent, the test fails with an error. If require_nps is set to TRUE (defaults to FALSE), the test will also ensure that a valid NPS publisher information is present. In this case, even if the publisher element is present, the test will fail with an error unless the publisher is the NPS (and all the publisher fields exactly match the expected information for NPS data packages).
 #'
 #' @inheritParams test_metadata_version
 #' @param require_nps If TRUE, throw an error if publisher information is not correct for NPS published data.
@@ -858,7 +862,7 @@ test_publisher <- function(metadata = load_metadata(directory), require_nps = FA
 
 #' Test Field Names for Invalid Characters
 #'
-#' @description test_valid_fieldnames checks for field names in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter.
+#' @description `test_valid_fieldnames()` checks for field names (e.g data column names) in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter. If invalid column names exist, the test will fail with a warning, otherwise the test passes.
 #'
 #' @details You should run `test_fields_match()` before you run this function, since this function only checks the field names in the metadata.
 #'
@@ -917,7 +921,7 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
 
 #' Test File Names for Invalid Characters
 #'
-#' @description test_valid_filenames checks for file names in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter.
+#' @description `test_valid_filenames()` checks for file names in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter. Currently, invalid filenames will result in the test failing with a warning, otherwise the test passes.
 #'
 #' @details You should run `test_file_name_match()` before you run this function, since this function only checks the file names in the metadata.
 #'
@@ -960,7 +964,7 @@ test_valid_filenames <- function(metadata = load_metadata(here::here())) {
 
 #' Convert EML date/time format string to one that R can parse
 #'
-#' @details This is not a sophisticated function. If the EML format string is not valid, it will happily and without complaint return an R format string that will break your code. You have been warned.
+#' @details `convert_datetime_format()` is not a sophisticated function. If the EML format string is not valid, it will happily and without complaint return an R format string that will break your code. You have been warned.
 #'
 #' @param eml_format_string A character vector of EML date/time format strings. This function understands the following codes: YYYY = four digit year, YY = two digit year, MMM = three letter month abbrev., MM = two digit month, DD = two digit day, hh or HH = 24 hour time, mm = minutes, ss or SS = seconds.
 #'
