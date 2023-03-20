@@ -2,7 +2,7 @@
 % Please edit documentation in R/required_eml_elements.R
 \name{test_publisher_city}
 \alias{test_publisher_city}
-\title{Test EML metadata for publisher city - made redundant by test_publisher}
+\title{Test EML metadata for publisher city}
 \usage{
 test_publisher_city(metadata = load_metadata(directory))
 }

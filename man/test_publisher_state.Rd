@@ -2,7 +2,7 @@
 % Please edit documentation in R/required_eml_elements.R
 \name{test_publisher_state}
 \alias{test_publisher_state}
-\title{Test EML metadata for publisher state - made redundant by test_publisher}
+\title{Test EML metadata for publisher state}
 \usage{
 test_publisher_state(metadata = load_metadata(directory))
 }

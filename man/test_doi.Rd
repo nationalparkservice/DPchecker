@@ -2,7 +2,7 @@
 % Please edit documentation in R/tabular_data_congruence.R
 \name{test_doi}
 \alias{test_doi}
-\title{Check for DOI}
+\title{Check for presence of a Digital Object Identifier}
 \usage{
 test_doi(metadata = load_metadata(directory))
 }
