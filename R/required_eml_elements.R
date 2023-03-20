@@ -196,7 +196,7 @@ test_publisher_name <- function(metadata = load_metadata(directory)) {
 }
 
 
-#' Test EML metadata for publisher state - made redundant by test_publisher
+#' Test EML metadata for publisher state
 #'
 #' @description `test_publisher_state()` inspects the publisher address in EML metadata. The test faisl with an error if the administrativeArea (state) element is empty. The test fails with a warning if it is not "CO" (again, because this is expected to be exceedingly rare). The test passes if it is "CO".
 #'
@@ -228,7 +228,7 @@ test_publisher_state <- function(metadata = load_metadata(directory)) {
   return(invisible(metadata))
 }
 
-#' Test EML metadata for publisher city - made redundant by test_publisher
+#' Test EML metadata for publisher city
 #'
 #' @description `test_publisher_city()` inspects the publisher address in EML metadata. It fails with an an error if the city element is empty. It fails with a warning if it is not "Fort Collins". The test passes if it is "Fort Collins"
 #'
