@@ -290,7 +290,8 @@ test_dp_abstract <- function(metadata = load_metadata(directory)){
         abs <- append(abs, abstract[[i]])
       }
     }
-    x <- sapply(strsplit(abs, "" ), length)
+    x <- sapply(stringr::str_count(abs, '\\w+'), sum)
+    #x <- sapply(strsplit(abs, "" ), length)
     x <- sum(x) #sums up all words across potential multiple paragraphs
     z <- NULL #tracking for warnings
     if(x < 20){
