@@ -13,7 +13,11 @@
 #' dir <- DPchecker_example("BICY_veg")
 #' run_congruence_checks(dir)
 #'
-run_congruence_checks <- function(directory = here::here(), metadata = load_metadata(directory), check_metadata_only = FALSE, output_filename, output_dir = here::here()) {
+run_congruence_checks <- function(directory = here::here(),
+                                  metadata = load_metadata(directory),
+                                  check_metadata_only = FALSE,
+                                  output_filename,
+                                  output_dir = here::here()) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   err_count <- 0
@@ -21,7 +25,9 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
   total_count <- 10  # Don't forget to update this number when adding more checks!
 
   if (!missing(output_filename)) {
-    output_dir <- normalizePath(output_dir, winslash = .Platform$file.sep, mustWork = TRUE)
+    output_dir <- normalizePath(output_dir,
+                                winslash = .Platform$file.sep,
+                                mustWork = TRUE)
     output_path <- file.path(output_dir, output_filename)
     open_mode <- if (file.exists(output_path)) {
       "at"  # if file exists, use append mode
@@ -51,7 +57,9 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
              cli::cli_bullets(c(e$message, e$body))
              try({
                if (grepl("rbaker", Sys.getenv("USERNAME"), ignore.case = TRUE)) {
-                 rstudioapi::viewer(url = system.file("extdata", "pebkac.jpg", package = "DPchecker", mustWork = TRUE))
+                 rstudioapi::viewer(url = system.file("extdata", "pebkac.jpg",
+                                                      package = "DPchecker",
+                                                      mustWork = TRUE))
                }
              })
              cli::cli_abort(c("x" = "You must correct the above issue before the congruence checks can run."), call = NULL)},
@@ -140,6 +148,11 @@ run_congruence_checks <- function(directory = here::here(), metadata = load_meta
            warning = function(w) {
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(w$message, w$body))
+           })
+  tryCatch(test_datatable_urls(metadata),
+           error = function(e) {
+             err_count <<- err_count +1
+             cli::cli_bullets(c(e$message, e$body))
            })
   tryCatch(test_publisher(metadata),
            error = function(e) {
