@@ -88,7 +88,7 @@ test_pub_date <- function(metadata = load_metadata(directory)) {
 
 #' Test data package title
 #'
-#' @description `test_dp_title()` tests EML metadata for presence of a data package title. The test fails with an error if the title is absent. The test fails with a warning if the title is > 15 words. Otherwise, the test passes.
+#' @description `test_dp_title()` tests EML metadata for presence of a data package title. The test fails with an error if the title is absent. The test fails with a warning if the title is > 20 or < 5 words. Otherwise, the test passes.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -105,18 +105,18 @@ test_dp_title <- function(metadata = load_metadata(directory)) {
   missing_title <- is.null(title)
   #error if no publication title found
   if(missing_title){
-    cli::cli_abort(c("x"= "Metadata does not contain a data package title."))
+    cli::cli_abort(c("x"= "Metadata does not contain a data package title. Use {.fn EMLeditor::set_title} to add one."))
   }
   #if title present, check certain parameters:
   if(!missing_title){
     x <- sapply(strsplit(title, " "), length)
-    if(x > 15){
+    if(x > 20){
       cli::cli_inform(c(
-        "!" = "Data package title is >15 words. Consider a more concise title."))
+        "!" = "Data package title is >20 words. Consider a more concise title. Use {.fn EMLeditor::set_title} to revise."))
     }
     if(x < 5){
       cli::cli_inform(c(
-        "!" = "Data package title is <5 words. Consider a more informative title."))
+        "!" = "Data package title is <5 words. Consider a more informative title. Use {.fn EMLeditor::set_title} to revise."))
     }
     else {
       cli::cli_inform(c(
@@ -143,7 +143,7 @@ test_by_for_nps <- function(metadata = load_metadata(directory)) {
   missing_nps <- is.null(nps)
   #error if no by or for nps
   if(missing_nps){
-    cli::cli_abort(c("x" = "Metadata does not contain information about whether the data package was created by or for the NPS."))
+    cli::cli_abort(c("x" = "Metadata does not contain information about whether the data package was created by or for the NPS.  Use {.fn EMLeditor::set_publisher} to revise."))
   }
   if(!missing_nps){
     if(nps == "TRUE"){
@@ -152,10 +152,10 @@ test_by_for_nps <- function(metadata = load_metadata(directory)) {
     }
     else if(nps == "FALSE"){
       cli::cli_warn(c(
-        "!" = "Metadata states data was NOT created by or for NPS. Are you sure this is correct?"))
+        "!" = "Metadata states data was NOT created by or for NPS. Are you sure this is correct?  Use {.fn EMLeditor::set_publisher} to revise."))
     }
     else if(nps == "NULL"){
-      cli::cli_abort(c("x" = 'Metadata indicates "by or for NPS" field set to NULL. This must be fixed.'))
+      cli::cli_abort(c("x" = 'Metadata indicates "by or for NPS" field set to NULL.  Use {.fn EMLeditor::set_publisher} to revise..'))
     }
   }
   return(invisible(metadata))
@@ -179,7 +179,7 @@ test_publisher_name <- function(metadata = load_metadata(directory)) {
   publisher_name <- metadata$dataset$publisher$organizationName
   missing_name <- is.null(publisher_name)
   if(missing_name){
-    cli::cli_abort(c("x" = "Metadata does not contain the publisher name."))
+    cli::cli_abort(c("x" = "Metadata does not contain the publisher name. Use {.fn EMLeditor::set_publisher} to revise."))
   }
   if(!missing_name){
     if(publisher_name == "National Park Service"){
@@ -189,7 +189,8 @@ test_publisher_name <- function(metadata = load_metadata(directory)) {
     else if(publisher_name != "National Park Service"){
       cli::cli_warn(c("!" = "Metadata indicates the publisher is {
                       crayon::bold$red(publisher_name)},
-                      not the National Park Service. Are you sure?"))
+                      not the National Park Service. Are you sure?
+                      Use {.fn EMLeditor::set_publisher} to revise."))
     }
   }
   return(invisible(metadata))
@@ -214,7 +215,7 @@ test_publisher_state <- function(metadata = load_metadata(directory)) {
   pub_state <- metadata$dataset$publisher$address$administrativeArea
   missing_state <- is.null(pub_state)
   if(missing_state){
-    cli::cli_abort(c("x"= "Metadata does not contain the publisher state."))
+    cli::cli_abort(c("x"= "Metadata does not contain the publisher state. Use {.fn EMLeditor::set_publisher} to revise."))
   }
   if(!missing_state){
     if(pub_state == "CO"){
@@ -222,7 +223,8 @@ test_publisher_state <- function(metadata = load_metadata(directory)) {
     }
     else if(pub_state != "CO"){
       cli::cli_warn(c("!" = "Metadata indicates the publisher state, {
-                      crayon::bold$red(pub_state)}, is not CO. Are you sure?"))
+                      crayon::bold$red(pub_state)}, is not CO. Are you sure?
+                       Use {.fn EMLeditor::set_publisher} to revise."))
     }
   }
   return(invisible(metadata))
@@ -246,7 +248,8 @@ test_publisher_city <- function(metadata = load_metadata(directory)) {
   pub_city <- metadata$dataset$publisher$address$city
   missing_city <- is.null(pub_city)
   if(missing_city){
-    cli::cli_abort(c("x" = "Metadata does not contain the publisher city."))
+    cli::cli_abort(c("x" = "Metadata does not contain the publisher city.
+                     Use {.fn EMLeditor::set_publisher} to revise."))
   }
   if(!missing_city){
     if(pub_city == "Fort Collins"){
@@ -254,7 +257,9 @@ test_publisher_city <- function(metadata = load_metadata(directory)) {
         "v" = "Metadata indicates the publisher city is Fort Collins."))
     }
     if(pub_city != "Fort Collins"){
-      cli::cli_warn(c("!" = "Metadata indicates the publisher city, {crayon::bold$red(pub_city)}, is not Fort Collins."))
+      cli::cli_warn(c("!" = "Metadata indicates the publisher city,
+                      {crayon::bold$red(pub_city)}, is not Fort Collins.
+                       Use {.fn EMLeditor::set_publisher} to revise."))
     }
   }
   return(invisible(metadata))
@@ -279,7 +284,8 @@ test_dp_abstract <- function(metadata = load_metadata(directory)){
   abstract <- metadata$dataset$abstract
   missing_abstract <- is.null(abstract)
   if(missing_abstract){
-    cli::cli_abort(c("x" = "Metadata does not contain an abstract for the data package."))
+    cli::cli_abort(c("x" = "Metadata does not contain an abstract for the data package.
+                     Use {.fn EMLeditor::set_abstract} to add one."))
   }
   if(!missing_abstract){
     #get rid of <para> tags, empty paragraphs, etc
@@ -296,32 +302,40 @@ test_dp_abstract <- function(metadata = load_metadata(directory)){
     z <- NULL #tracking for warnings
     if(x < 20){
       cli::cli_warn(c(
-        "!" = "The data package abstract is less than 20 words. Are you sure this is informative enough?"))
+        "!" = "The data package abstract is less than 20 words.
+        Are you sure this is informative enough?
+        Use {.fn EMLeditor::set_abstract} to revise."))
       z <- "warn"
     }
     if(x > 250){
       cli::cli_warn(c(
-        "!" = "The data package abstract is longer than 250 words. Consider revising for a more concise abstract."))
+        "!" = "The data package abstract is longer than 250 words.
+        Consider using {.fn EMLeditor::set_abstract} and
+        revising for a more concise abstract."))
       z <- "warn"
     }
     if(sum(stringr::str_detect(abs, "&amp;#13;"))>0){
       cli::cli_warn(c(
         "!" = "The data package abstract contains non-standard characters: {
-                      crayon::bold$red('&amp;#13;')}. "))
+                      crayon::bold$red('&amp;#13;')}.
+        Use {.fn EMLeditor::set_abstract} to revise."))
       z <- "warn"
     }
     if(sum(grepl("[\r?\n|\r]", abs))>0){
-      cli::cli_warn(c("!" = "The data package abstract contains non-standard end of line characters such as \\r, \\n, or \\n\\r."))
+      cli::cli_warn(c("!" = "The data package abstract contains non-standard end of line characters such as \\r, \\n, or \\n\\r.
+                      Use {.fn EMLeditor::set_abstract} to revise."))
       z <- "warn"
     }
     if(sum(grepl("   ", abs))>0){
       cli::cli_warn(c(
-        "!" = "The data package abstract contains extra (more than two in a row) spaces."))
+        "!" = "The data package abstract contains extra (more than two in a row) spaces.
+        Use {.fn EMLeditor::set_abstract} to revise."))
       z <- "warn"
     }
     if(length(seq_along(abs))>3){
       cli::cli_warn(c(
-        "!" = "The data package abstract contains more than three paragraphs. Consider revising. Use {crayon::green("
+        "!" = "The data package abstract contains more than three paragraphs.
+        Consider using {.fn EMLeditor::set_abstract} to revise."
       ))
     }
     #if no other warnings generated:
