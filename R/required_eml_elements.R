@@ -37,11 +37,11 @@ test_pub_date <- function(metadata = load_metadata(directory)) {
     }
     if(!is.na(pub_year)){
       if(pub_year <= 2022){
-        cli::cli_inform(c("!" = "Publication date, {pub_year}, predates the Data Package Reference Type."))
+        cli::cli_warn(c("!" = "Publication date, {pub_year}, predates the Data Package Reference Type."))
         z <- "error"
       }
       if(pub_year > curr_year){
-        cli::cli_inform(c("!" = "Publication date, {pub_year}, exceeds the current year."))
+        cli::cli_warn(c("!" = "Publication date, {pub_year}, exceeds the current year."))
         z <- "error"
       }
     }
@@ -419,11 +419,11 @@ test_cui_dissemination <- function(metadata = load_metadata(directory)) {
   # get all additionalMetadata elelements and all children elements
   diss_code <- arcticdatautils::eml_get_simple(metadata, "CUI")
   if(is.null(diss_code)){
-    cli::cli_abort(c("x" = "Metadata does not contain a CUI dissemination code."))
+    cli::cli_abort(c("x" = "Metadata does not contain a CUI dissemination code. Use {.fn EMLeditor::set_cui}."))
   }
   if(!is.null(diss_code)){
     if(!diss_code %in% valid_codes){
-      cli::cli_abort(c("x" = "The CUI dissemination code {diss_code} is not a valid code."))
+      cli::cli_abort(c("x" = "The CUI dissemination code {diss_code} is not a valid code. Use {.fn EMLeditor::set_cui}."))
     }
     if(diss_code %in% valid_codes){
       cli::cli_inform(c("v" = "Metadata contains the valid CUI dissemination code {diss_code}."))
@@ -454,22 +454,22 @@ test_license <- function(metadata = load_metadata(directory)) {
 
   license <- metadata$dataset$licensed$licenseName
   if(is.null(license)){
-    cli::cli_abort(c("x" = "Metadata does not contain a license name."))
+    cli::cli_abort(c("x" = "Metadata does not contain a license name. Use {.fn EMLeditor::set_int_rights} to add a license name."))
   }
   if(!is.null(license)){
     if(!license %in% license_list){
       cli::cli_abort(c(
-        "x" = "The metadata does not contain a valid license name."))
+        "x" = "The metadata does not contain a valid license name. Use {.fn EMLeditor::set_int_rights} to add a valid license name."))
     }
     if(license %in% license_list){
       diss_code <- arcticdatautils::eml_get_simple(metadata, "CUI")
       if(diss_code == "PUBLIC" & license == "No License/Controlled Unclassified Information"){
         cli::cli_abort(c(
-          "x" = "Metadata license and CUI dissemination code do not agree."))
+          "x" = "Metadata license and CUI dissemination code do not agree. Use {.fn EMLeditor::set_int_rights} or {.fn EMLeditor::set_cui}."))
       }
       else if(diss_code != "PUBLIC" & license != "No Licnese/Controlled Unclassified Information"){
         cli::cli_abort(c(
-          "x" = "Metadata license and CUI dissemination code do not agree."))
+          "x" = "Metadata license and CUI dissemination code do not agree. Use {.fn EMLeditor::set_int_rights} or {.fn EMLeditor::set_cui}."))
       }
       else {
         cli::cli_inform(c("v" = "Metadata contains a valid license name."))
@@ -499,7 +499,7 @@ test_int_rights <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)
   int_rights <- metadata$dataset$intellectualRights
   if(is.null(int_rights)){
-    cli::cli_abort(c("x" = "Metadata lacks an Intellectual Rights statemet."))
+    cli::cli_abort(c("x" = "Metadata lacks an Intellectual Rights statemet. Use {.fn EMLeditor::set_int_rights}."))
   }
   else {
     cli::cli_inform(c(
