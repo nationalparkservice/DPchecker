@@ -844,13 +844,13 @@ test_geographic_cov <- function(metadata = load_metadata(directory)) {
 test_doi <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-  doi <- arcticdatautils::eml_get_simple(metadata, "alternateIdentifier")
+  doi <- metadata[["dataset"]][["alternateIdentifier"]]
   missing_doi <- is.null(doi) || !any(grepl("^doi\\:", doi))
 
   if (missing_doi) {
     cli::cli_warn(c("!" = "Metadata does not contain a digital object identifier. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to add a DOI."))
   } else {
-    pass_message <- paste0("Metadata contains a digital object identifier, {.val", doi, "}.")
+    pass_message <- paste0("Metadata contains a digital object identifier, {.val ", doi, "}.")
     cli::cli_inform(c("v" = pass_message))
   }
 
