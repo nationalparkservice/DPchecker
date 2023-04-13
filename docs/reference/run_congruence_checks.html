@@ -46,11 +46,11 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_congruence_checks</span><span class="op">(</span></span>
-<span>  directory <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  directory <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/here/man/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  metadata <span class="op">=</span> <span class="fu"><a href="load_metadata.html">load_metadata</a></span><span class="op">(</span><span class="va">directory</span><span class="op">)</span>,</span>
 <span>  check_metadata_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  <span class="va">output_filename</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  output_dir <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/here/man/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -105,6 +105,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata contains taxonomic coverage element.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata contains geographic coverage element</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata contains a digital object identifier.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All data table URLs correctly correspond to the DOI.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata contains publisher element.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Field names begin with a letter and do not contain spaces or special</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   characters.</span>
@@ -119,13 +120,14 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata indicates the publisher is the National Park Service.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata indicates the publisher state is CO.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata indicates the publisher city is Fort Collins.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> The data package abstract is longer than 250 words. Consider revising for a</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> more concise abstract.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> The data package abstract contains non-standard characters: <span style="color: #BB0000; font-weight: bold;">&amp;amp;#13;</span>.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All dataTables listed in metadata have a unique file description.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Data file 1 description is greater than 10 words. Consider a more concise</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> description.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> The CUI dissemination code PUBVER is not a valid code.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Metadata does not contain a license name.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> The CUI dissemination code PUBVER is not a valid code. Use</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   `EMLeditor::set_cui()`.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Metadata does not contain a license name. Use `EMLeditor::set_int_rights()`</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   to add a license name.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata contains an Intellectual Rights statement.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All attributes listed in metadata have attribute definitions.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All attributes listed in metadata have storage types associated with them.</span>
@@ -144,7 +146,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Summary</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> 2 errors to address</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 2 warnings to look into</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 3 warnings to look into</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>

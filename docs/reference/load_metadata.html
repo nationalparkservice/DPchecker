@@ -45,7 +45,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">load_metadata</span><span class="op">(</span>directory <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>, inform_success <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">load_metadata</span><span class="op">(</span>directory <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/here/man/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>, inform_success <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -67,7 +67,7 @@
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Given a path or directory - default is the working directory -  <code>load_metadata()</code> looks for files with the ending *_metadata.xml. The function quits with an error and tells the user if no such files are found or if more than one such file is found. If only one metadata file is found, it is checked for one of 3 formats: FGDC, ISO, or EML. Currently only EML is supported and the function will fail with an error, inform the user, and quit if non-EML metadata is found. The EML metadata file is loaded into R's work space for future use during congruence checking.</p>
-<p>In the context of National Park Service data packages, this function can be slightly easier to use for loading metadata into R than <code><a href="https://docs.ropensci.org/EML/reference/read_eml.html" class="external-link">EML::read_eml()</a></code> because it does require a filename or type be specified.</p>
+<p>In the context of National Park Service data packages, this function can be slightly easier to use for loading metadata into R than <code><a href="https://rdrr.io/pkg/EML/man/read_eml.html" class="external-link">EML::read_eml()</a></code> because it does require a filename or type be specified.</p>
     </div>
 
     <div class="section level2">
