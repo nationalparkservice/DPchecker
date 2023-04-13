@@ -336,6 +336,54 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
   return(invisible(metadata))
 }
 
+
+#' Checks for consistency in data file URLs
+#'
+#' @description `test_datatable_urls` Checks to make sure that the URLs listed for data files correctly correspond to the DOI in metadata. If the last 7 digits of the URL for all data tables is identical to the last 7 digits of the DOI, the test passes. If there is no DOI, the test fails with a warning. If a data table lacks a URL, the test fails with an error. If any data table URL's last 7 digits are not identical to the DOI's last 7 digits, the test fails with an error.
+#'
+#' @details suggestions of which functions to use to correct errors/warnings are provided.
+#'
+#' @param metadata
+#'
+#' @return invisible(metadata)
+#' @export
+#'
+#' @examples
+#' dir <- DPchecker_example("BICY_veg")
+#' test_datatable_urls(dir)
+test_datatable_urls <- function (metadata = load_metadata(directory)) {
+  is_eml(metadata)
+  # test for DOI presence
+  doi <- metadata[["dataset"]][["alternateIdentifier"]]
+  if(is.na(doi)){
+    cli::cli_warn(c("!" = "Metadata lacks a DOI. Cannot check for data table URL congruence with DOI. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to add a DOI."))
+  }
+  if(!is.na(doi)){
+    ds_ref <- stringr::str_sub(doi, -7, -1)
+
+    data_tbl <- EML::eml_get(metadata, "dataTable")
+    data_tbl <- within(data_tbl, rm("@context"))
+
+    #check for data table urls and get datastore reference IDs
+    url_refs<-NULL
+    for(i in seq_along(data_tbl)){
+      url <- data_tbl[[i]][["physical"]][["distribution"]][["online"]][["url"]]
+      if(is.na(url)){
+        cli::cli_abort(c("x" = "A data table lacks a URL. Use {.fn EMLeditor::set_data_urls} to add URLs."))
+      }
+      url <- stringr::str_sub(url, -7, -1)
+      url_refs <- append(url_refs, url)
+    }
+    if(sum(ds_ref != url_refs) > 0){
+      cli::cli_abort(c("x" = "Data table URLs do not correspond to the DOI. Use {.fn EMLeditor::set_data_urls} to update URLs to correspond to the current DOI."))
+    }
+    else{
+      cli::cli_inform(c("v" = "All data table URLs correctly correspond to the DOI."))
+    }
+  }
+  return(invisible(metadata))
+}
+
 #' File Name Match
 #'
 #' @description `test_file_name_match()` checks to see whether all data files (.csv) within a specified directory are listed under the objectName (child of physical) element in an EML metadata file in the same directory, and vice versa. Mismatches will result in the test failing with an error message.
