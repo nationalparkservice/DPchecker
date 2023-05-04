@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DPchecker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.2.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -18,7 +18,10 @@
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
-      <ul class="navbar-nav me-auto"><li class="active nav-item">
+      <ul class="navbar-nav me-auto"><li class="nav-item">
+  <a class="nav-link" href="../articles/DPchecker.html">Get started</a>
+</li>
+<li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
@@ -57,6 +60,11 @@
         <dd>Generate path to example data</dd>
       </dl><dl><dt>
           
+          <code><a href="is_eml.html">is_eml()</a></code> 
+        </dt>
+        <dd>Check if metadata is eml object</dd>
+      </dl><dl><dt>
+          
           <code><a href="load_data.html">load_data()</a></code> 
         </dt>
         <dd>Load Data</dd>
@@ -72,6 +80,26 @@
         <dd>Run all congruence checks</dd>
       </dl><dl><dt>
           
+          <code><a href="test_attribute_defs.html">test_attribute_defs()</a></code> 
+        </dt>
+        <dd>Test metadata for attribute definitions</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_by_for_nps.html">test_by_for_nps()</a></code> 
+        </dt>
+        <dd>Test for "by or for NPS"</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_cui_dissemination.html">test_cui_dissemination()</a></code> 
+        </dt>
+        <dd>Test for CUI dissemination code</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_datatable_urls.html">test_datatable_urls()</a></code> 
+        </dt>
+        <dd>Checks for consistency in data file URLs</dd>
+      </dl><dl><dt>
+          
           <code><a href="test_date_range.html">test_date_range()</a></code> 
         </dt>
         <dd>Test Date Range</dd>
@@ -84,8 +112,17 @@
           
           <code><a href="test_doi.html">test_doi()</a></code> 
         </dt>
-        <dd>Check for DOI
-Checks if DOI is present in metadata. Does not currently validate DOI.</dd>
+        <dd>Check for presence of a Digital Object Identifier</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_dp_abstract.html">test_dp_abstract()</a></code> 
+        </dt>
+        <dd>Test EML abstract</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_dp_title.html">test_dp_title()</a></code> 
+        </dt>
+        <dd>Test data package title</dd>
       </dl><dl><dt>
           
           <code><a href="test_dup_meta_entries.html">test_dup_meta_entries()</a></code> 
@@ -96,6 +133,11 @@ Checks if DOI is present in metadata. Does not currently validate DOI.</dd>
           <code><a href="test_fields_match.html">test_fields_match()</a></code> 
         </dt>
         <dd>Test Matching Data/Metadata Fields</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_file_descript.html">test_file_descript()</a></code> 
+        </dt>
+        <dd>Test presence of file descriptions</dd>
       </dl><dl><dt>
           
           <code><a href="test_file_name_match.html">test_file_name_match()</a></code> 
@@ -110,13 +152,22 @@ Checks if DOI is present in metadata. Does not currently validate DOI.</dd>
           
           <code><a href="test_geographic_cov.html">test_geographic_cov()</a></code> 
         </dt>
-        <dd>Check for Geographic Coverage
-Checks if geographic coverage element is present in metadata. Does not perform any validation of geographic coverage information.</dd>
+        <dd>Check for Geographic Coverage</dd>
       </dl><dl><dt>
           
           <code><a href="test_header_num.html">test_header_num()</a></code> 
         </dt>
         <dd>Header Check</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_int_rights.html">test_int_rights()</a></code> 
+        </dt>
+        <dd>Test for presence of Intellectual Rights</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_license.html">test_license()</a></code> 
+        </dt>
+        <dd>Test for presence of a license name</dd>
       </dl><dl><dt>
           
           <code><a href="test_metadata_version.html">test_metadata_version()</a></code> 
@@ -131,14 +182,37 @@ Checks if geographic coverage element is present in metadata. Does not perform a
           
           <code><a href="test_publisher.html">test_publisher()</a></code> 
         </dt>
-        <dd>Check for Publisher
-Checks if publisher information is present in metadata, with option to require valid NPS publisher information.</dd>
+        <dd>Check for Publisher</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_publisher_city.html">test_publisher_city()</a></code> 
+        </dt>
+        <dd>Test EML metadata for publisher city</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_publisher_name.html">test_publisher_name()</a></code> 
+        </dt>
+        <dd>Tests EML metadata for the publisher name</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_publisher_state.html">test_publisher_state()</a></code> 
+        </dt>
+        <dd>Test EML metadata for publisher state</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_pub_date.html">test_pub_date()</a></code> 
+        </dt>
+        <dd>Test publication date presence and ISO-8601 formatting</dd>
+      </dl><dl><dt>
+          
+          <code><a href="test_storage_type.html">test_storage_type()</a></code> 
+        </dt>
+        <dd>Tests for attribute storage type</dd>
       </dl><dl><dt>
           
           <code><a href="test_taxonomic_cov.html">test_taxonomic_cov()</a></code> 
         </dt>
-        <dd>Check for Taxonomic Coverage
-Checks if taxonomic coverage element is present in metadata. Does not perform any validation of taxonomic coverage information.</dd>
+        <dd>Check for Taxonomic Coverage</dd>
       </dl><dl><dt>
           
           <code><a href="test_validate_schema.html">test_validate_schema()</a></code> 

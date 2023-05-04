@@ -2,8 +2,7 @@
 % Please edit documentation in R/tabular_data_congruence.R
 \name{test_geographic_cov}
 \alias{test_geographic_cov}
-\title{Check for Geographic Coverage
-Checks if geographic coverage element is present in metadata. Does not perform any validation of geographic coverage information.}
+\title{Check for Geographic Coverage}
 \usage{
 test_geographic_cov(metadata = load_metadata(directory))
 }
@@ -14,8 +13,7 @@ test_geographic_cov(metadata = load_metadata(directory))
 Invisibly returns \code{metadata}.
 }
 \description{
-Check for Geographic Coverage
-Checks if geographic coverage element is present in metadata. Does not perform any validation of geographic coverage information.
+\code{test_geographic_cov()} checks if geographic coverage element is present in metadata. It does not perform any validation of geographic coverage information. If the geographicCoverage element is present, the test passes. If it is absent, the test fails with a warning.
 }
 \examples{
 meta <- load_metadata(DPchecker_example("BICY_veg"))

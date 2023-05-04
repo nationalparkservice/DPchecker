@@ -18,10 +18,10 @@ test_file_name_match(
 Invisibly returns \code{metadata}.
 }
 \description{
-test_file_name_match checks to see whether all data files (.csv) within a specified directory are listed under the objectName (child of physical) element in an EML metadata file in the same directory, and vice versa. Mismatches will result in an error message.
+\code{test_file_name_match()} checks to see whether all data files (.csv) within a specified directory are listed under the objectName (child of physical) element in an EML metadata file in the same directory, and vice versa. Mismatches will result in the test failing with an error message.
 }
 \details{
-If a directory other than the current working directory is specified, test.fileNameMatch returns to the current working directory on exit. Note that the metadata file must follow NPS naming conventions, specifically ending in *_metadata.xml. test.fileNameMatch assumes there are the same number of data files in the directory as dataTables in the metadata file.
+If a directory other than the current working directory is specified, \code{test.file_name_match()} returns to the current working directory on exit. Note that the metadata file must follow NPS naming conventions, specifically ending in *_metadata.xml. \code{test.file_name_match()} assumes there are the same number of data files in the directory as dataTables in the metadata file.
 }
 \examples{
 dir <- DPchecker_example("BICY_veg")
