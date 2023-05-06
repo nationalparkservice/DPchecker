@@ -703,8 +703,6 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
     #commenting out this next line fixes one error and causes about a dozen more!
     dttm_formats <- dttm_formats[is_time]
 
-
-
     dttm_col_names <- dttm_col_names[is_time]
 
     # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
@@ -737,14 +735,20 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
       format_str_r <- dttm_formats_r[col]
       bad_cols <- NULL
 
-      # Compare years first, and only compare months and days if they are included in the format string
-      if (lubridate::year(max_date) > lubridate::year(meta_end_date) || lubridate::year(min_date) < lubridate::year(meta_begin_date)) {
-        bad_cols <- paste0("{.field ", col, "} [{.val ", format(min_date, format_str_r), "}, {.val ", format(max_date, format_str_r), "}]") # column name and actual date range
-      } else if (grepl("%m", format_str_r) && (lubridate::month(max_date) > lubridate::month(meta_end_date) || lubridate::month(min_date) < lubridate::month(meta_begin_date))) {
-        bad_cols <- paste0("{.field ", col, "} [{.val ", format(min_date, format_str_r), "}, {.val ", format(max_date, format_str_r), "}]") # column name and actual date range
-      } else if (grepl("%d", format_str_r) && (lubridate::day(max_date) > lubridate::day(meta_end_date) || lubridate::day(min_date) < lubridate::day(meta_begin_date))) {
+      # Set metadata day and/or month to 1 if not present in format string so that date comparisons work correctly
+      if (!grepl("d", format_str_r)) {
+        lubridate::day(meta_end_date) <- 1
+        lubridate::day(meta_begin_date) <- 1
+      }
+      if (!grepl("m|b", format_str_r)) {
+        lubridate::month(meta_end_date) <- 1
+        lubridate::month(meta_begin_date) <- 1
+      }
+      # Compare min and max dates in data to begin and end dates in metadata
+      if (max_date > meta_end_date || min_date < meta_begin_date) {
         bad_cols <- paste0("{.field ", col, "} [{.val ", format(min_date, format_str_r), "}, {.val ", format(max_date, format_str_r), "}]") # column name and actual date range
       }
+
       return(bad_cols)
     }, simplify = FALSE, USE.NAMES = TRUE)
     tbl_out_of_range <- purrr::discard(tbl_out_of_range, is.null)
