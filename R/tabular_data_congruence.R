@@ -364,6 +364,11 @@ test_datatable_urls <- function (metadata = load_metadata(directory)) {
     data_tbl <- EML::eml_get(metadata, "dataTable")
     data_tbl <- within(data_tbl, rm("@context"))
 
+    # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+    if ("attributeList" %in% names(data_tbl)) {
+      data_tbl <- list(data_tbl)
+    }
+
     #check for data table urls and get datastore reference IDs
     url_refs<-NULL
     for(i in seq_along(data_tbl)){
@@ -881,6 +886,34 @@ test_doi <- function(metadata = load_metadata(directory)) {
   }
 
   return(invisible(metadata))
+}
+
+#' Check DOI formatting
+#'
+#' @description `test_doi_format()` runs some basic formatting checks. If your DOI is absent, the test will fail with an error. If the DOI is not exactly 37 characters AND does not contain "doi: https://doi.org/10.57830/" the test will fail with an error. The test passes if the entry in the alternateIdentifier field is exactly 37 characters long and contains "doi: https://doi.org/10.57830/". Please note that this is a very cursory formatting check; it does not check to make sure the DOI is active (it probably should not be at this stage of data package authoring). It does not check to make sure it is correct or that it correctly corresponds to anything on DataStore or elsewhere whithin the metadata.
+#'
+#' @param metadata
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- test_doi_format(metadata)
+#'
+test_doi_format <- function(metadata = load_metadata(directory)) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
+  doi <- metadata[["dataset"]][["alternateIdentifier"]]
+  missing_doi <- is.null(doi) || !any(grepl("^doi\\:", doi))
+
+  if (missing_doi) {
+    cli::cli_abort(c("!" = "Metadata Digital Object Identifier is not properly formatted: DOI missing. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to add a DOI."))
+  }
+  if(nchar(doi) == 37 & grepl("doi: https://doi.org/10.57830/", doi)){
+      cli::cli_inform(c("v" = "Metadata Digital Object Identifier appears to be properly formatted."))
+  }
+  if(nchar(doi) != 37 || !grepl("doi: https://doi.org/10.57830/", doi)){
+    cli::cli_abort(c("x" = "Your DOI is improperly formatted. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to edit your DOI."))
+  }
 }
 
 #' Check for Publisher
