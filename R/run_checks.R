@@ -23,6 +23,7 @@ run_congruence_checks <- function(directory = here::here(),
   err_count <- 0
   warn_count <- 0
   total_count <- 10  # Don't forget to update this number when adding more checks!
+      #(why? doesn't appear to be used anywhere else...)
 
   if (!missing(output_filename)) {
     output_dir <- normalizePath(output_dir,
@@ -55,13 +56,13 @@ run_congruence_checks <- function(directory = here::here(),
            error = function(e) {
              err_count <<- err_count + 1
              cli::cli_bullets(c(e$message, e$body))
-             try({
-               if (grepl("rbaker", Sys.getenv("USERNAME"), ignore.case = TRUE)) {
-                 rstudioapi::viewer(url = system.file("extdata", "pebkac.jpg",
-                                                      package = "DPchecker",
-                                                      mustWork = TRUE))
-               }
-             })
+            # try({
+            #   if (grepl("rbaker", Sys.getenv("USERNAME"), ignore.case = TRUE)) {
+            #     rstudioapi::viewer(url = system.file("extdata", "pebkac.jpg",
+            #                                          package = "DPchecker",
+            #                                          mustWork = TRUE))
+            #   }
+            # })
              cli::cli_abort(c("x" = "You must correct the above issue before the congruence checks can run."), call = NULL)},
            warning = function(w) {
              warn_count <<- warn_count + 1
@@ -141,6 +142,15 @@ run_congruence_checks <- function(directory = here::here(),
              cli::cli_bullets(c(w$message, w$body))
            })
   tryCatch(test_doi(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+  tryCatch(test_doi_format(metadata),
            error = function(e) {
              err_count <<- err_count + 1
              cli::cli_bullets(c(e$message, e$body))

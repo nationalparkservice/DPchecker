@@ -364,6 +364,11 @@ test_datatable_urls <- function (metadata = load_metadata(directory)) {
     data_tbl <- EML::eml_get(metadata, "dataTable")
     data_tbl <- within(data_tbl, rm("@context"))
 
+    # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+    if ("attributeList" %in% names(data_tbl)) {
+      data_tbl <- list(data_tbl)
+    }
+
     #check for data table urls and get datastore reference IDs
     url_refs<-NULL
     for(i in seq_along(data_tbl)){
@@ -717,10 +722,25 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
     # Read date/time columns, find max/min, and compare with max and min dates in metadata
     na_strings <- c("", "NA")
     if ("missingValueCode" %in% names(dttm_attrs[[data_file]])) {
-      na_strings <- c(na_strings, unique(dttm_attrs[[data_file]]$missingValueCode))
+      na_strings <- c(na_strings,
+                      unique(dttm_attrs[[data_file]]$missingValueCode))
     }
-    dttm_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(dttm_col_names), na = na_strings, col_types = do.call(readr::cols, dttm_col_spec), show_col_types = FALSE))
-    char_data <- suppressWarnings(readr::read_csv(file.path(directory, data_file), col_select = dplyr::all_of(dttm_col_names), na = na_strings, col_types = rep("c", length(dttm_col_names)), show_col_types = FALSE))
+
+    dttm_data <- suppressWarnings(
+      readr::read_csv(
+        file.path(directory, data_file),
+        col_select = dplyr::all_of(dttm_col_names),
+        na = na_strings,
+        col_types = do.call(readr::cols, dttm_col_spec),
+        show_col_types = FALSE))
+
+    #WTF does this do?
+    char_data <- suppressWarnings(
+      readr::read_csv(file.path(directory, data_file),
+                      col_select = dplyr::all_of(dttm_col_names),
+                      na = na_strings,
+                      col_types = rep("c", length(dttm_col_names)),
+                      show_col_types = FALSE))
 
     tbl_out_of_range <- sapply(names(dttm_data), function(col) {
       col_data <- dttm_data[[col]]
@@ -730,8 +750,10 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
       } else if (sum(is.na(col_data)) > orig_na_count) {
         return(paste0("{.field ", col, "} (partially failed to parse)"))
       }
+      #returns bad min/max dates because dates are not parsed as dates yet?
       max_date <- max(col_data, na.rm = TRUE)
       min_date <- min(col_data, na.rm = TRUE)
+      #something funky here.... the next line returns NA
       format_str_r <- dttm_formats_r[col]
       bad_cols <- NULL
 
@@ -746,7 +768,12 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
       }
       # Compare min and max dates in data to begin and end dates in metadata
       if (max_date > meta_end_date || min_date < meta_begin_date) {
-        bad_cols <- paste0("{.field ", col, "} [{.val ", format(min_date, format_str_r), "}, {.val ", format(max_date, format_str_r), "}]") # column name and actual date range
+        bad_cols <- paste0("{.field ",
+                           col, "} [{.val ",
+                           format(min_date, format_str_r),
+                           "}, {.val ",
+                           format(max_date, format_str_r),
+                           "}]") # column name and actual date range
       }
 
       return(bad_cols)
@@ -859,6 +886,34 @@ test_doi <- function(metadata = load_metadata(directory)) {
   }
 
   return(invisible(metadata))
+}
+
+#' Check DOI formatting
+#'
+#' @description `test_doi_format()` runs some basic formatting checks. If your DOI is absent, the test will fail with an error. If the DOI is not exactly 37 characters AND does not contain "doi: https://doi.org/10.57830/" the test will fail with an error. The test passes if the entry in the alternateIdentifier field is exactly 37 characters long and contains "doi: https://doi.org/10.57830/". Please note that this is a very cursory formatting check; it does not check to make sure the DOI is active (it probably should not be at this stage of data package authoring). It does not check to make sure it is correct or that it correctly corresponds to anything on DataStore or elsewhere whithin the metadata.
+#'
+#' @param metadata
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#'
+#' @examples
+#' meta <- test_doi_format(metadata)
+#'
+test_doi_format <- function(metadata = load_metadata(directory)) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
+  doi <- metadata[["dataset"]][["alternateIdentifier"]]
+  missing_doi <- is.null(doi) || !any(grepl("^doi\\:", doi))
+
+  if (missing_doi) {
+    cli::cli_abort(c("!" = "Metadata Digital Object Identifier is not properly formatted: DOI missing. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to add a DOI."))
+  }
+  if(nchar(doi) == 37 & grepl("doi: https://doi.org/10.57830/", doi)){
+      cli::cli_inform(c("v" = "Metadata Digital Object Identifier appears to be properly formatted."))
+  }
+  if(nchar(doi) != 37 || !grepl("doi: https://doi.org/10.57830/", doi)){
+    cli::cli_abort(c("x" = "Your DOI is improperly formatted. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to edit your DOI."))
+  }
 }
 
 #' Check for Publisher
@@ -1038,7 +1093,9 @@ convert_datetime_format <- function(eml_format_string) {
     stringr::str_replace_all("DD", "%d") %>%
     stringr::str_replace_all("(hh)|(HH)", "%H") %>%
     stringr::str_replace_all("mm", "%M") %>%
-    stringr::str_replace_all("(ss)|(SS)", "%S")
+    stringr::str_replace_all("(ss)|(SS)", "%S") %>%
+    stringr::str_replace_all("M", "%m") %>%
+    stringr::str_replace_all("D", "%d")
 
   return(r_format_string)
 }
