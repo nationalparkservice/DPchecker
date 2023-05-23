@@ -87,6 +87,8 @@ These tests determine whether the metadata is schema valid and adheres to some r
 * Metadata contains taxonomic coverage element ([`test_taxonomic_cov()`](../reference/test_taxonomic_cov.html))
 * Metadata contains geographic coverage element ([`test_geographic_cov()`](../reference/test_geographic_cov.html))
 * Metadata contains a Digital Object Identifier (DOI) ([`test_doi()`](../reference/test_doi.html))
+* Metadata DOI is properly formatted
+([`test_doi_format()`])(../reference/test_doi_format.html))
 * Metadata contains URLs to each data file and the URLs correspond to the DOI ([test_datatable_urls](../reference/test_datatable_urls.html))
 * Metadata contains a publisher element ([`test_publisher()`](../reference/test_publisher.html))
 * Metadata indicates data column names begin with a letter and do not contain spaces or special characters ([`test_valid_fieldnames()`](../reference/test_valid_fieldnames.html))
