@@ -13,7 +13,7 @@ test_file_descript(metadata = load_metadata(directory))
 invisibly returns \code{metadata}
 }
 \description{
-\code{test_file_descript()} tests for the presence of file descriptions (entityDescription) fields. It fails with an error if any one or all of the entityDescription fields are empty in a dataTable. It fails with an error if any two or more file descriptions are identical. The test fails with a warning if for each file description that is longer than 10 words or shorter than three words. Otherwise the test passes.
+\code{test_file_descript()} tests for the presence of file descriptions (entityDescription) fields. It fails with an error if any one or all of the entityDescription fields are empty in a dataTable. It fails with an error if any two or more file descriptions are identical. The test fails with a warning if for each file description that is longer than 15 words or shorter than three words. Otherwise the test passes.
 }
 \examples{
 \dontrun{
