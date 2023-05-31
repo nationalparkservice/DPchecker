@@ -406,7 +406,7 @@ test_file_descript <- function(metadata = load_metadata(directory)) {
             "!" = "Data file {i} description is less than 3 words long. Consider a more informative descrption."))
         }
         if(x > 15){
-          cli::cli_warn(c("!" = "Data file {i} description is greater than 10 words. Consider a more concise description."))
+          cli::cli_warn(c("!" = "Data file {i} description is greater than 15 words. Consider a more concise description."))
         }
       }
     }
