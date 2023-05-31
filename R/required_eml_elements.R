@@ -349,7 +349,7 @@ test_dp_abstract <- function(metadata = load_metadata(directory)){
 
 #' Test presence of file descriptions
 #'
-#' @description `test_file_descript()` tests for the presence of file descriptions (entityDescription) fields. It fails with an error if any one or all of the entityDescription fields are empty in a dataTable. It fails with an error if any two or more file descriptions are identical. The test fails with a warning if for each file description that is longer than 10 words or shorter than three words. Otherwise the test passes.
+#' @description `test_file_descript()` tests for the presence of file descriptions (entityDescription) fields. It fails with an error if any one or all of the entityDescription fields are empty in a dataTable. It fails with an error if any two or more file descriptions are identical. The test fails with a warning if for each file description that is longer than 15 words or shorter than three words. Otherwise the test passes.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -405,7 +405,7 @@ test_file_descript <- function(metadata = load_metadata(directory)) {
           cli::cli_warn(c(
             "!" = "Data file {i} description is less than 3 words long. Consider a more informative descrption."))
         }
-        if(x > 10){
+        if(x > 15){
           cli::cli_warn(c("!" = "Data file {i} description is greater than 10 words. Consider a more concise description."))
         }
       }
