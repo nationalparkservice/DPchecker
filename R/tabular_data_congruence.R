@@ -355,10 +355,10 @@ test_datatable_urls <- function (metadata = load_metadata(directory)) {
   is_eml(metadata)
   # test for DOI presence
   doi <- metadata[["dataset"]][["alternateIdentifier"]]
-  if(is.na(doi)){
+  if(is.null(doi)){
     cli::cli_warn(c("!" = "Metadata lacks a DOI. Cannot check for data table URL congruence with DOI. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to add a DOI."))
   }
-  if(!is.na(doi)){
+  if(!is.null(doi)){
     ds_ref <- stringr::str_sub(doi, -7, -1)
 
     data_tbl <- EML::eml_get(metadata, "dataTable")
@@ -906,7 +906,7 @@ test_doi_format <- function(metadata = load_metadata(directory)) {
   missing_doi <- is.null(doi) || !any(grepl("^doi\\:", doi))
 
   if (missing_doi) {
-    cli::cli_abort(c("!" = "Metadata Digital Object Identifier is not properly formatted: DOI missing. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to add a DOI."))
+    cli::cli_warn(c("!" = "Metadata Digital Object Identifier is not properly formatted: DOI missing. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to add a DOI."))
   }
   if(nchar(doi) == 37 & grepl("doi: https://doi.org/10.57830/", doi)){
       cli::cli_inform(c("v" = "Metadata Digital Object Identifier appears to be properly formatted."))
