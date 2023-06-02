@@ -7,7 +7,7 @@
 test_datatable_urls(metadata = load_metadata(directory))
 }
 \arguments{
-\item{metadata}{}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 }
 \value{
 invisible(metadata)
@@ -19,6 +19,9 @@ invisible(metadata)
 suggestions of which functions to use to correct errors/warnings are provided.
 }
 \examples{
+ \dontrun{
 dir <- DPchecker_example("BICY_veg")
 test_datatable_urls(dir)
+}
+
 }

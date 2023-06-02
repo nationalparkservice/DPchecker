@@ -343,51 +343,106 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 #'
 #' @details suggestions of which functions to use to correct errors/warnings are provided.
 #'
-#' @param metadata
+#' @inheritParams test_metadata_version
 #'
 #' @return invisible(metadata)
 #' @export
 #'
 #' @examples
+#'  \dontrun{
 #' dir <- DPchecker_example("BICY_veg")
 #' test_datatable_urls(dir)
+#' }
+#'
 test_datatable_urls <- function (metadata = load_metadata(directory)) {
   is_eml(metadata)
+
+  #get dataTable urls
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  data_tbl <- within(data_tbl, rm("@context"))
+
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+    #check for data table urls and get datastore reference IDs
+  url_count <- 0
+  for(i in seq_along(data_tbl)){
+    url <- data_tbl[[i]][["physical"]][["distribution"]][["online"]][["url"]]
+    if(is.na(url)){
+      tbl_name <- data_tbl[[i]][["physical"]][["objectName"]]
+      cli::cli_abort(c("x" = "The data table corresponding to ", crayon::blue$bold(tbl_name), "lacks a URL. Use {.fn EMLeditor::set_data_urls} to add URLs."))
+      url_count <- (url_count + 1)
+    }
+  }
+  if(url_count == 0){
+    cli::cli_inform(c(
+      "v" = "Metadata contains URLs for all data tables."))
+  }
+  return(invisible(metadata))
+}
+
+#' Tests for data table URL formatting & correspondance with DOI
+#'
+#' @description `test_datatable_urls_doi()` passes if all data tables have URLs that are properly formatted (i.e. "https://irma.nps.gov/DataStore/Reference/Profile/xxxxxxx") where "xxxxxx" is identical to the DOI specified in the metadata. Fails with a warning if there is no DOI specified in metadata. If a DOI is specified in metadata, but the data table URL does not properly coincide with the url for the landing page that the doi points to for any one table, the test fails with a warning (and indicates which table failed).
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @return invisible(metadata)
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' dir <- DPchecker_example("BICY_veg")
+#' test_datatable_urls_doi(dir)
+#' }
+test_datatable_urls_doi <-  function (metadata = load_metadata(directory)) {
+  is_eml(metadata)
+
+  #get dataTable urls
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  data_tbl <- within(data_tbl, rm("@context"))
+
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
   # test for DOI presence
   doi <- metadata[["dataset"]][["alternateIdentifier"]]
-  if(is.na(doi)){
+  #if no DOI:
+  if(is.null(doi)){
     cli::cli_warn(c("!" = "Metadata lacks a DOI. Cannot check for data table URL congruence with DOI. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to add a DOI."))
   }
-  if(!is.na(doi)){
+  #if yes DOI:
+
+  if(!is.null(doi)){
+    #get 7 digit datastore ref
     ds_ref <- stringr::str_sub(doi, -7, -1)
-
-    data_tbl <- EML::eml_get(metadata, "dataTable")
-    data_tbl <- within(data_tbl, rm("@context"))
-
-    # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
-    if ("attributeList" %in% names(data_tbl)) {
-      data_tbl <- list(data_tbl)
-    }
-
-    #check for data table urls and get datastore reference IDs
-    url_refs<-NULL
+    bad_url <- 0
     for(i in seq_along(data_tbl)){
       url <- data_tbl[[i]][["physical"]][["distribution"]][["online"]][["url"]]
-      if(is.na(url)){
-        cli::cli_abort(c("x" = "A data table lacks a URL. Use {.fn EMLeditor::set_data_urls} to add URLs."))
+      prefix <- stringr::str_sub(url, 1, stringr::str_length(url)-7)
+      suffix <- stringr::str_sub(url, -7, -1)
+
+      if(!prefix == "https://irma.nps.gov/DataStore/Reference/Profile/" ||
+        !suffix == ds_ref){
+        bad_url <- bad_url + 1
+        tbl_name <- data_tbl[[i]][["physical"]][["objectName"]]
+        cli::cli_abort(c(
+          "x" = "Metadata url for the data table corresponding to",
+          crayon::blue$bold(tbl_name),
+          "is incorrectly formatted or does not correspond to the metadata DOI. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to edit DOIs or use {.fn EMLeditor::set_data_urls} to edit urls."))
       }
-      url <- stringr::str_sub(url, -7, -1)
-      url_refs <- append(url_refs, url)
     }
-    if(sum(ds_ref != url_refs) > 0){
-      cli::cli_abort(c("x" = "Data table URLs do not correspond to the DOI. Use {.fn EMLeditor::set_data_urls} to update URLs to correspond to the current DOI."))
-    }
-    else{
-      cli::cli_inform(c("v" = "All data table URLs correctly correspond to the DOI."))
+    if(bad_url == 0){
+      cli::cli_inform(
+        c("v" = "Data table URLs are properly formmatted and correspond to the specified DOI."))
     }
   }
   return(invisible(metadata))
 }
+
 
 #' File Name Match
 #'
@@ -435,7 +490,6 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
     }
     cli::cli_abort(msg)
   }
-
   return(invisible(metadata))
 }
 
@@ -906,7 +960,7 @@ test_doi_format <- function(metadata = load_metadata(directory)) {
   missing_doi <- is.null(doi) || !any(grepl("^doi\\:", doi))
 
   if (missing_doi) {
-    cli::cli_abort(c("!" = "Metadata Digital Object Identifier is not properly formatted: DOI missing. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to add a DOI."))
+    cli::cli_warn(c("!" = "Metadata Digital Object Identifier is not properly formatted: DOI missing. Use {.fn EMLeditor::set_doi} or {.fn EMLeditor::set_datastore_doi} to add a DOI."))
   }
   if(nchar(doi) == 37 & grepl("doi: https://doi.org/10.57830/", doi)){
       cli::cli_inform(c("v" = "Metadata Digital Object Identifier appears to be properly formatted."))
