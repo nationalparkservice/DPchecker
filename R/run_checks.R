@@ -163,7 +163,7 @@ run_congruence_checks <- function(directory = here::here(),
            error = function(e) {
              err_count <<- err_count + 1
              cli::cli_bullets(c(e$message, e$body))
-           }
+           },
            warning = function(w) {
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(w$message, w$body))
@@ -172,7 +172,7 @@ run_congruence_checks <- function(directory = here::here(),
            error = function(e) {
              err_count <<-err_count + 1
              cli::cli_bullets(c(e$message, e$body))
-           }
+           },
            warning = function(w) {
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(w$message, w$body))
