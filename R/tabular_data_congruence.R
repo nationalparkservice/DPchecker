@@ -351,7 +351,8 @@ test_dup_meta_entries <- function(metadata = load_metadata(here::here())) {
 #' @examples
 #'  \dontrun{
 #' dir <- DPchecker_example("BICY_veg")
-#' test_datatable_urls(dir)}
+#' test_datatable_urls(dir)
+#' }
 #'
 test_datatable_urls <- function (metadata = load_metadata(directory)) {
   is_eml(metadata)
@@ -394,6 +395,7 @@ test_datatable_urls <- function (metadata = load_metadata(directory)) {
 #' \dontrun{
 #' dir <- DPchecker_example("BICY_veg")
 #' test_datatable_urls_doi(dir)
+#' }
 test_datatable_urls_doi <-  function (metadata = load_metadata(directory)) {
   is_eml(metadata)
 
