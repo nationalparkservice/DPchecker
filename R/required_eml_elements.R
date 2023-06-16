@@ -626,3 +626,64 @@ test_storage_type <- function(metadata = load_metadata(directory)) {
   }
   return(invisible(metadata))
 }
+
+
+test_orcid_exists <- function(metadata = load_metadata(directory)){
+  #get creators
+  creator <- eml_object[["dataset"]][["creator"]]
+
+  # If there's only one creator, creator ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  names_list <- c("individualName", "organizationName", "positionName")
+  if(sum(names_list %in% names(creator)) > 0){
+    creator <- list(creator)
+  }
+
+  # extract orcids and surNames
+  surName <- NULL
+  existing_orcid <- NULL
+  for(i in seq_along(creator)){
+    if("individualName" %in% names(creator[[i]])){
+      #check for orcid directory id:
+      surName <- append(surName, creator[[i]][["individualName"]][["surName"]])
+      existing_orcid <- append(existing_orcid, creator[[i]][["userId"]][["userId"]])
+    }
+  }
+
+}
+
+
+
+test_orcid_format <- function(metadata = load_metadata(directory)){}
+test_orcid_resolves <- function(metadata = load_metadata(directory)){}
+test_orcid_match <- function(metadata = load_metadata(directory)){
+
+  orcid_url <- "https://orcid.org/9999-0001-7591-5035" #bad orcid
+  orcid_url <- "https://orcid.org/0000-0001-7591-5035" #valid orcid
+
+  exist <- httr::http_error(orcid_url)
+  if(exist = FALSE){
+    stop("ERROR: Your ORCiD could not resolve to a web address. Make sure your ORCiD is correctly designated and that you are connected to the internet.\n")
+  }
+  if(exist = TRUE){
+    cat("Your orcid resolves to a valid orcid account")
+  }
+
+  test_req<-httr::GET(orcid_url)
+  status_code<-httr::stop_for_status(test_req)$status_code
+
+  #if API call fails, alert user and remind them to log on to VPN:
+  if(!status_code==200){
+    stop("ERROR: Your ORCiD could not resolve to a web address. Make sure your ORCiD is correctly designated and that you are connected to the internet.\n")
+  }
+  test_json <- httr::content(test_req, "text")
+  test_rjson <- jsonlite::fromJSON(test_json)
+
+  last_name<-test_rjson$person$name$`family-name`$value
+
+
+
+}
+
+
+
+
