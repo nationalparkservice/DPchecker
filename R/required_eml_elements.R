@@ -628,9 +628,22 @@ test_storage_type <- function(metadata = load_metadata(directory)) {
 }
 
 
+#' Test creators for presence of an ORCiD
+#'
+#' @description `test_orcid_exists()` will inspect the metadata and test each creator listed as an individual person (individualName) but not creators that are organizations for the presence of an ORCiD. If an ORCiD is found for all individual creators, the test passes. If any individual creator lacks an ORCiD, the test fails with a warning and the users is pointed towards `EMLeditor::set_creator_orcids()` to add ORCiDs if they so choose.
+#'
+#' @inheritParams test_pub_date
+#'
+#' @return invisibly returns `metadata`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_orcid_exists()
+#' }
 test_orcid_exists <- function(metadata = load_metadata(directory)){
   #get creators
-  creator <- eml_object[["dataset"]][["creator"]]
+  creator <- metadata[["dataset"]][["creator"]]
 
   # If there's only one creator, creator ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
   names_list <- c("individualName", "organizationName", "positionName")
@@ -644,11 +657,21 @@ test_orcid_exists <- function(metadata = load_metadata(directory)){
   for(i in seq_along(creator)){
     if("individualName" %in% names(creator[[i]])){
       #check for orcid directory id:
-      surName <- append(surName, creator[[i]][["individualName"]][["surName"]])
-      existing_orcid <- append(existing_orcid, creator[[i]][["userId"]][["userId"]])
+      last_name <- creator[[i]][["individualName"]][["surName"]]
+      surName <- append(surName, last_name)
+      orcid<-creator[[i]][["userId"]][["userId"]]
+      if(is.null(orcid)){
+        cli::cli_warn(c("!" = "Creator {last_name} lacks an ORCiD. To add an ORCiD, use {.fn EMLeditor::set_creator_orcids}.\n"))
+      }
+      else {
+        existing_orcid <- append(existing_orcid, orcid)
+      }
     }
   }
-
+  if(identical(seq_along(surName), seq_along(existing_orcid))){
+    cli::cli_inform(c("v" = "All individual creators have associated ORCiDs."))
+  }
+  return(invisible(metadata))
 }
 
 
