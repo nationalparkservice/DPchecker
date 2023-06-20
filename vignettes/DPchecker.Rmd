@@ -112,6 +112,14 @@ These tests ensure that the EML elements necessary for DataStore to properly ext
 * All attributes listed in metadata have storage types associated with them ([`test_storage_type()`](../reference/test_storage_type.html))
 * All attribute storage types are valid values ([`test_storage_type()`](../reference/test_storage_type.html))
 
+## Recommended EML elements
+These elements aren't required. If they are missing, the tests will generate a warning that you can choose to ignore. However, if you have included these elements, please resolve any errors before submitting the data package.
+
+* All individual Creators have an [ORCiD](https://orcid.org) associated with them ([`test_orcid_exists()`])(../reference/test_orcid_exists.html)
+* All ORCiDs are properly formatted ([`test_orcid_format()`])(../reference/test_orcid_format.html)
+* All ORCiDs resolve to an ORCiD profile ([`test_orcid_resolves()`])(../reference/test_orcid_resolves.html)
+* All ORCiDs resolve to an ORCiD profile that matches the Creator's last name ([`test_orcid_match()`])(../reference/test_orcid_match.html)
+
 ## Metadata and Data Congruence
 These files check to make sure the values and fields in the metadata file accurately corresponds to the data files supplied. These test require the entire data package - both the \*_metadata.xml file and all data files (*.csv) must be present.
 
