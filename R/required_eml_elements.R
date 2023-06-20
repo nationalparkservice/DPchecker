@@ -725,9 +725,9 @@ test_orcid_format <- function(metadata = load_metadata(directory)){
     if(!is.null(bad_orcids)){
       cli::cli_abort(c("x" = "{?ORCiD/ORCiDs} for {?creator/creators} {bad_orcids} {?is/are} improperly formatted. To reformat as xxxx-xxxx-xxxx-xxxx (do NOT include the http prefix), use {.fn EMLeditor::set_creator_orcids}.\n"))
     }
-    else {
-      cli::cli_warn(c("!" = "{?ORCiD/ORCiDs} for {?Creator/Creators} {surName} {?is/are} imporperly formatted: {?ORCiD/ORiDs} missing. To add {?an ORCiD/ORCiDs}, use {.fn EMLeditor::set_creator_orcids}.\n"))
-    }
+    #else {
+    #  cli::cli_warn(c("!" = "{?ORCiD/ORCiDs} for {?Creator/Creators} {surName} {?is/are} imporperly formatted: {?ORCiD/ORiDs} missing. To add {?an ORCiD/ORCiDs}, use {.fn EMLeditor::set_creator_orcids}.\n"))
+    #}
   }
   return(invisible(metadata))
 }
