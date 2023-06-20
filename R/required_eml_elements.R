@@ -676,7 +676,63 @@ test_orcid_exists <- function(metadata = load_metadata(directory)){
 
 
 
-test_orcid_format <- function(metadata = load_metadata(directory)){}
+#' Test for ORCiD formatting (and presence)
+#'
+#' @description `test_orcid_format()` inspects metadata and looks for ORCiDs for each individual creator (not organizations listed as creators). If all individuals have correctly formatted ORCiDs (i.e a 19-character string such as xxxx-xxxx-xxxx-xxxx), the test passes. If any individual has in improperly formatted ORCiD, the test fails with an error. If there are no improperly formatted ORCiDs but one or more ORCiDs are missing, the test fails with a warning. Note that if there are imporperly formatted ORCiDs, the test will not inspect for presence/absence of individual ORCiDs. For a full accounting of which (if any) ORCiDs are missing (but no formatting check), use `test_orcid_exists`.
+#'
+#' @inheritParams test_pub_date
+#'
+#' @return invisibly returns `metadata`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_orcid_format()
+#' }
+test_orcid_format <- function(metadata = load_metadata(directory)){
+  creator <- metadata[["dataset"]][["creator"]]
+
+  # If there's only one creator, creator ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  names_list <- c("individualName", "organizationName", "positionName")
+  if(sum(names_list %in% names(creator)) > 0){
+    creator <- list(creator)
+  }
+
+  # extract orcids and surNames
+  surName <- NULL
+  existing_orcid <- NULL
+  bad_orcids <- NULL
+  for(i in seq_along(creator)){
+    if("individualName" %in% names(creator[[i]])){
+      #check for orcid directory id:
+      last_name <- creator[[i]][["individualName"]][["surName"]]
+      orcid<-creator[[i]][["userId"]][["userId"]]
+      if(!is.null(orcid)){
+        if(nchar(orcid) != 19){
+          bad_orcids <- append(bad_orcids, last_name)
+        }
+        existing_orcid <- append(existing_orcid, orcid)
+        surName <- append(surName, last_name)
+      }
+    }
+  }
+  if(is.null(bad_orcids) & !is.null(existing_orcid)){
+    cli::cli_inform(c("v" = "All Creator ORCiDs are properly formatted.\n"))
+  }
+  else{
+    if(!is.null(bad_orcids)){
+      cli::cli_abort(c("x" = "{?ORCiD/ORCiDs} for {?creator/creators} {bad_orcids} {?is/are} improperly formatted. To reformat as xxxx-xxxx-xxxx-xxxx (do NOT include the http prefix), use {.fn EMLeditor::set_creator_orcids}.\n"))
+    }
+    else {
+      cli::cli_warn(c("!" = "{?ORCiD/ORCiDs} for {?Creator/Creators} {surName} {?is/are} imporperly formatted: {?ORCiD/ORiDs} missing. To add {?an ORCiD/ORCiDs}, use {.fn EMLeditor::set_creator_orcids}.\n"))
+    }
+  }
+  return(invisible(metadata))
+}
+
+
+
+
 test_orcid_resolves <- function(metadata = load_metadata(directory)){}
 test_orcid_match <- function(metadata = load_metadata(directory)){
 
