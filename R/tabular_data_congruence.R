@@ -1074,7 +1074,7 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
 
   # If there are mismatches, throw an error, otherwise, print a message indicating passed test
   if (!is.null(bad_fieldnames)) {
-    cli::cli_warn(c("!" = "Some field names contain special characters and/or do not begin with a letter:", bad_fieldnames))
+    cli::cli_warn(c("!" = paste0("Some field names contain special characters and/or do not begin with a letter: ", bad_fieldnames)))
   } else {
     cli::cli_inform(c("v" = "Field names begin with a letter and do not contain spaces or special characters."))
   }
