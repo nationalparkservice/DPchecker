@@ -952,8 +952,9 @@ test_doi <- function(metadata = load_metadata(directory)) {
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' meta <- test_doi_format(metadata)
-#'
+#' }
 test_doi_format <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
   doi <- metadata[["dataset"]][["alternateIdentifier"]]
