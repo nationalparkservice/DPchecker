@@ -27,7 +27,9 @@ Imports:
     purrr,
     stringr,
     tibble,
-    crayon
+    crayon,
+    httr,
+    jsonlite
 Remotes: 
     https://github.com/NCEAS/arcticdatautils
 URL: https://nationalparkservice.github.io/DPchecker/
