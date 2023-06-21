@@ -628,14 +628,19 @@ test_storage_type <- function(metadata = load_metadata(directory)) {
   return(invisible(metadata))
 }
 
-#' Title
+#' Test for presence of creator and surName
 #'
-#' @param metadata
+#' @description `test_creator()` examines the Creator element in metadata. If the creator element is missing, the test fails with an error. If the creator element is present, the function looks for individual creators. If individual creators are present and any of them lacks a surName, the test fails with an error. If any individual creators have a surName with more than two words, the test fails with a warning. Otherwise, the test passes.
 #'
-#' @return
+#' @inheritParams test_pub_date
+#'
+#' @return invisible(metadata)
 #' @export
 #'
 #' @examples
+#' \dontrun{
+#' test_creator()
+#' }
 test_creator <- function(metadata = load_metadata(directory)){
   is_eml(metadata)
   #get creators
@@ -677,7 +682,7 @@ test_creator <- function(metadata = load_metadata(directory)){
     }
   }
 
-  cli::cli_inform(c("v" = "All individual Creators in metadata have a surNames with less than three words."))
+  cli::cli_inform(c("v" = "Any individual Creators in metadata have a surNames with less than three words."))
 
   return(invisible(metadata))
 
