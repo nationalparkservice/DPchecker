@@ -97,13 +97,13 @@ These tests determine whether the metadata is schema valid and adheres to some r
 ## Required EML elements
 These tests ensure that the EML elements necessary for DataStore to properly extract metadata and populate a reference exist, are in the correct location, and are properly formatted. These elements are also often the aspects of metadata that will be passed on to other repositories and search engines such as [DataCite](https://datacite.org/) [data.gov](https://data.gov/) and [google's dataset search](https://datasetsearch.research.google.com/). Therefore, these checks may throw warnings with suggestions on best practices - such as removing stray characters from abstracts or suggesting a more informative title if your title is unusually short. Required EML element tests only require the *_metadata.xml file to run and do not require that the data files be present.
 
-* Creator element exists and if individual creators exist, they all have valid (<3 words) surNames ([`test_creator`](../reference/test_creator.html))
+* Creator element exists and if individual creators exist, they all have valid (<3 words) surNames ([`test_creator()`](../reference/test_creator.html))
 * Publication date is present and in the correct ISO-8601 format ([`test_pub_date()`](../reference/test_pub_date.html))
 * Data package title is present in metadata ([`test_dp_title()`](../reference/test_dp_title.html))
 * Metadata states data was created by or for NPS ([`test_by_for_nps()`](../reference/test_by_for_nps.html))
 * Metadata indicates the publisher is the National Park Service ([`test_publisher_name()`](../reference/test_publisher_name.html))
 * Metadata indicates the publisher state is CO  ([`test_publisher_state()`](../reference/test_publisher_state.html))
-* Metadata indicates the publisher city is Fort Colllins ([`test_publisher_city()`](../reference/test_publisher_city.html))
+* Metadata indicates the publisher city is Fort Collins ([`test_publisher_city()`](../reference/test_publisher_city.html))
 * Metadata contains a well formatted abstract for the data package ([`test_dp_abstract()`](../reference/test_dp_abstract.html))
 * All dataTables listed in metadata have a unique file description ([`test_file_descript()`](../reference/test_file_descript.html))
 * Metadata contains a valid CUI code ([`test_cui_dissemination()`](../reference/test_cui_dissemination.html))
