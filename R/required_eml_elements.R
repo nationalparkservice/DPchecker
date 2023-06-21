@@ -628,6 +628,60 @@ test_storage_type <- function(metadata = load_metadata(directory)) {
   return(invisible(metadata))
 }
 
+#' Title
+#'
+#' @param metadata
+#'
+#' @return
+#' @export
+#'
+#' @examples
+test_creator <- function(metadata = load_metadata(directory)){
+  is_eml(metadata)
+  #get creators
+  creator <- metadata[["dataset"]][["creator"]]
+
+  if(is.null(creator)){
+    cli::cli_abort(c("x" = "Metadata lacks a Creator. Use EMLassemblyline to add individuals as creators or use {.fn EMLeditor::set_creator_orgs} to add an organization as a creator."))
+    return(invisible(metadata))
+  }
+
+  # If there's only one creator, creator ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  names_list <- c("individualName", "organizationName", "positionName")
+  if(sum(names_list %in% names(creator)) > 0){
+    creator <- list(creator)
+  }
+
+  #get surNames from individual creators:
+  surName <- NULL
+  for(i in seq_along(creator)){
+    if("individualName" %in% names(creator[[i]])){
+      #check for orcid directory id:
+      last_name <- creator[[i]][["individualName"]][["surName"]]
+      #if any surName is missing, fail with an error:
+      if(is.null(last_name)){
+        cli::cli_abort(c("x" = "An individual Creator in metadata lacks a surName. Use EMLassemblyline to insure all individual creators have surNames.\n"))
+        return(metadata(invisible))
+      }
+      else {
+        surName <- append(surName, last_name)
+      }
+    }
+  }
+
+  for(i in seq_along(surName)){
+    word_count <- stringr::str_count(surName[i], "\\W+") + 1
+    if(word_count > 2){
+      cli::cli_warn(c("!" = "At least one Individual Creator in metadata has a surName with more than two words. Could this be mistake? Use {.fn EMLeditor::set_creator_orgs} to include an organization as a creator and {.fn EMLeditor::set_creator_order} to re-order or remove creators."))
+      return(invisible(metadata))
+    }
+  }
+
+  cli::cli_inform(c("v" = "All individual Creators in metadata have a surNames with less than three words."))
+
+  return(invisible(metadata))
+
+}
 
 #' Test creators for presence of an ORCiD
 #'
