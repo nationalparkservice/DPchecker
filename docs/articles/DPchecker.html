@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DPchecker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -161,7 +161,7 @@ creator consider writing a more informative abstract.</p>
 <div class="section level2">
 <h2 id="tests-conducted">Tests conducted<a class="anchor" aria-label="anchor" href="#tests-conducted"></a>
 </h2>
-<p>DPchecker v0.3.0 runs two types of tests: metadata only tests and
+<p>DPchecker v0.3.1 runs two types of tests: metadata only tests and
 tests to determine whether the metadata and data files are congruent.
 Metadata tests can be broken down in to two sub-categories, metadata
 compliance and metadata completeness. The tests run and the order in
@@ -227,6 +227,21 @@ and do not require that the data files be present.</p>
 <li>All attributes listed in metadata have storage types associated with
 them (<a href="../reference/test_storage_type.html"><code>test_storage_type()</code></a>)</li>
 <li>All attribute storage types are valid values (<a href="../reference/test_storage_type.html"><code>test_storage_type()</code></a>)</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="recommended-eml-elements">Recommended EML elements<a class="anchor" aria-label="anchor" href="#recommended-eml-elements"></a>
+</h3>
+<p>These elements aren’t required. If they are missing, the tests will
+generate a warning that you can choose to ignore. However, if you have
+included these elements, please resolve any errors before submitting the
+data package.</p>
+<ul>
+<li>All individual Creators have an <a href="https://orcid.org" class="external-link">ORCiD</a> associated with them (<a href="../reference/test_orcid_exists.html"><code>test_orcid_exists()</code></a>)</li>
+<li>All ORCiDs are properly formatted (<a href="../reference/test_orcid_format.html"><code>test_orcid_format()</code></a>)</li>
+<li>All ORCiDs resolve to an ORCiD profile (<a href="../reference/test_orcid_resolves.html"><code>test_orcid_resolves()</code></a>)</li>
+<li>All ORCiDs resolve to an ORCiD profile that matches the Creator’s
+last name (<a href="../reference/test_orcid_match.html"><code>test_orcid_match()</code></a>)</li>
 </ul>
 </div>
 <div class="section level3">

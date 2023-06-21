@@ -112,6 +112,18 @@
     <loc>/reference/test_numeric_fields.html</loc>
   </url>
   <url>
+    <loc>/reference/test_orcid_exists.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_orcid_format.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_orcid_match.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_orcid_resolves.html</loc>
+  </url>
+  <url>
     <loc>/reference/test_publisher.html</loc>
   </url>
   <url>
