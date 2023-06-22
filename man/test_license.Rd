@@ -7,7 +7,7 @@
 test_license(metadata = load_metadata(directory))
 }
 \arguments{
-\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter is not provided, it defaults to calling \code{load_metadata} in the current project directory.#'}
+\item{metadata}{The metadata object returned by \code{load_metadata}. If parameter is not provided, it defaults to calling \code{load_metadata} in the current project directory.}
 }
 \value{
 invisibly returns \code{metadata}

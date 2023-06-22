@@ -946,14 +946,15 @@ test_doi <- function(metadata = load_metadata(directory)) {
 #'
 #' @description `test_doi_format()` runs some basic formatting checks. If your DOI is absent, the test will fail with an error. If the DOI is not exactly 37 characters AND does not contain "doi: https://doi.org/10.57830/" the test will fail with an error. The test passes if the entry in the alternateIdentifier field is exactly 37 characters long and contains "doi: https://doi.org/10.57830/". Please note that this is a very cursory formatting check; it does not check to make sure the DOI is active (it probably should not be at this stage of data package authoring). It does not check to make sure it is correct or that it correctly corresponds to anything on DataStore or elsewhere whithin the metadata.
 #'
-#' @param metadata
+#' @inheritParams test_metadata_version
 #'
 #' @return Invisibly returns `metadata`.
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' meta <- test_doi_format(metadata)
-#'
+#' }
 test_doi_format <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
   doi <- metadata[["dataset"]][["alternateIdentifier"]]
@@ -1074,7 +1075,7 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
 
   # If there are mismatches, throw an error, otherwise, print a message indicating passed test
   if (!is.null(bad_fieldnames)) {
-    cli::cli_warn(c("!" = "Some field names contain special characters and/or do not begin with a letter:", bad_fieldnames))
+    cli::cli_warn(c("!" = paste0("Some field names contain special characters and/or do not begin with a letter: ", bad_fieldnames)))
   } else {
     cli::cli_inform(c("v" = "Field names begin with a letter and do not contain spaces or special characters."))
   }

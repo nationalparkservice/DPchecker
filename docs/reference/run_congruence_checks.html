@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DPchecker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -117,6 +117,8 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Checking that metadata contains required elements for DataStore extraction</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Any individual Creators in metadata have a surNames with less than three</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   words.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Publication date, 2022, predates the Data Package Reference Type.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Data package title is present in metadata.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata states data was created by or for NPS.</span>
@@ -137,6 +139,18 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All attributes listed in metadata have storage types associated with them.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All attribute storage types are valid values.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Checking that metadata contains optional elements for DataStore extraction</span> ──</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All individual creators have associated ORCiDs.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> ORCiD for creator Quevedo is improperly formatted. To reformat as</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   xxxx-xxxx-xxxx-xxxx (do NOT include the http prefix), use</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   `EMLeditor::set_creator_orcids()`.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Creator Quevedo had an ORCiD that did not resolve to a valid ORCiD profile.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   Use `EMLeditor::set_creator_orcids()` to edit ORCiDs.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Creator Quevedo has an ORCiD profile that does not match the surName in</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   metadata. Use `EMLeditor::set_creator_orcids()` to edit ORCiDs in metadata,</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   or go to <span style="color: #0000BB; font-style: italic;">&lt;</span><a href="https://orcid.org" class="external-link"><span style="color: #0000BB; font-style: italic;">https://orcid.org</span></a><span style="color: #0000BB; font-style: italic;">&gt;</span> to make your ORCiD profile publicly visible.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Checking that metadata is consistent with data file(s)</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All data files are listed in metadata and all metadata files names refer to</span>
@@ -149,7 +163,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Summary</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> 2 errors to address</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> 5 errors to address</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 3 warnings to look into</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

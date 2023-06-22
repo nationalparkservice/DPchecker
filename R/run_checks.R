@@ -207,6 +207,15 @@ run_congruence_checks <- function(directory = here::here(),
 
   cli::cli_h2("Checking that metadata contains required elements for DataStore extraction")
 
+  tryCatch(test_creator(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
   tryCatch(test_pub_date(metadata),
            error = function(e) {
              err_count <<- err_count + 1
@@ -324,6 +333,48 @@ run_congruence_checks <- function(directory = here::here(),
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(w$message, w$body))
            })
+
+  cli::cli_h2("Checking that metadata contains optional elements for DataStore extraction")
+
+  tryCatch(test_orcid_exists(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+  tryCatch(test_orcid_format(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+  tryCatch(test_orcid_resolves(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+  tryCatch(test_orcid_match(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+
+
+
 
 
   if (!check_metadata_only) {
