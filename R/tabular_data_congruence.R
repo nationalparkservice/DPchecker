@@ -685,7 +685,9 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #' @examples
 #' dir <- DPchecker_example("BICY_veg")
 #' test_date_range(dir)
-test_date_range <- function(directory = here::here(), metadata = load_metadata(directory)) {
+test_date_range <- function(directory = here::here(),
+                            metadata = load_metadata(directory),
+                            skip_cols = NA) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   missing_temporal <- is.null(arcticdatautils::eml_get_simple(metadata, "temporalCoverage"))
@@ -744,6 +746,17 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
     return(attrs)
   })
   dttm_attrs$`@context` <- NULL
+
+  #### Working!
+
+   #if(!is.na(skip_cols)){
+  #  for(i in seq_along(dttm_attrs)){
+  #    if skip_col %in% dttm_attrs[[i]][['attributeName']]
+  #      j <- which[dttm_attrs[[i]][['attributeName']]] == skip_cols
+  #  }
+#
+#  }
+
   names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
 
   # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
