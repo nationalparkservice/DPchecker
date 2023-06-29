@@ -752,22 +752,8 @@ test_date_range <- function(directory = here::here(),
   if(sum(!is.na(skip_cols)) > 0){
     for(i in seq_along(dttm_attrs)){
       dttm_attrs[[i]]<-filter(dttm_attrs[[i]], !attributeName %in% skip_cols)
-
-      #if(any(skip_cols %in% dttm_attrs[[i]][['attributeName']])){
-      #  dttm_attrs[[i]][]
-
-
-
-        #for(j in length(seq_along(skip_cols))){
-        #  dttm_attrs[[i]] <- within(dttm_attrs[[i]], rm(as.character(skip_cols[j])))
-        #}
-
-        #temp_attrs <- dttm_attrs[[i]][!grepl(skip_cols[j],
-        #                            dttm_attrs[[i]][['attributeName']]),]
-        #dttm_attrs[[i]]<-j
     }
   }
-
 
   names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
 
