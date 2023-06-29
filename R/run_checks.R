@@ -16,6 +16,7 @@
 run_congruence_checks <- function(directory = here::here(),
                                   metadata = load_metadata(directory),
                                   check_metadata_only = FALSE,
+                                  skip_cols = NA,
                                   output_filename,
                                   output_dir = here::here()) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
@@ -408,7 +409,7 @@ run_congruence_checks <- function(directory = here::here(),
                warn_count <<- warn_count + 1
                cli::cli_bullets(c(w$message, w$body))
              })
-    tryCatch(test_date_range(directory, metadata),
+    tryCatch(test_date_range(directory, metadata, skip_cols = skip_cols),
              error = function(e) {
                err_count <<- err_count + 1
                cli::cli_bullets(c(e$message, e$body))
