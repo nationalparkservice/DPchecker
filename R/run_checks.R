@@ -5,6 +5,7 @@
 #' @param output_dir Location in which to save the output file, if using.
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
+#' @param skip_cols String. Defaults to NA. A list of one or more columns in the data to skip when testing whether the dates within data fall within the dates range specified in metadata. Useful if, for instance, there are columns within the data associated with the QA/QC process and these dates are expected to fall outside the date range specified for the data.
 #'
 #' @return Invisibly returns `metadata`.
 #' @export
