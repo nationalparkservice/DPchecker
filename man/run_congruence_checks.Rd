@@ -8,6 +8,7 @@ run_congruence_checks(
   directory = here::here(),
   metadata = load_metadata(directory),
   check_metadata_only = FALSE,
+  skip_cols = NA,
   output_filename,
   output_dir = here::here()
 )
@@ -18,6 +19,8 @@ run_congruence_checks(
 \item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
 
 \item{check_metadata_only}{Only run checks on the metadata and skip anything involving data files.}
+
+\item{skip_cols}{String. Defaults to NA. A list of one or more columns in the data to skip when testing whether the dates within data fall within the dates range specified in metadata. Useful if, for instance, there are columns within the data associated with the QA/QC process and these dates are expected to fall outside the date range specified for the data.}
 
 \item{output_filename}{Optional. If specified, saves results of congruence checks to this file. If omitted, prints results to console. If the file already exists, results will be appended to the existing file.}
 

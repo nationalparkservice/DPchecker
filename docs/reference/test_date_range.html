@@ -45,7 +45,11 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">test_date_range</span><span class="op">(</span>directory <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/here/man/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>, metadata <span class="op">=</span> <span class="fu"><a href="load_metadata.html">load_metadata</a></span><span class="op">(</span><span class="va">directory</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">test_date_range</span><span class="op">(</span></span>
+<span>  directory <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  metadata <span class="op">=</span> <span class="fu"><a href="load_metadata.html">load_metadata</a></span><span class="op">(</span><span class="va">directory</span><span class="op">)</span>,</span>
+<span>  skip_cols <span class="op">=</span> <span class="cn">NA</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -56,6 +60,10 @@
 
 <dt>metadata</dt>
 <dd><p>The metadata object returned by <code>load_metadata</code>. If parameter not provided, defaults to calling <code>load_metadata</code> in current project directory.</p></dd>
+
+
+<dt>skip_cols</dt>
+<dd><p>String. Defaults to NA. One or more columns to omit from the test_date_range function.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -68,6 +76,7 @@
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This function checks columns that are identified as date/time in the metadata. If the metadata lacks a date range, the function fails with a warning. It fails with a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and result failing the test with an error.</p>
 <p>This test will also inform the user which file and columns are causing the test to fail and how it is failing (i.e. outside of the date range or failed to parse).</p>
+<p>If the date columns that are causing the test to fail are associated with the QA/QC process and are expected to fall outside the date range specified for the data, these columns can be omitted from the test using skip_cols.</p>
     </div>
 
     <div class="section level2">
