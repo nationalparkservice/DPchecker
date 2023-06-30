@@ -754,7 +754,7 @@ test_date_range <- function(directory = here::here(),
   #### dropping skip_cols from date range check:
   if(sum(!is.na(skip_cols)) > 0){
     for(i in seq_along(dttm_attrs)){
-      dttm_attrs[[i]]<-filter(dttm_attrs[[i]], !attributeName %in% skip_cols)
+      dttm_attrs[[i]]<-dplyr::filter(dttm_attrs[[i]], !attributeName %in% skip_cols)
     }
   }
 
