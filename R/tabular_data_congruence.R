@@ -676,8 +676,11 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #'
 #' This test will also inform the user which file and columns are causing the test to fail and how it is failing (i.e. outside of the date range or failed to parse).
 #'
+#' If the date columns that are causing the test to fail are associated with the QA/QC process and are expected to fall outside the date range specified for the data, these columns can be omitted from the test using skip_cols.
+#'
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
+#' @param skip_cols String. Defaults to NA. One or more columns to omit from the test_date_range function.
 #'
 #' @return Invisibly returns `metadata`.
 #' @export
