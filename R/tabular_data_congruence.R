@@ -860,7 +860,7 @@ test_date_range <- function(directory = here::here(),
   if (!is.null(dataset_out_of_range)) {
     msg <- paste0("--> {.file ", names(dataset_out_of_range), "}:  ", dataset_out_of_range)
     names(msg) <- rep(" ", length(msg))
-    err <- paste0("The following date/time columns are out of the range [{.val ", meta_begin_date, "}, {.val ", meta_end_date, "}] specified in the metadata:")
+    err <- paste0("The following date/time columns are out of the range [{.val ", meta_begin_date, "}, {.val ", meta_end_date, "}] specified in the metadata. To exclude QA/QC dates, re-run {.fn DPchecker::run_congruence_checks} with skip_cols set to the columns to skip.")
     if (any(grepl("failed to parse", msg))) {
       cli::cli_abort(c("x" = err, msg))  # Throw an error if some dates won't parse
     } else {
@@ -869,7 +869,6 @@ test_date_range <- function(directory = here::here(),
   } else {
     cli::cli_inform(c("v" = "Columns indicated as date/time in metadata are within the stated temporal coverage range."))
   }
-
   return(invisible(metadata))
 }
 
