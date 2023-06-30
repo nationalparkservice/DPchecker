@@ -5,6 +5,7 @@
 #' @param output_dir Location in which to save the output file, if using.
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
+#' @param skip_cols String. Defaults to NA. A list of one or more columns in the data to skip when testing whether the dates within data fall within the dates range specified in metadata. Useful if, for instance, there are columns within the data associated with the QA/QC process and these dates are expected to fall outside the date range specified for the data.
 #'
 #' @return Invisibly returns `metadata`.
 #' @export
@@ -16,6 +17,7 @@
 run_congruence_checks <- function(directory = here::here(),
                                   metadata = load_metadata(directory),
                                   check_metadata_only = FALSE,
+                                  skip_cols = NA,
                                   output_filename,
                                   output_dir = here::here()) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
@@ -408,7 +410,7 @@ run_congruence_checks <- function(directory = here::here(),
                warn_count <<- warn_count + 1
                cli::cli_bullets(c(w$message, w$body))
              })
-    tryCatch(test_date_range(directory, metadata),
+    tryCatch(test_date_range(directory, metadata, skip_cols = skip_cols),
              error = function(e) {
                err_count <<- err_count + 1
                cli::cli_bullets(c(e$message, e$body))

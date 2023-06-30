@@ -676,8 +676,11 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #'
 #' This test will also inform the user which file and columns are causing the test to fail and how it is failing (i.e. outside of the date range or failed to parse).
 #'
+#' If the date columns that are causing the test to fail are associated with the QA/QC process and are expected to fall outside the date range specified for the data, these columns can be omitted from the test using skip_cols.
+#'
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
+#' @param skip_cols String. Defaults to NA. One or more columns to omit from the test_date_range function.
 #'
 #' @return Invisibly returns `metadata`.
 #' @export
@@ -685,7 +688,9 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #' @examples
 #' dir <- DPchecker_example("BICY_veg")
 #' test_date_range(dir)
-test_date_range <- function(directory = here::here(), metadata = load_metadata(directory)) {
+test_date_range <- function(directory = here::here(),
+                            metadata = load_metadata(directory),
+                            skip_cols = NA) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   missing_temporal <- is.null(arcticdatautils::eml_get_simple(metadata, "temporalCoverage"))
@@ -718,14 +723,14 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   meta_begin_date <- readr::parse_datetime(firstDate, format = "%d %B %Y")
 
   lastDate<- arcticdatautils::eml_get_simple(metadata, "endDate")
-    if (is.null(lastDate)) {
-      warning("Your metadata lacks an ending date.")
-      LastDate <- NA
-    } else {
-      lastDate <- lastDate %>%
-        as.Date() %>%
-        format("%d %B %Y")
-    }
+  if (is.null(lastDate)) {
+    warning("Your metadata lacks an ending date.")
+    LastDate <- NA
+  } else {
+    lastDate <- lastDate %>%
+      as.Date() %>%
+      format("%d %B %Y")
+  }
   meta_end_date <- readr::parse_datetime(lastDate, format = "%d %B %Y")
 
   meta_date_range <- c(begin = meta_begin_date, end = meta_end_date)
@@ -733,7 +738,8 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   if (any(is.na(meta_date_range))) {
     missing_date <- names(meta_date_range[is.na(meta_date_range)])
     present_date <- names(meta_date_range[!is.na(meta_date_range)])
-    cli::cli_warn(c("!" = paste("Metadata temporal coverage is missing", missing_date, "date.")))
+    cli::cli_warn(c("!" = paste("Metadata temporal coverage is missing",
+                                missing_date, "date.")))
   }
 
   # Get list of date/time attributes for each table in the metadata
@@ -744,6 +750,14 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
     return(attrs)
   })
   dttm_attrs$`@context` <- NULL
+
+  #### dropping skip_cols from date range check:
+  if(sum(!is.na(skip_cols)) > 0){
+    for(i in seq_along(dttm_attrs)){
+      dttm_attrs[[i]]<-dplyr::filter(dttm_attrs[[i]], !attributeName %in% skip_cols)
+    }
+  }
+
   names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
 
   # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
@@ -849,7 +863,7 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   if (!is.null(dataset_out_of_range)) {
     msg <- paste0("--> {.file ", names(dataset_out_of_range), "}:  ", dataset_out_of_range)
     names(msg) <- rep(" ", length(msg))
-    err <- paste0("The following date/time columns are out of the range [{.val ", meta_begin_date, "}, {.val ", meta_end_date, "}] specified in the metadata:")
+    err <- paste0("The following date/time columns are out of the range [{.val ", meta_begin_date, "}, {.val ", meta_end_date, "}] specified in the metadata. To exclude QA/QC dates, re-run {.fn DPchecker::run_congruence_checks} with skip_cols set to the columns to skip.")
     if (any(grepl("failed to parse", msg))) {
       cli::cli_abort(c("x" = err, msg))  # Throw an error if some dates won't parse
     } else {
@@ -858,12 +872,11 @@ test_date_range <- function(directory = here::here(), metadata = load_metadata(d
   } else {
     cli::cli_inform(c("v" = "Columns indicated as date/time in metadata are within the stated temporal coverage range."))
   }
-
   return(invisible(metadata))
 }
 
 #' Check for Taxonomic Coverage
-#'
+#'test
 #' @description 'test_taxnomomic_cov()` checks whether taxonomic coverage element is present in metadata. It does not perform any validation of taxonomic coverage information. If taxonomic coverage is present, the test passes. If it is absent, the test fails with a warning.
 #'
 #' @inheritParams test_metadata_version

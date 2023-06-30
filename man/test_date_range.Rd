@@ -4,12 +4,18 @@
 \alias{test_date_range}
 \title{Test Date Range}
 \usage{
-test_date_range(directory = here::here(), metadata = load_metadata(directory))
+test_date_range(
+  directory = here::here(),
+  metadata = load_metadata(directory),
+  skip_cols = NA
+)
 }
 \arguments{
 \item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
 
 \item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
+
+\item{skip_cols}{String. Defaults to NA. One or more columns to omit from the test_date_range function.}
 }
 \value{
 Invisibly returns \code{metadata}.
@@ -21,6 +27,8 @@ Invisibly returns \code{metadata}.
 This function checks columns that are identified as date/time in the metadata. If the metadata lacks a date range, the function fails with a warning. It fails with a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and result failing the test with an error.
 
 This test will also inform the user which file and columns are causing the test to fail and how it is failing (i.e. outside of the date range or failed to parse).
+
+If the date columns that are causing the test to fail are associated with the QA/QC process and are expected to fall outside the date range specified for the data, these columns can be omitted from the test using skip_cols.
 }
 \examples{
 dir <- DPchecker_example("BICY_veg")
