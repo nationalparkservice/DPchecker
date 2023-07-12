@@ -864,7 +864,7 @@ test_orcid_resolves <- function(metadata = load_metadata(directory)){
 #'
 #' @description `test_orcid_match()` will only evaluate Creators that are individuals (not organizations). If an ORCiD has been supplied, the function will attempt to access the indicated ORCiD profile and test whether the last name indicated on the ORCiD profile matches the surName indicated in Metadata. If all surNames match the ORCiD profiles, the test passes. If any surName does not match the indicated ORCID profile, the test fails with an error.
 #'
-#' @details Potential reasons for failing this test having entered the wrong ORCiD into metadata, having improperly formatted the ORCiD in metadata (it should be listed as https://orcid.org/xxxx-xxxx-xxxx-xxxx - see `test_orcid_format()`), having set your ORCiD profile to "private" (in which case the function can't access the name associated with the profile) or differences between the ORCiD profile name and the name in metadata (such as maiden vs. married name, transposing given and surnames, or variation in surName spelling).
+#' @details Potential reasons for failing this test include having entered the wrong ORCiD into metadata, having improperly formatted the ORCiD in metadata (it should be listed as https://orcid.org/xxxx-xxxx-xxxx-xxxx - see `test_orcid_format()`), having set your ORCiD profile to "private" (in which case the function can't access the name associated with the profile) or differences between the ORCiD profile name and the name in metadata (such as maiden vs. married name, transposing given and surnames, or variation in surName spelling).
 #'
 #' @inheritParams test_pub_date
 #'
@@ -906,23 +906,31 @@ test_orcid_match <- function(metadata = load_metadata(directory)){
     for(i in seq_along(surName)){
       orcid_url <- existing_orcid[i]
       #api request to ORCID:
-      test_req<-httr::GET(orcid_url)
-      # if the status is good, check that the names match:
-      status <- test_req$status_code
-      if(status == 200){
-        #munge api result:
-        test_json <- httr::content(test_req, "text")
-        test_rjson <- jsonlite::fromJSON(test_json)
-        #pull last name from api result; if set to private == NULL
-        last_name<-test_rjson$person$name$`family-name`$value
 
-        #check whether surName in metadata matches last name on ORCiD profile:
-        if(!identical(surName[i], last_name)){
+      tryCatch({test_req <- httr::GET(orcid_url)},
+               error = function(e){}
+      )
+      if(exists("test_req")){
+        status <- test_req$status_code
+        if(status == 200){
+          #munge api result:
+          test_json <- httr::content(test_req, "text")
+          test_rjson <- jsonlite::fromJSON(test_json)
+          #pull last name from api result; if set to private == NULL
+          last_name<-test_rjson$person$name$`family-name`$value
+
+          #check whether surName in metadata matches last name on ORCiD profile:
+          if(!identical(surName[i], last_name)){
+            wrong_person <- append(wrong_person, surName[i])
+          }
+        }
+
+        #if the status is bad, assume the profile is somehow bad/doesn't match
+        if(status != 200){
           wrong_person <- append(wrong_person, surName[i])
         }
       }
-      #if the status is bad, assume the profile is somehow bad/doesn't match
-      if(status != 200){
+      else{
         wrong_person <- append(wrong_person, surName[i])
       }
     }
