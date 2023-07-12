@@ -739,7 +739,7 @@ test_orcid_exists <- function(metadata = load_metadata(directory)){
 
 #' Test for ORCiD formatting (and presence)
 #'
-#' @description `test_orcid_format()` inspects metadata and looks for ORCiDs for each individual creator (not organizations listed as creators). If all individuals have correctly formatted ORCiDs (i.e a 19-character string such as xxxx-xxxx-xxxx-xxxx), the test passes. If any individual has in improperly formatted ORCiD, the test fails with an error. If there are no improperly formatted ORCiDs but one or more ORCiDs are missing, the test fails with a warning. Note that if there are imporperly formatted ORCiDs, the test will not inspect for presence/absence of individual ORCiDs. For a full accounting of which (if any) ORCiDs are missing (but no formatting check), use `test_orcid_exists`.
+#' @description `test_orcid_format()` inspects metadata and looks for ORCiDs for each individual creator (not organizations listed as creators). If all individuals have correctly formatted ORCiDs (i.e a 37-character string such as "https://orcid.org/xxxx-xxxx-xxxx-xxxx"), the test passes. This is a simple test that just looks at string length, not content. If any individual has in improperly formatted ORCiD, the test fails with an error. If there are no improperly formatted ORCiDs but one or more ORCiDs are missing, the test fails with a warning. Note that if there are improperly formatted ORCiDs, the test will not inspect for presence/absence of individual ORCiDs. For a full accounting of which (if any) ORCiDs are missing (but no formatting check), use `test_orcid_exists`.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -770,7 +770,7 @@ test_orcid_format <- function(metadata = load_metadata(directory)){
       last_name <- creator[[i]][["individualName"]][["surName"]]
       orcid<-creator[[i]][["userId"]][["userId"]]
       if(!is.null(orcid)){
-        if(nchar(orcid) != 19){
+        if(nchar(orcid) != 37){
           bad_orcids <- append(bad_orcids, last_name)
         }
         existing_orcid <- append(existing_orcid, orcid)
@@ -783,7 +783,7 @@ test_orcid_format <- function(metadata = load_metadata(directory)){
   }
   else{
     if(!is.null(bad_orcids)){
-      cli::cli_abort(c("x" = "{?ORCiD/ORCiDs} for {?creator/creators} {bad_orcids} {?is/are} improperly formatted. To reformat as xxxx-xxxx-xxxx-xxxx (do NOT include the http prefix), use {.fn EMLeditor::set_creator_orcids}.\n"))
+      cli::cli_abort(c("x" = "{?ORCiD/ORCiDs} for {?creator/creators} {bad_orcids} {?is/are} improperly formatted. To reformat as https://orcid.org/xxxx-xxxx-xxxx-xxxx, use {.fn EMLeditor::set_creator_orcids}.\n"))
     }
     #else {
     #  cli::cli_warn(c("!" = "{?ORCiD/ORCiDs} for {?Creator/Creators} {surName} {?is/are} imporperly formatted: {?ORCiD/ORiDs} missing. To add {?an ORCiD/ORCiDs}, use {.fn EMLeditor::set_creator_orcids}.\n"))
