@@ -832,12 +832,11 @@ test_orcid_resolves <- function(metadata = load_metadata(directory)){
   if(!is.null(existing_orcid)){
     bad_orcid <- NULL
     for(i in seq_along(surName)){
-      orcid_url <- paste0("https://orcid.org/", existing_orcid[i])
+      orcid_url <- existing_orcid[i]
       if(httr::http_error(orcid_url)){
         bad_orcid <- append(bad_orcid, surName[i])
       }
     }
-
     if(is.null(bad_orcid)){
       cli::cli_inform(c("v" = "All Creator ORCiDs resolved to a valid ORCiD profile.\n"))
     }
