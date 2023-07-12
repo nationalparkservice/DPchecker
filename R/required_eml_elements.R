@@ -833,8 +833,20 @@ test_orcid_resolves <- function(metadata = load_metadata(directory)){
     bad_orcid <- NULL
     for(i in seq_along(surName)){
       orcid_url <- existing_orcid[i]
-      if(httr::http_error(orcid_url)){
+      #test URL is valid:
+      tryCatch({test_url <- httr::http_error(orcid_url)},
+               error = function(e){}
+                 )
+      #if http_error generates an error:
+      if(!exists("test_url")){
+        #if it isn't a valid url at all (e.g. just xxxx-xxxx-xxxx-xxxx)
         bad_orcid <- append(bad_orcid, surName[i])
+      }
+      else{
+        if(test_url == FALSE){
+          #valid URL, but results in 400 or above error:
+          bad_orcid <- append(bad_orcid, surName[i])
+        }
       }
     }
     if(is.null(bad_orcid)){
