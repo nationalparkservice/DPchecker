@@ -13,7 +13,7 @@ test_orcid_resolves(metadata = load_metadata(directory))
 invisibly returns \code{metadata}
 }
 \description{
-\code{test_orcid_resolves()} will only examine ORCiDs that are supplied for individual Creators (not organizations). If the ORCiD supplied can be used to construct a URL that leads to a valid ORCiD profile, the test passes. If the ORCiD supplied cannot be used to construct a URL that resolves to a valid ORCiD profile - either because the ORCiD itself does not exist or because the ORCiD was supplied in an incorrect format, the test fails with an error. This test does not examine Creators that do not have associated ORCiDs; if no ORCiDs are provided that test does not return a pass or a fail.
+\code{test_orcid_resolves()} will only examine ORCiDs that are supplied for individual Creators (not organizations). If the ORCiD supplied consists of a URL that leads to a valid ORCiD profile, the test passes. If the ORCiD supplied is not a URL that resolves to a valid ORCiD profile - either because the ORCiD itself does not exist or because the ORCiD was supplied in an incorrect format, the test fails with an error. This test does not examine Creators that do not have associated ORCiDs; if no ORCiDs are provided that test does not return a pass or a fail.
 }
 \examples{
 \dontrun{

@@ -739,7 +739,7 @@ test_orcid_exists <- function(metadata = load_metadata(directory)){
 
 #' Test for ORCiD formatting (and presence)
 #'
-#' @description `test_orcid_format()` inspects metadata and looks for ORCiDs for each individual creator (not organizations listed as creators). If all individuals have correctly formatted ORCiDs (i.e a 19-character string such as xxxx-xxxx-xxxx-xxxx), the test passes. If any individual has in improperly formatted ORCiD, the test fails with an error. If there are no improperly formatted ORCiDs but one or more ORCiDs are missing, the test fails with a warning. Note that if there are imporperly formatted ORCiDs, the test will not inspect for presence/absence of individual ORCiDs. For a full accounting of which (if any) ORCiDs are missing (but no formatting check), use `test_orcid_exists`.
+#' @description `test_orcid_format()` inspects metadata and looks for ORCiDs for each individual creator (not organizations listed as creators). If all individuals have correctly formatted ORCiDs (i.e a 37-character string such as "https://orcid.org/xxxx-xxxx-xxxx-xxxx"), the test passes. This is a simple test that just looks at string length, not content. If any individual has in improperly formatted ORCiD, the test fails with an error. If there are no improperly formatted ORCiDs but one or more ORCiDs are missing, the test fails with a warning. Note that if there are improperly formatted ORCiDs, the test will not inspect for presence/absence of individual ORCiDs. For a full accounting of which (if any) ORCiDs are missing (but no formatting check), use `test_orcid_exists`.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -770,7 +770,7 @@ test_orcid_format <- function(metadata = load_metadata(directory)){
       last_name <- creator[[i]][["individualName"]][["surName"]]
       orcid<-creator[[i]][["userId"]][["userId"]]
       if(!is.null(orcid)){
-        if(nchar(orcid) != 19){
+        if(nchar(orcid) != 37){
           bad_orcids <- append(bad_orcids, last_name)
         }
         existing_orcid <- append(existing_orcid, orcid)
@@ -783,7 +783,7 @@ test_orcid_format <- function(metadata = load_metadata(directory)){
   }
   else{
     if(!is.null(bad_orcids)){
-      cli::cli_abort(c("x" = "{?ORCiD/ORCiDs} for {?creator/creators} {bad_orcids} {?is/are} improperly formatted. To reformat as xxxx-xxxx-xxxx-xxxx (do NOT include the http prefix), use {.fn EMLeditor::set_creator_orcids}.\n"))
+      cli::cli_abort(c("x" = "{?ORCiD/ORCiDs} for {?creator/creators} {bad_orcids} {?is/are} improperly formatted. To reformat as https://orcid.org/xxxx-xxxx-xxxx-xxxx, use {.fn EMLeditor::set_creator_orcids}.\n"))
     }
     #else {
     #  cli::cli_warn(c("!" = "{?ORCiD/ORCiDs} for {?Creator/Creators} {surName} {?is/are} imporperly formatted: {?ORCiD/ORiDs} missing. To add {?an ORCiD/ORCiDs}, use {.fn EMLeditor::set_creator_orcids}.\n"))
@@ -794,7 +794,7 @@ test_orcid_format <- function(metadata = load_metadata(directory)){
 
 #' Test whether supplied Creator ORCiDs resolve to a valid ORCiD profile
 #'
-#' @description `test_orcid_resolves()` will only examine ORCiDs that are supplied for individual Creators (not organizations). If the ORCiD supplied can be used to construct a URL that leads to a valid ORCiD profile, the test passes. If the ORCiD supplied cannot be used to construct a URL that resolves to a valid ORCiD profile - either because the ORCiD itself does not exist or because the ORCiD was supplied in an incorrect format, the test fails with an error. This test does not examine Creators that do not have associated ORCiDs; if no ORCiDs are provided that test does not return a pass or a fail.
+#' @description `test_orcid_resolves()` will only examine ORCiDs that are supplied for individual Creators (not organizations). If the ORCiD supplied consists of a URL that leads to a valid ORCiD profile, the test passes. If the ORCiD supplied is not a URL that resolves to a valid ORCiD profile - either because the ORCiD itself does not exist or because the ORCiD was supplied in an incorrect format, the test fails with an error. This test does not examine Creators that do not have associated ORCiDs; if no ORCiDs are provided that test does not return a pass or a fail.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -832,12 +832,23 @@ test_orcid_resolves <- function(metadata = load_metadata(directory)){
   if(!is.null(existing_orcid)){
     bad_orcid <- NULL
     for(i in seq_along(surName)){
-      orcid_url <- paste0("https://orcid.org/", existing_orcid[i])
-      if(httr::http_error(orcid_url)){
+      orcid_url <- existing_orcid[i]
+      #test URL is valid:
+      tryCatch({test_url <- httr::http_error(orcid_url)},
+               error = function(e){}
+                 )
+      #if http_error generates an error:
+      if(!exists("test_url")){
+        #if it isn't a valid url at all (e.g. just xxxx-xxxx-xxxx-xxxx)
         bad_orcid <- append(bad_orcid, surName[i])
       }
+      else{
+        if(test_url == TRUE){
+          #valid URL, but results in 400 or above error:
+          bad_orcid <- append(bad_orcid, surName[i])
+        }
+      }
     }
-
     if(is.null(bad_orcid)){
       cli::cli_inform(c("v" = "All Creator ORCiDs resolved to a valid ORCiD profile.\n"))
     }
@@ -853,7 +864,7 @@ test_orcid_resolves <- function(metadata = load_metadata(directory)){
 #'
 #' @description `test_orcid_match()` will only evaluate Creators that are individuals (not organizations). If an ORCiD has been supplied, the function will attempt to access the indicated ORCiD profile and test whether the last name indicated on the ORCiD profile matches the surName indicated in Metadata. If all surNames match the ORCiD profiles, the test passes. If any surName does not match the indicated ORCID profile, the test fails with an error.
 #'
-#' @details Potential reasons for failing this test having entered the wrong ORCiD into metadata, having improperly formatted the ORCiD in metadata (it should be listed as xxxx-xxxx-xxxx-xxxx - see `test_orcid_format()`), having set your ORCiD profile to "private" (in which case the function can't access the name associated with the profile) or differences between the ORCiD profile name and the name in metadata (such as maiden vs. married name, transposing given and surnames, or variation in surName spelling).
+#' @details Potential reasons for failing this test include having entered the wrong ORCiD into metadata, having improperly formatted the ORCiD in metadata (it should be listed as https://orcid.org/xxxx-xxxx-xxxx-xxxx - see `test_orcid_format()`), having set your ORCiD profile to "private" (in which case the function can't access the name associated with the profile) or differences between the ORCiD profile name and the name in metadata (such as maiden vs. married name, transposing given and surnames, or variation in surName spelling).
 #'
 #' @inheritParams test_pub_date
 #'
@@ -893,25 +904,33 @@ test_orcid_match <- function(metadata = load_metadata(directory)){
     bad_orcid <- NULL
     wrong_person <- NULL
     for(i in seq_along(surName)){
-      orcid_url <- paste0("https://orcid.org/", existing_orcid[i])
+      orcid_url <- existing_orcid[i]
       #api request to ORCID:
-      test_req<-httr::GET(orcid_url)
-      # if the status is good, check that the names match:
-      status <- test_req$status_code
-      if(status == 200){
-        #munge api result:
-        test_json <- httr::content(test_req, "text")
-        test_rjson <- jsonlite::fromJSON(test_json)
-        #pull last name from api result; if set to private == NULL
-        last_name<-test_rjson$person$name$`family-name`$value
 
-        #check whether surName in metadata matches last name on ORCiD profile:
-        if(!identical(surName[i], last_name)){
+      tryCatch({test_req <- httr::GET(orcid_url)},
+               error = function(e){}
+      )
+      if(exists("test_req")){
+        status <- test_req$status_code
+        if(status == 200){
+          #munge api result:
+          test_json <- httr::content(test_req, "text")
+          test_rjson <- jsonlite::fromJSON(test_json)
+          #pull last name from api result; if set to private == NULL
+          last_name<-test_rjson$person$name$`family-name`$value
+
+          #check whether surName in metadata matches last name on ORCiD profile:
+          if(!identical(surName[i], last_name)){
+            wrong_person <- append(wrong_person, surName[i])
+          }
+        }
+
+        #if the status is bad, assume the profile is somehow bad/doesn't match
+        if(status != 200){
           wrong_person <- append(wrong_person, surName[i])
         }
       }
-      #if the status is bad, assume the profile is somehow bad/doesn't match
-      if(status != 200){
+      else{
         wrong_person <- append(wrong_person, surName[i])
       }
     }

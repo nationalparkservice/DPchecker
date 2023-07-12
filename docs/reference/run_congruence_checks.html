@@ -46,12 +46,12 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_congruence_checks</span><span class="op">(</span></span>
-<span>  directory <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  directory <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/here/man/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  metadata <span class="op">=</span> <span class="fu"><a href="load_metadata.html">load_metadata</a></span><span class="op">(</span><span class="va">directory</span><span class="op">)</span>,</span>
 <span>  check_metadata_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  skip_cols <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  <span class="va">output_filename</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  output_dir <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/here/man/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -147,14 +147,10 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Checking that metadata contains optional elements for DataStore extraction</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All individual creators have associated ORCiDs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> ORCiD for creator Quevedo is improperly formatted. To reformat as</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   xxxx-xxxx-xxxx-xxxx (do NOT include the http prefix), use</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   `EMLeditor::set_creator_orcids()`.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Creator Quevedo had an ORCiD that did not resolve to a valid ORCiD profile.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   Use `EMLeditor::set_creator_orcids()` to edit ORCiDs.</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> Creator Quevedo has an ORCiD profile that does not match the surName in</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   metadata. Use `EMLeditor::set_creator_orcids()` to edit ORCiDs in metadata,</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span>   or go to <span style="color: #0000BB; font-style: italic;">&lt;</span><a href="https://orcid.org" class="external-link"><span style="color: #0000BB; font-style: italic;">https://orcid.org</span></a><span style="color: #0000BB; font-style: italic;">&gt;</span> to make your ORCiD profile publicly visible.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All Creator ORCiDs are properly formatted.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All Creator ORCiDs resolved to a valid ORCiD profile.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All Creator ORCiDs resolve to an ORCiD profile that matches the Creator last</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span>   name.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Checking that metadata is consistent with data file(s)</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
@@ -168,7 +164,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Summary</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> 5 errors to address</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> 2 errors to address</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 3 warnings to look into</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>

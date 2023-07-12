@@ -13,7 +13,7 @@ test_orcid_format(metadata = load_metadata(directory))
 invisibly returns \code{metadata}
 }
 \description{
-\code{test_orcid_format()} inspects metadata and looks for ORCiDs for each individual creator (not organizations listed as creators). If all individuals have correctly formatted ORCiDs (i.e a 19-character string such as xxxx-xxxx-xxxx-xxxx), the test passes. If any individual has in improperly formatted ORCiD, the test fails with an error. If there are no improperly formatted ORCiDs but one or more ORCiDs are missing, the test fails with a warning. Note that if there are imporperly formatted ORCiDs, the test will not inspect for presence/absence of individual ORCiDs. For a full accounting of which (if any) ORCiDs are missing (but no formatting check), use \code{test_orcid_exists}.
+\code{test_orcid_format()} inspects metadata and looks for ORCiDs for each individual creator (not organizations listed as creators). If all individuals have correctly formatted ORCiDs (i.e a 37-character string such as "https://orcid.org/xxxx-xxxx-xxxx-xxxx"), the test passes. This is a simple test that just looks at string length, not content. If any individual has in improperly formatted ORCiD, the test fails with an error. If there are no improperly formatted ORCiDs but one or more ORCiDs are missing, the test fails with a warning. Note that if there are improperly formatted ORCiDs, the test will not inspect for presence/absence of individual ORCiDs. For a full accounting of which (if any) ORCiDs are missing (but no formatting check), use \code{test_orcid_exists}.
 }
 \examples{
 \dontrun{
