@@ -843,7 +843,7 @@ test_orcid_resolves <- function(metadata = load_metadata(directory)){
         bad_orcid <- append(bad_orcid, surName[i])
       }
       else{
-        if(test_url == FALSE){
+        if(test_url == TRUE){
           #valid URL, but results in 400 or above error:
           bad_orcid <- append(bad_orcid, surName[i])
         }
