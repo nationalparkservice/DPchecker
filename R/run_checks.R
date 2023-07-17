@@ -375,10 +375,6 @@ run_congruence_checks <- function(directory = here::here(),
              cli::cli_bullets(c(w$message, w$body))
            })
 
-
-
-
-
   if (!check_metadata_only) {
     cli::cli_h2("Checking that metadata is consistent with data file(s)")
     tryCatch(test_file_name_match(directory, metadata),
