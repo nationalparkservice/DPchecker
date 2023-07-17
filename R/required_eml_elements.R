@@ -613,10 +613,10 @@ test_storage_type <- function(metadata = load_metadata(directory)) {
   attr_storage_type <- unlist(attr_storage_type)
   #comparisons:
   if(identical(seq_along(metadata_attrs), seq_along(attr_storage_type))){
-    cli::cli_inform(c("v" = "All attributes listed in metadata have storage types associated with them."))
+    cli::cli_inform(c("v" = "All attributes listed in metadata have a storage type associated with them."))
   }
   else {
-    cli::cli_abort(c("x" = "Some metadata attributes are missing definitions (or vice versa)."))
+    cli::cli_abort(c("x" = "Metadata attribute and storage type mis-match: attributes must have exactly one storage type."))
   }
   attr_storage_list <- c("string", "float", "date", "factor", "character")
   if(sum(!attr_storage_type %in% attr_storage_list) > 0){
