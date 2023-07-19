@@ -690,7 +690,7 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #' test_date_range(dir)
 test_date_range <- function(directory = here::here(),
                             metadata = load_metadata(directory),
-                            skip_cols = NA) {
+                            skip_cols = NA){
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   missing_temporal <- is.null(arcticdatautils::eml_get_simple(metadata, "temporalCoverage"))
@@ -754,7 +754,8 @@ test_date_range <- function(directory = here::here(),
   #### dropping skip_cols from date range check:
   if(sum(!is.na(skip_cols)) > 0){
     for(i in seq_along(dttm_attrs)){
-      dttm_attrs[[i]]<-dplyr::filter(dttm_attrs[[i]], !attributeName %in% skip_cols)
+      dttm_attrs[[i]]<-dplyr::filter(dttm_attrs[[i]],
+                                     !attributeName %in% skip_cols)
     }
   }
 
