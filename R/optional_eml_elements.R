@@ -1,3 +1,47 @@
+test_meta_pii_emails <- function(directory = here::here() metadata = load_metadata(directory)) {
+  is_eml(metadata)
+
+  #get the full file names and paths for all files in directory
+  files <- list.files(directory, full.names = TRUE)
+  metadata <- NULL
+  #Read in all metadata files as a single line
+  for(file in files){
+    if(grepl("metadata.xml", file)) {
+      metadata <- append(metadata, paste(readLines(file), collapse = " "))
+    }
+  }
+  #extract emails from metadata lines:
+  meta_emails <- regmatches(metadata,
+                            gregexpr("([_+a-z0-9-]+(\\.[_+a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,14}))",
+                                     metadata))
+  if(!is.null(meta_emails)){
+    meta_emails <- meta_emails[[1]]
+    personal_emails <- NULL
+    #uggggggly email filtering:
+    for(i in seq_along(meta_emails)){
+      #filter out .govs
+      if(!stringr::str_detect(meta_emails[i], ".gov")){
+        #filter out .edus
+        if(!stringr::str_detect(meta_emails[i], ".edu")){
+          personal_emails <- append(personal_emails, meta_emails[i])
+        }
+      }
+    }
+    if(!is.null(personal_emails)){
+      cli::cli_inform(c("v" = "Metadata does not appear to contain any personal emails."))
+    } else {
+      cli::cli_warn(c("!" = "Metadata contains the following personal emails: {.email {personal_emails}}. Consider removing potential Personal Identifiable Information (PII)."))
+    }
+  }
+  else{
+    cli::cli_warn(c("!" = "Metadata does not appear to contain any emails. Are you sure this is correct?"))
+  }
+  return(invisible(metadata))
+}
+
+
+
+
 #' Examines the additionalInfo elment of EML metadata
 #'
 #' @description `test_notes()` extracts the additionalInfo components of EML metadata. These elements will be used to populate the "Notes" section on the DataStore landing page. If the Notes section is blank, the test fails with a warning. If the notes section contains non-standard characters (such as &amp;#13;) or more than two consecutive spaces, the test fails with a warning. Otherwise the test passes.  For all warnings, the user is advised to use `EMLeditor::set_additional_info()` to fix the additionalInfo section.
