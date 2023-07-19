@@ -4,7 +4,7 @@
 #'
 #' @param metadata The metadata object returned by `load_metadata`. If parameter is not provided, it defaults to calling `load_metadata` in the current project directory.
 #'
-#' @return
+#' @return invisible(metadata)
 #' @export
 #'
 #' @examples
@@ -29,7 +29,7 @@ test_notes <- function(metadata = load_metadata(directory)){
       }
     }
     if(sum(grepl("[\r|&amp;#13;]", info))>0){
-      cli::cli_warn(c("!" = "The metadata additionalInfo (\"Notes\" on DataStore) contains non-standard end of line characters such as \\r or &amp;#13;.
+      cli::cli_warn(c("!" = "The metadata additionalInfo (\"Notes\" on DataStore) contains non-standard characters such as \\r or &amp;#13;.
                       Use {.fn EMLeditor::set_additional_info} to revise."))
       z <- "warn"
     }
