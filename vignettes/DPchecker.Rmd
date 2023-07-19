@@ -105,6 +105,7 @@ These tests ensure that the EML elements necessary for DataStore to properly ext
 * Metadata indicates the publisher state is CO  ([`test_publisher_state()`](../reference/test_publisher_state.html))
 * Metadata indicates the publisher city is Fort Collins ([`test_publisher_city()`](../reference/test_publisher_city.html))
 * Metadata contains a well formatted abstract for the data package ([`test_dp_abstract()`](../reference/test_dp_abstract.html))
+* Metadata contains a well formated methods section for the data package ([`test_methods()`](../reference/test_methods.html))
 * All dataTables listed in metadata have a unique file description ([`test_file_descript()`](../reference/test_file_descript.html))
 * Metadata contains a valid CUI code ([`test_cui_dissemination()`](../reference/test_cui_dissemination.html))
 * Metadata contains a valid license name ([`test_license()`](../reference/test_license.html))
@@ -120,6 +121,7 @@ These elements aren't required. If they are missing, the tests will generate a w
 * All ORCiDs are properly formatted ([`test_orcid_format()`](../reference/test_orcid_format.html))
 * All ORCiDs resolve to an ORCiD profile ([`test_orcid_resolves()`](../reference/test_orcid_resolves.html))
 * All ORCiDs resolve to an ORCiD profile that matches the Creator's last name ([`test_orcid_match()`](../reference/test_orcid_match.html))
+* The metadata contains a well formatted additionalInfo ("Notes" on DataStore) section ([`test_notes()`](../reference/test_notes.html))
 
 ## Metadata and Data Congruence
 These files check to make sure the values and fields in the metadata file accurately corresponds to the data files supplied. These test require the entire data package - both the \*_metadata.xml file and all data files (*.csv) must be present.

@@ -281,6 +281,16 @@ run_congruence_checks <- function(directory = here::here(),
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(w$message, w$body))
            })
+
+  tryCatch(test_methods(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
   tryCatch(test_file_descript(metadata),
            error = function(e) {
              err_count <<- err_count + 1
@@ -374,10 +384,15 @@ run_congruence_checks <- function(directory = here::here(),
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(w$message, w$body))
            })
-
-
-
-
+  tryCatch(test_notes(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_cont <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
 
   if (!check_metadata_only) {
     cli::cli_h2("Checking that metadata is consistent with data file(s)")
