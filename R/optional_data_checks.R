@@ -1,16 +1,16 @@
-#' Check metadata for PII (emails)
+#' Check data files for PII (emails)
 #'
-#' @deacription `test_pii_meta_emails()` is a tool to help identify emails in metadata that may constitute Personally Identifiable Information (PII). This tool is not guaranteed to find all emails, nor can it definitely tell you whether an email consitutes PII or not. `test_pii_meta_emails()` reads in a *_metadata.xml file from the specified directory. It uses regular expressions to extract all emails (in truth, it's hard to test the regex against all possible emails so there is a chance it will miss one here or there). If there are no emails in the metadata, the function fails with a warning (there probably should be an email contact somewhere in the metadata). If there are any emails that end in anything other than .gov, the function fails with a warning and lists the offending emails. If the only emails in metadata end in .gov, these are assumed to be public emails and the function passes without listing out the emails.
+#' @deacription `test_pii_data_emails()` is a tool to help identify emails in the data files (.csv) that may constitute Personally Identifiable Information (PII). This tool is not guaranteed to find all emails, nor can it definitely tell you whether an email constitutes PII or not. `test_pii_data_emails()` reads in each .csv file from the specified directory. It uses regular expressions to extract all emails (in truth, it's hard to test the regex against all possible emails so there is a chance it will miss one here or there). If there are any emails that end in anything other than .gov, the function fails with a warning and lists the offending files and the emails they contain. If there are no emails in the data files or the only emails in the data files end in .gov, these are assumed to be public emails and the function passes without listing any emails.
 #'
 #'
 #' @param directory
 #'
-#' @return invisible(metadata)
+#' @return String
 #' @export
 #'
 #' @examples
 #' \dontrun{
-#' test_pii_meta_emails()
+#' test_pii_data_emails()
 #' }
 test_pii_data_emails <- function(directory = here::here()) {
 
@@ -49,7 +49,7 @@ test_pii_data_emails <- function(directory = here::here()) {
   }
   #if there are offending emails, fail with warning:
   if(!is.null(emails_list)){
-    msg <- paste0("--> {.file ", names(emails_list), " }: ", unlist(emails_list))
+    msg <- paste0("--> {.file ", names(emails_list), "}: ", unlist(emails_list))
     names(msg) <- rep(" ", length(msg))
     err <- paste0("The following data files contain emails with potential PII:")
 
