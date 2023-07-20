@@ -575,7 +575,7 @@ test_attribute_defs <- function(metadata = load_metadata(directory)) {
 #'
 #' @description `test_storage_type()` checks to see if there are the same number of attributes (attributeName) and storageTypes in the metadata. Equal numbers of elements will pass; unequal numbers will fail the test with an error. `test_storage_type()` does NOT attempt to verify if the number of storageType elements matches the number of columns in the data package data files (for that functionality, use `test_fields_match()`).
 #'
-#' `test_storage_type()` verifies that the storageType is valid; i.e. is a member of an accepted list of possible storage types. Currently these are: string, float, date, factor, or characters. Validity for this test is based solely on observed ezEML/EAL output (in theory any string in storageType is schema-valid). Invalid storageTypes will result in a warning.
+#' `test_storage_type()` also verifies that the storageType is valid; i.e. is a member of an accepted list of possible storage types. Currently these are: string, float, date, factor, dateTime, or characters. Validity for this test is based solely on observed ezEML/EAL output (in theory any string in storageType is schema-valid). Invalid storageTypes will result in a warning.
 #'
 #' `test_storage_type()` does NOT attempt to verify that the value in storageType logically matches the type data in the corresponding column.
 #'
@@ -602,15 +602,24 @@ test_storage_type <- function(metadata = load_metadata(directory)) {
                            {arcticdatautils::eml_get_simple(tbl,
                                                             "attributeName")})
   metadata_attrs$`@context` <- NULL
+  metadata_attrs <- unlist(metadata_attrs)
   #get attribute storage types:
   attr_storage_type <- lapply(data_tbl,
                       function (tbl)
                       {list(arcticdatautils::eml_get_simple(tbl,
                                                             "storageType"))})
-  attr_storage_type$`@context` <- NULL
-  #unlist:
-  metadata_attrs <- unlist(metadata_attrs)
-  attr_storage_type <- unlist(attr_storage_type)
+  #if EZeml added typeSystem="XML Schema Datatypes" to storageType element:
+  if(sum(grepl("XML Schema Datatype", attr_storage_type)) > 0){
+    attr_storage_type <-attr_storage_type[-length(seq_along(attr_storage_type))]
+    attr_storage_type <- unlist(attr_storage_type)
+    attr_storage_type <- attr_storage_type[names(attr_storage_type) %in% c("")]
+  }
+  # else not an ezEML product:
+  else{
+    attr_storage_type$`@context` <- NULL
+    attr_storage_type <- unlist(attr_storage_type)
+  }
+
   #comparisons:
   if(identical(seq_along(metadata_attrs), seq_along(attr_storage_type))){
     cli::cli_inform(c("v" = "All attributes listed in metadata have a storage type associated with them."))
@@ -618,7 +627,7 @@ test_storage_type <- function(metadata = load_metadata(directory)) {
   else {
     cli::cli_abort(c("x" = "Metadata attribute and storage type mis-match: attributes must have exactly one storage type."))
   }
-  attr_storage_list <- c("string", "float", "date", "factor", "character")
+  attr_storage_list <- c("string", "float", "date", "factor", "character", "dateTime")
   if(sum(!attr_storage_type %in% attr_storage_list) > 0){
     cli::cli_warn(c("!" = "Some attribute storage types are not accepted values."))
   }
