@@ -22,13 +22,15 @@ test_pii_meta_emails <- function(directory = here::here()) {
   #Read in all metadata files as a single line
   for(file in files){
     if(grepl("metadata.xml", file)) {
-      metadata <- append(metadata, paste(readLines(file), collapse = " "))
+      metadata <- append(metadata,
+                         paste(suppressWarnings(readLines(file)),
+                               collapse = " "))
     }
   }
   #extract emails from metadata lines:
-  meta_emails <- regmatches(metadata,
-                            gregexpr("([_+a-z0-9-]+(\\.[_+a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,14}))",
-                                     metadata))
+  meta_emails <- suppressWarnings(
+    regmatches(metadata,
+               gregexpr("([_+a-z0-9-]+(\\.[_+a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,14}))", metadata)))
   if(!is.null(meta_emails)){
     meta_emails <- unlist(meta_emails, recursive = FALSE)
     personal_emails <- NULL
