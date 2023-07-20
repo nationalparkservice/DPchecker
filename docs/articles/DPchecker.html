@@ -75,7 +75,7 @@ part of the <a href="https://roblbaker.github.io/NPSdataverse/" class="external-
 using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/remotes/man/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"nationalparkservice/NPSdataverse"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"nationalparkservice/NPSdataverse"</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/nationalparkservice/NPSdataverse" class="external-link">NPSdataverse</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -195,10 +195,11 @@ indicated in the metadata (<a href="../reference/test_datatable_urls_doi">test_d
 contain spaces or special characters (<a href="../reference/test_valid_fieldnames.html"><code>test_valid_fieldnames()</code></a>)</li>
 <li>Metadata indicates that file names being with a letter and do not
 contain special characters or spaces. (<a href="../reference/test_valid_filenames.html"><code>test_valid_filenames()</code></a>)</li>
+<li>Metadata contains emails, but only .gov emails (<a href="../reference/test_pii_meta_emails.html"><code>test_pii_meta_emails()</code></a>)</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="required-eml-elements">Required EML elements<a class="anchor" aria-label="anchor" href="#required-eml-elements"></a>
+<h3 id="eml-elements-required-for-datastore">EML elements required for DataStore:<a class="anchor" aria-label="anchor" href="#eml-elements-required-for-datastore"></a>
 </h3>
 <p>These tests ensure that the EML elements necessary for DataStore to
 properly extract metadata and populate a reference exist, are in the
@@ -220,7 +221,7 @@ have valid (&lt;3 words) surNames (<a href="../reference/test_creator.html"><cod
 <li>Metadata indicates the publisher state is CO (<a href="../reference/test_publisher_state.html"><code>test_publisher_state()</code></a>)</li>
 <li>Metadata indicates the publisher city is Fort Collins (<a href="../reference/test_publisher_city.html"><code>test_publisher_city()</code></a>)</li>
 <li>Metadata contains a well formatted abstract for the data package (<a href="../reference/test_dp_abstract.html"><code>test_dp_abstract()</code></a>)</li>
-<li>Metadata contains a well formated methods section for the data
+<li>Metadata contains a well formatted methods section for the data
 package (<a href="../reference/test_methods.html"><code>test_methods()</code></a>)</li>
 <li>All dataTables listed in metadata have a unique file description (<a href="../reference/test_file_descript.html"><code>test_file_descript()</code></a>)</li>
 <li>Metadata contains a valid CUI code (<a href="../reference/test_cui_dissemination.html"><code>test_cui_dissemination()</code></a>)</li>
@@ -253,10 +254,10 @@ DataStore) section (<a href="../reference/test_notes.html"><code>test_notes()</c
 <div class="section level3">
 <h3 id="metadata-and-data-congruence">Metadata and Data Congruence<a class="anchor" aria-label="anchor" href="#metadata-and-data-congruence"></a>
 </h3>
-<p>These files check to make sure the values and fields in the metadata
-file accurately corresponds to the data files supplied. These test
-require the entire data package - both the *_metadata.xml file and all
-data files (*.csv) must be present.</p>
+<p>These functions check to make sure the values and fields in the
+metadata file accurately corresponds to the data files supplied. These
+test require the entire data package - both the *_metadata.xml file and
+all data files (*.csv) must be present.</p>
 <ul>
 <li>All data files are listed in metadata and all metadata file names
 refer to data files (<a href="../reference/test_file_name_match.html"><code>test_file_name_match()</code></a>)</li>
@@ -265,6 +266,17 @@ refer to data files (<a href="../reference/test_file_name_match.html"><code>test
 and missing value codes in the data (<a href="../reference/test_numeric_fields.html"><code>test_numeric_fields()</code></a>)</li>
 <li>Columns indicated as date/time in metadata contain values that fall
 within the stated temporal coverage in metadata (<a href="../reference/test_date_range.html"><code>test_date_range()</code></a>)</li>
+</ul>
+</div>
+<div class="section level3">
+<h3 id="data-compliance">Data Compliance<a class="anchor" aria-label="anchor" href="#data-compliance"></a>
+</h3>
+<p>These functions check the data files for compliance. Please resolve
+any errors before uploading your data.</p>
+<ul>
+<li>Data files do not contain any email addresses that constitute
+personally identifiable information (PII) (<a href="../reference/test_pii_data"><code>test_pii_data_emails()</code></a>
+</li>
 </ul>
 </div>
 </div>
