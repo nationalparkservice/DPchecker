@@ -93,8 +93,9 @@ These tests determine whether the metadata is schema valid and adheres to some r
 * Metadata contains a publisher element ([`test_publisher()`](../reference/test_publisher.html))
 * Metadata indicates data column names begin with a letter and do not contain spaces or special characters ([`test_valid_fieldnames()`](../reference/test_valid_fieldnames.html))
 * Metadata indicates that file names being with a letter and do not contain special characters or spaces. ([`test_valid_filenames()`](../reference/test_valid_filenames.html))
+* Metadata contains emails, but only .gov emails ([`test_pii_meta_emails()`](../reference/test_pii_meta_emails.html))
 
-## Required EML elements
+## EML elements required for DataStore:
 These tests ensure that the EML elements necessary for DataStore to properly extract metadata and populate a reference exist, are in the correct location, and are properly formatted. These elements are also often the aspects of metadata that will be passed on to other repositories and search engines such as [DataCite](https://datacite.org/) [data.gov](https://data.gov/) and [google's dataset search](https://datasetsearch.research.google.com/). Therefore, these checks may throw warnings with suggestions on best practices - such as removing stray characters from abstracts or suggesting a more informative title if your title is unusually short. Required EML element tests only require the *_metadata.xml file to run and do not require that the data files be present.
 
 * Creator element exists and if individual creators exist, they all have valid (<3 words) surNames ([`test_creator()`](../reference/test_creator.html))
@@ -105,7 +106,7 @@ These tests ensure that the EML elements necessary for DataStore to properly ext
 * Metadata indicates the publisher state is CO  ([`test_publisher_state()`](../reference/test_publisher_state.html))
 * Metadata indicates the publisher city is Fort Collins ([`test_publisher_city()`](../reference/test_publisher_city.html))
 * Metadata contains a well formatted abstract for the data package ([`test_dp_abstract()`](../reference/test_dp_abstract.html))
-* Metadata contains a well formated methods section for the data package ([`test_methods()`](../reference/test_methods.html))
+* Metadata contains a well formatted methods section for the data package ([`test_methods()`](../reference/test_methods.html))
 * All dataTables listed in metadata have a unique file description ([`test_file_descript()`](../reference/test_file_descript.html))
 * Metadata contains a valid CUI code ([`test_cui_dissemination()`](../reference/test_cui_dissemination.html))
 * Metadata contains a valid license name ([`test_license()`](../reference/test_license.html))
@@ -124,9 +125,14 @@ These elements aren't required. If they are missing, the tests will generate a w
 * The metadata contains a well formatted additionalInfo ("Notes" on DataStore) section ([`test_notes()`](../reference/test_notes.html))
 
 ## Metadata and Data Congruence
-These files check to make sure the values and fields in the metadata file accurately corresponds to the data files supplied. These test require the entire data package - both the \*_metadata.xml file and all data files (*.csv) must be present.
+These functions check to make sure the values and fields in the metadata file accurately corresponds to the data files supplied. These test require the entire data package - both the \*_metadata.xml file and all data files (*.csv) must be present.
 
 * All data files are listed in metadata and all metadata file names refer to data files ([`test_file_name_match()`](../reference/test_file_name_match.html))
 * All columns in data match all columns in metadata ([`test_fields_match()`](../reference/test_fields_match.html))
 * Columns indicated as numeric in metadata contain only numeric values and missing value codes in the data ([`test_numeric_fields()`](../reference/test_numeric_fields.html))
 * Columns indicated as date/time in metadata contain values that fall within the stated temporal coverage in metadata ([`test_date_range()`](../reference/test_date_range.html))
+
+## Data Compliance
+These functions check the data files for compliance. Please resolve any errors before uploading your data. 
+
+* Data files do not contain any email addresses that constitute personally identifiable information (PII) ([`test_pii_data_emails()`](../reference/test_pii_data)
