@@ -13,7 +13,7 @@ test_notes(metadata = load_metadata(directory))
 invisible(metadata)
 }
 \description{
-\code{test_notes()} extracts the additionalInfo components of EML metadata. These elements will be used to populate the "Notes" section on the DataStore landing page. If the Notes section is blank, the test fails with a warning. If the notes section contains non-standard characters (such as &#13;) or more than two consecuitive spaces, the test fails with a warning. Otherwise the test passes.  For all warnings, the user is advised to use \code{EMLeditor::set_additional_info()} to fix the additionalInfo section.
+\code{test_notes()} extracts the additionalInfo components of EML metadata. These elements will be used to populate the "Notes" section on the DataStore landing page. If the Notes section is blank, the test fails with a warning. If the notes section contains non-standard characters (such as &#13;) or more than two consecutive spaces, the test fails with a warning. Otherwise the test passes.  For all warnings, the user is advised to use \code{EMLeditor::set_additional_info()} to fix the additionalInfo section.
 }
 \examples{
 \dontrun{

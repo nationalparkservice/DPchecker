@@ -1,6 +1,62 @@
+
+
+#' Check metadata for PII (emails)
+#'
+#' @description `test_pii_meta_emails()` is a tool to help identify emails in metadata that may constitute Personally Identifiable Information (PII). This tool is not guaranteed to find all emails, nor can it definitely tell you whether an email constitutes PII or not. `test_pii_meta_emails()` reads in a *_metadata.xml file from the specified directory. It uses regular expressions to extract all emails (in truth, it's hard to test the regex against all possible emails so there is a chance it will miss one here or there). If there are no emails in the metadata, the function fails with a warning (there probably should be an email contact somewhere in the metadata). If there are any emails that end in anything other than .gov, the function fails with a warning and lists the offending emails. If the only emails in metadata end in .gov, these are assumed to be public emails and the function passes without listing out the emails.
+#'
+#'
+#' @param directory String. The directory where the metadata file resides. Defaults to the current working directory.
+#'
+#' @return invisible(metadata)
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_pii_meta_emails()
+#' }
+test_pii_meta_emails <- function(directory = here::here()) {
+
+  #get the full file names and paths for all files in directory
+  files <- list.files(directory, full.names = TRUE)
+  metadata <- NULL
+  #Read in all metadata files as a single line
+  for(file in files){
+    if(grepl("metadata.xml", file)) {
+      metadata <- append(metadata,
+                         paste(suppressWarnings(readLines(file)),
+                               collapse = " "))
+    }
+  }
+  #extract emails from metadata lines:
+  meta_emails <- suppressWarnings(
+    regmatches(metadata,
+               gregexpr("([_+a-z0-9-]+(\\.[_+a-z0-9-]+)*@[a-z0-9-]+(\\.[a-z0-9-]+)*(\\.[a-z]{2,14}))", metadata)))
+  if(!is.null(meta_emails)){
+    meta_emails <- unlist(meta_emails, recursive = FALSE)
+    personal_emails <- NULL
+    #uggggggly email filtering:
+    for(i in seq_along(meta_emails)){
+      #filter out .govs
+      if(!stringr::str_detect(meta_emails[i], ".gov")){
+        personal_emails <- append(personal_emails, meta_emails[i])
+      }
+    }
+    if(is.null(personal_emails)){
+      cli::cli_inform(c("v" = "Metadata does not appear to contain any personal emails."))
+    } else {
+      cli::cli_warn(c("!" = "Metadata contains the following personal emails: {.email {personal_emails}}. Consider removing potential Personal Identifiable Information (PII)."))
+    }
+  }
+  else{
+    cli::cli_warn(c("!" = "Metadata does not appear to contain any emails. Are you sure this is correct?"))
+  }
+  return(invisible(metadata))
+}
+
+
 #' Examines the additionalInfo elment of EML metadata
 #'
-#' @description `test_notes()` extracts the additionalInfo components of EML metadata. These elements will be used to populate the "Notes" section on the DataStore landing page. If the Notes section is blank, the test fails with a warning. If the notes section contains non-standard characters (such as &amp;#13;) or more than two consecuitive spaces, the test fails with a warning. Otherwise the test passes.  For all warnings, the user is advised to use `EMLeditor::set_additional_info()` to fix the additionalInfo section.
+#' @description `test_notes()` extracts the additionalInfo components of EML metadata. These elements will be used to populate the "Notes" section on the DataStore landing page. If the Notes section is blank, the test fails with a warning. If the notes section contains non-standard characters (such as &amp;#13;) or more than two consecutive spaces, the test fails with a warning. Otherwise the test passes.  For all warnings, the user is advised to use `EMLeditor::set_additional_info()` to fix the additionalInfo section.
 #'
 #' @param metadata The metadata object returned by `load_metadata`. If parameter is not provided, it defaults to calling `load_metadata` in the current project directory.
 #'
@@ -53,7 +109,7 @@ test_notes <- function(metadata = load_metadata(directory)){
 #'
 #' @description `test_methods()` first extracts the methods from an EML object. If methods are not present, the test fails with an error. If the methods are present, the tests asks 1) Is the section longer than 20 words? If not, the test fails with a warning.  2) Does the methods section contain unconventional characters such as &amp;#13;? If so, the test fails with a warning. 2) Does the methods section contain additional spaces (more than two consecuitive spaces)? If so, the test fails with a warning. If all of the tests pass, the test as whole passes. For any error or warning, users are advised to use `EMLeditor::set_methods()` to correct the problem.
 #'
-#' @param metadata
+#' @param metadata The metadata object returned by `load_metadata`. If parameter is not provided, it defaults to calling `load_metadata` in the current project directory.
 #'
 #' @return invisible(metadata)
 #' @export
@@ -107,3 +163,262 @@ test_methods <- function(metadata = load_metadata(directory)){
   }
   return(invisible(metadata))
 }
+
+#' Test creators for presence of an ORCiD
+#'
+#' @description `test_orcid_exists()` will inspect the metadata and test each creator listed as an individual person (individualName) but not creators that are organizations for the presence of an ORCiD. If an ORCiD is found for all individual creators, the test passes. If any individual creator lacks an ORCiD, the test fails with a warning and the users is pointed towards `EMLeditor::set_creator_orcids()` to add ORCiDs if they so choose.
+#'
+#' @inheritParams test_pub_date
+#'
+#' @return invisibly returns `metadata`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_orcid_exists()
+#' }
+test_orcid_exists <- function(metadata = load_metadata(directory)){
+  is_eml(metadata)
+  #get creators
+  creator <- metadata[["dataset"]][["creator"]]
+
+  # If there's only one creator, creator ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  names_list <- c("individualName", "organizationName", "positionName")
+  if(sum(names_list %in% names(creator)) > 0){
+    creator <- list(creator)
+  }
+
+  # extract orcids and surNames
+  surName <- NULL
+  existing_orcid <- NULL
+  for(i in seq_along(creator)){
+    if("individualName" %in% names(creator[[i]])){
+      #check for orcid directory id:
+      last_name <- creator[[i]][["individualName"]][["surName"]]
+      surName <- append(surName, last_name)
+      orcid<-creator[[i]][["userId"]][["userId"]]
+      if(is.null(orcid)){
+        cli::cli_warn(c("!" = "Creator {last_name} lacks an ORCiD. To add an ORCiD, use {.fn EMLeditor::set_creator_orcids}.\n"))
+      }
+      else {
+        existing_orcid <- append(existing_orcid, orcid)
+      }
+    }
+  }
+  if(identical(seq_along(surName), seq_along(existing_orcid))){
+    cli::cli_inform(c("v" = "All individual creators have associated ORCiDs."))
+  }
+  return(invisible(metadata))
+}
+
+
+
+#' Test for ORCiD formatting (and presence)
+#'
+#' @description `test_orcid_format()` inspects metadata and looks for ORCiDs for each individual creator (not organizations listed as creators). If all individuals have correctly formatted ORCiDs (i.e a 37-character string such as "https://orcid.org/xxxx-xxxx-xxxx-xxxx"), the test passes. This is a simple test that just looks at string length, not content. If any individual has in improperly formatted ORCiD, the test fails with an error. If there are no improperly formatted ORCiDs but one or more ORCiDs are missing, the test fails with a warning. Note that if there are improperly formatted ORCiDs, the test will not inspect for presence/absence of individual ORCiDs. For a full accounting of which (if any) ORCiDs are missing (but no formatting check), use `test_orcid_exists`.
+#'
+#' @inheritParams test_pub_date
+#'
+#' @return invisibly returns `metadata`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_orcid_format()
+#' }
+test_orcid_format <- function(metadata = load_metadata(directory)){
+  is_eml(metadata)
+  creator <- metadata[["dataset"]][["creator"]]
+
+  # If there's only one creator, creator ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  names_list <- c("individualName", "organizationName", "positionName")
+  if(sum(names_list %in% names(creator)) > 0){
+    creator <- list(creator)
+  }
+
+  # extract orcids and surNames
+  surName <- NULL
+  existing_orcid <- NULL
+  bad_orcids <- NULL
+  for(i in seq_along(creator)){
+    if("individualName" %in% names(creator[[i]])){
+      #check for orcid directory id:
+      last_name <- creator[[i]][["individualName"]][["surName"]]
+      orcid<-creator[[i]][["userId"]][["userId"]]
+      if(!is.null(orcid)){
+        if(nchar(orcid) != 37){
+          bad_orcids <- append(bad_orcids, last_name)
+        }
+        existing_orcid <- append(existing_orcid, orcid)
+        surName <- append(surName, last_name)
+      }
+    }
+  }
+  if(is.null(bad_orcids) & !is.null(existing_orcid)){
+    cli::cli_inform(c("v" = "All Creator ORCiDs are properly formatted.\n"))
+  }
+  else{
+    if(!is.null(bad_orcids)){
+      cli::cli_abort(c("x" = "{?ORCiD/ORCiDs} for {?creator/creators} {bad_orcids} {?is/are} improperly formatted. To reformat as https://orcid.org/xxxx-xxxx-xxxx-xxxx, use {.fn EMLeditor::set_creator_orcids}.\n"))
+    }
+    #else {
+    #  cli::cli_warn(c("!" = "{?ORCiD/ORCiDs} for {?Creator/Creators} {surName} {?is/are} imporperly formatted: {?ORCiD/ORiDs} missing. To add {?an ORCiD/ORCiDs}, use {.fn EMLeditor::set_creator_orcids}.\n"))
+    #}
+  }
+  return(invisible(metadata))
+}
+
+#' Test whether supplied Creator ORCiDs resolve to a valid ORCiD profile
+#'
+#' @description `test_orcid_resolves()` will only examine ORCiDs that are supplied for individual Creators (not organizations). If the ORCiD supplied consists of a URL that leads to a valid ORCiD profile, the test passes. If the ORCiD supplied is not a URL that resolves to a valid ORCiD profile - either because the ORCiD itself does not exist or because the ORCiD was supplied in an incorrect format, the test fails with an error. This test does not examine Creators that do not have associated ORCiDs; if no ORCiDs are provided that test does not return a pass or a fail.
+#'
+#' @inheritParams test_pub_date
+#'
+#' @return invisibly returns `metadata`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_orcid_resolves()
+#' }
+test_orcid_resolves <- function(metadata = load_metadata(directory)){
+  is_eml(metadata)
+  creator <- metadata[["dataset"]][["creator"]]
+  # If there's only one creator, creator ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  names_list <- c("individualName", "organizationName", "positionName")
+  if(sum(names_list %in% names(creator)) > 0){
+    creator <- list(creator)
+  }
+  # extract orcids and surNames
+  surName <- NULL
+  existing_orcid <- NULL
+  for(i in seq_along(creator)){
+    if("individualName" %in% names(creator[[i]])){
+      #check for orcid directory id:
+      orcid<-creator[[i]][["userId"]][["userId"]]
+      #if there is an orcid, record the orcid and surName associated with it
+      if(!is.null(orcid)){
+        last_name <- creator[[i]][["individualName"]][["surName"]]
+        surName <- append(surName, last_name)
+        existing_orcid <- append(existing_orcid, orcid)
+      }
+    }
+  }
+  #if there are any orcids, record orcids that return a 404 or other web page error:
+  if(!is.null(existing_orcid)){
+    bad_orcid <- NULL
+    for(i in seq_along(surName)){
+      orcid_url <- existing_orcid[i]
+      #test URL is valid:
+      tryCatch({test_url <- httr::http_error(orcid_url)},
+               error = function(e){}
+      )
+      #if http_error generates an error:
+      if(!exists("test_url")){
+        #if it isn't a valid url at all (e.g. just xxxx-xxxx-xxxx-xxxx)
+        bad_orcid <- append(bad_orcid, surName[i])
+      }
+      else{
+        if(test_url == TRUE){
+          #valid URL, but results in 400 or above error:
+          bad_orcid <- append(bad_orcid, surName[i])
+        }
+      }
+    }
+    if(is.null(bad_orcid)){
+      cli::cli_inform(c("v" = "All Creator ORCiDs resolved to a valid ORCiD profile.\n"))
+    }
+    else {
+      cli::cli_abort(c("x" = "{?Creator/Creators} {bad_orcid} {?had an/had} {?ORCiD/ORCiDs} that did not resolve to a valid ORCiD profile. Use {.fn EMLeditor::set_creator_orcids} to edit ORCiDs.\n"))
+    }
+  }
+  return(invisible(metadata))
+}
+
+
+#' Tests whether metadata creator matches the ORCiD profile
+#'
+#' @description `test_orcid_match()` will only evaluate Creators that are individuals (not organizations). If an ORCiD has been supplied, the function will attempt to access the indicated ORCiD profile and test whether the last name indicated on the ORCiD profile matches the surName indicated in Metadata. If all surNames match the ORCiD profiles, the test passes. If any surName does not match the indicated ORCID profile, the test fails with an error.
+#'
+#' @details Potential reasons for failing this test include having entered the wrong ORCiD into metadata, having improperly formatted the ORCiD in metadata (it should be listed as https://orcid.org/xxxx-xxxx-xxxx-xxxx - see `test_orcid_format()`), having set your ORCiD profile to "private" (in which case the function can't access the name associated with the profile) or differences between the ORCiD profile name and the name in metadata (such as maiden vs. married name, transposing given and surnames, or variation in surName spelling).
+#'
+#' @inheritParams test_pub_date
+#'
+#' @return invisibly returns `metadata`
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_orcid_match()
+#' }
+test_orcid_match <- function(metadata = load_metadata(directory)){
+  is_eml(metadata)
+  creator <- metadata[["dataset"]][["creator"]]
+  # If there's only one creator, creator ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  names_list <- c("individualName", "organizationName", "positionName")
+  if(sum(names_list %in% names(creator)) > 0){
+    creator <- list(creator)
+  }
+  # extract orcids and surNames
+  surName <- NULL
+  existing_orcid <- NULL
+  for(i in seq_along(creator)){
+    if("individualName" %in% names(creator[[i]])){
+      #check for orcid directory id:
+      orcid<-creator[[i]][["userId"]][["userId"]]
+      #if there is an orcid, record the orcid and surName associated with it
+      if(!is.null(orcid)){
+        surName <- append(surName,
+                          creator[[i]][["individualName"]][["surName"]])
+        existing_orcid <- append(existing_orcid, orcid)
+      }
+    }
+  }
+
+  #if there are any orcids, record orcids bad orcids:
+  if(!is.null(existing_orcid)){
+    bad_orcid <- NULL
+    wrong_person <- NULL
+    for(i in seq_along(surName)){
+      orcid_url <- existing_orcid[i]
+      #api request to ORCID:
+
+      tryCatch({test_req <- httr::GET(orcid_url)},
+               error = function(e){}
+      )
+      if(exists("test_req")){
+        status <- test_req$status_code
+        if(status == 200){
+          #munge api result:
+          test_json <- httr::content(test_req, "text")
+          test_rjson <- jsonlite::fromJSON(test_json)
+          #pull last name from api result; if set to private == NULL
+          last_name<-test_rjson$person$name$`family-name`$value
+
+          #check whether surName in metadata matches last name on ORCiD profile:
+          if(!identical(surName[i], last_name)){
+            wrong_person <- append(wrong_person, surName[i])
+          }
+        }
+
+        #if the status is bad, assume the profile is somehow bad/doesn't match
+        if(status != 200){
+          wrong_person <- append(wrong_person, surName[i])
+        }
+      }
+      else{
+        wrong_person <- append(wrong_person, surName[i])
+      }
+    }
+  }
+  if(exists("wrong_person")){
+    if(is.null(wrong_person)){
+      cli::cli_inform(c("v" = "All Creator ORCiDs resolve to an ORCiD profile that matches the Creator last name.\n"))
+    }
+    else{
+      cli::cli_abort(c("x" = "{?Creator/Creators} {wrong_person} {?has/have} {?an ORCiD/ORCiD} {?profile/profiles} that {?does/do} not match the {?surName/surNames} in metadata. Use {.fn EMLeditor::set_creator_orcids} to edit ORCiDs in metadata, or go to {.url https://orcid.org} to make your ORCiD profile publicly visible.\n"))
+    }
+  }
+  return(invisible(metadata))
+}
+

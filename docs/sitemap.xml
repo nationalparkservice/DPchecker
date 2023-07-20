@@ -133,6 +133,12 @@
     <loc>/reference/test_orcid_resolves.html</loc>
   </url>
   <url>
+    <loc>/reference/test_pii_data_emails.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_pii_meta_emails.html</loc>
+  </url>
+  <url>
     <loc>/reference/test_publisher.html</loc>
   </url>
   <url>
