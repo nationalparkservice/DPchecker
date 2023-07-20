@@ -2,10 +2,10 @@
 
 #' Check metadata for PII (emails)
 #'
-#' @deacription `test_pii_meta_emails()` is a tool to help identify emails in metadata that may constitute Personally Identifiable Information (PII). This tool is not guaranteed to find all emails, nor can it definitely tell you whether an email constitutes PII or not. `test_pii_meta_emails()` reads in a *_metadata.xml file from the specified directory. It uses regular expressions to extract all emails (in truth, it's hard to test the regex against all possible emails so there is a chance it will miss one here or there). If there are no emails in the metadata, the function fails with a warning (there probably should be an email contact somewhere in the metadata). If there are any emails that end in anything other than .gov, the function fails with a warning and lists the offending emails. If the only emails in metadata end in .gov, these are assumed to be public emails and the function passes without listing out the emails.
+#' @description `test_pii_meta_emails()` is a tool to help identify emails in metadata that may constitute Personally Identifiable Information (PII). This tool is not guaranteed to find all emails, nor can it definitely tell you whether an email constitutes PII or not. `test_pii_meta_emails()` reads in a *_metadata.xml file from the specified directory. It uses regular expressions to extract all emails (in truth, it's hard to test the regex against all possible emails so there is a chance it will miss one here or there). If there are no emails in the metadata, the function fails with a warning (there probably should be an email contact somewhere in the metadata). If there are any emails that end in anything other than .gov, the function fails with a warning and lists the offending emails. If the only emails in metadata end in .gov, these are assumed to be public emails and the function passes without listing out the emails.
 #'
 #'
-#' @param directory
+#' @param directory String. The directory where the metadata file resides. Defaults to the current working directory.
 #'
 #' @return invisible(metadata)
 #' @export
@@ -109,7 +109,7 @@ test_notes <- function(metadata = load_metadata(directory)){
 #'
 #' @description `test_methods()` first extracts the methods from an EML object. If methods are not present, the test fails with an error. If the methods are present, the tests asks 1) Is the section longer than 20 words? If not, the test fails with a warning.  2) Does the methods section contain unconventional characters such as &amp;#13;? If so, the test fails with a warning. 2) Does the methods section contain additional spaces (more than two consecuitive spaces)? If so, the test fails with a warning. If all of the tests pass, the test as whole passes. For any error or warning, users are advised to use `EMLeditor::set_methods()` to correct the problem.
 #'
-#' @param metadata
+#' @param metadata The metadata object returned by `load_metadata`. If parameter is not provided, it defaults to calling `load_metadata` in the current project directory.
 #'
 #' @return invisible(metadata)
 #' @export
