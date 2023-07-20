@@ -1,5 +1,20 @@
-test_meta_pii_emails <- function(directory = here::here() metadata = load_metadata(directory)) {
-  is_eml(metadata)
+
+
+#' Check metadata for PII (emails)
+#'
+#' @deacription `test_pii_meta_emails()` is a tool to help identify emails in metadata that may constitute Personally Identifiable Information (PII). This tool is not guaranteed to find all emails, nor can it definitely tell you whether an email consitutes PII or not. `test_pii_meta_emails()` reads in a *_metadata.xml file from the specified directory. It uses regular expressions to extract all emails (in truth, it's hard to test the regex against all possible emails so there is a chance it will miss one here or there). If there are no emails in the metadata, the function fails with a warning (there probably should be an email contact somewhere in the metadata). If there are any emails that end in anything other than .gov, the function fails with a warning and lists the offending emails. If the only emails in metadata end in .gov, these are assumed to be public emails and the function passes without listing out the emails.
+#'
+#'
+#' @param directory
+#'
+#' @return invisible(metadata)
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_pii_meta_emails()
+#' }
+test_pii_meta_emails <- function(directory = here::here()) {
 
   #get the full file names and paths for all files in directory
   files <- list.files(directory, full.names = TRUE)
@@ -21,13 +36,10 @@ test_meta_pii_emails <- function(directory = here::here() metadata = load_metada
     for(i in seq_along(meta_emails)){
       #filter out .govs
       if(!stringr::str_detect(meta_emails[i], ".gov")){
-        #filter out .edus
-        if(!stringr::str_detect(meta_emails[i], ".edu")){
-          personal_emails <- append(personal_emails, meta_emails[i])
-        }
+        personal_emails <- append(personal_emails, meta_emails[i])
       }
     }
-    if(!is.null(personal_emails)){
+    if(is.null(personal_emails)){
       cli::cli_inform(c("v" = "Metadata does not appear to contain any personal emails."))
     } else {
       cli::cli_warn(c("!" = "Metadata contains the following personal emails: {.email {personal_emails}}. Consider removing potential Personal Identifiable Information (PII)."))
@@ -38,8 +50,6 @@ test_meta_pii_emails <- function(directory = here::here() metadata = load_metada
   }
   return(invisible(metadata))
 }
-
-
 
 
 #' Examines the additionalInfo elment of EML metadata
