@@ -145,7 +145,7 @@ test_methods <- function(metadata = load_metadata(directory)){
         Use {.fn EMLeditor::set_methods} to revise."))
       z <- "warn"
     }
-    if(sum(grepl("[\r|&amp;#13;]", new_methods))>0){
+    if(sum(grepl("\r|&amp;#13;", new_methods))>0){
       cli::cli_warn(c("!" = "The metadata methods contains non-standard characters such as \\r or &amp;#13;. Use {.fn EMLeditor::set_methods} to revise."))
       z <- "warn"
     }
