@@ -84,7 +84,8 @@ test_notes <- function(metadata = load_metadata(directory)){
         info <- append(info, notes[[i]])
       }
     }
-    if(sum(grepl("[\r|&amp;#13;]", info))>0){
+    z<-NULL
+    if(sum(grepl("\r|&amp;#13;", info))>0){
       cli::cli_warn(c("!" = "The metadata additionalInfo (\"Notes\" on DataStore) contains non-standard characters such as \\r or &amp;#13;.
                       Use {.fn EMLeditor::set_additional_info} to revise."))
       z <- "warn"
