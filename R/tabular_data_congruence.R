@@ -668,6 +668,66 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
   return(invisible(metadata))
 }
 
+
+#' Title
+#'
+#' @param directory
+#' @param metadata
+#'
+#' @return
+#' @export
+#'
+#' @examples
+test_dates_parse <- function(directory = here::here(),
+                             metadata = load_metadata(directory)){
+
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
+
+  missing_temporal <- is.null(
+    metadata[["dataset"]][["coverage"]][["temporalCoverage"]])
+
+  # Check if temporal coverage info is complete. Throw a warning if it's missing entirely
+  if (missing_temporal) {
+    cli::cli_warn(c("!" = "Metadata does not contain temporal coverage information. Could not check whether data/metadata date formats are congruent."))
+    return(invisible(metadata))
+  }
+
+  # get dataTable and all children elements
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  data_tbl$`@context` <- NULL
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  # Get list of date/time attributes for each table in the metadata
+  dttm_attrs <- lapply(data_tbl, function(tbl) {
+    attrs <- suppressMessages(EML::get_attributes(tbl$attributeList))
+    attrs <- attrs$attributes
+    attrs <- dplyr::filter(attrs, domain == "dateTimeDomain")
+    return(attrs)
+  })
+  dttm_attrs$`@context` <- NULL
+
+  names(dttm_attrs) <- unlist(lapply(data_tbl, function(x) {
+    x[["entityName"]]
+    }))
+
+  names(dttm_attrs) <- filenames
+
+
+    arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+
+
+
+
+
+
+}
+
+
+
 #' Test Date Range
 #'
 #' @description `test_date_range()` verifies that dates in the dataset are consistent with the date range in the metadata.
@@ -772,6 +832,7 @@ test_date_range <- function(directory = here::here(),
     # Get format string for each date/time column and filter out anything that doesn't have a year associated with it
     dttm_formats <- dttm_attrs[[data_file]]$formatString
 
+    #is_time <- grepl("Y", dttm_formats) #trying to account for both Y and y:
     is_time <- grepl("Y", dttm_formats)
 
     #commenting out this next line fixes one error and causes about a dozen more!
