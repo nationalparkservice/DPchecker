@@ -713,10 +713,9 @@ test_dates_parse <- function(directory = here::here(),
     x[["entityName"]]
     }))
 
-  names(dttm_attrs) <- filenames
+  #get a list of
 
 
-    arcticdatautils::eml_get_simple(data_tbl, "objectName")
 
 
 
