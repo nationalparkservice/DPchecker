@@ -669,59 +669,82 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 }
 
 
-#' Title
+#' Test data and metadata data formats match
 #'
-#' @param directory
-#' @param metadata
+#' @inheritParams load_data
+#' @inheritParams test_metadata_version
 #'
-#' @return
+#' @return Invisibly returns `metadata`
 #' @export
 #'
 #' @examples
+#' dir <- DPchecker_example("BICY_veg")
+#' test_dates_parse(dir)
 test_dates_parse <- function(directory = here::here(),
                              metadata = load_metadata(directory)){
 
-  is_eml(metadata)  # Throw an error if metadata isn't an emld object
+   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-  missing_temporal <- is.null(
-    metadata[["dataset"]][["coverage"]][["temporalCoverage"]])
+   missing_temporal <- is.null(
+     metadata[["dataset"]][["coverage"]][["temporalCoverage"]])
 
-  # Check if temporal coverage info is complete. Throw a warning if it's missing entirely
-  if (missing_temporal) {
-    cli::cli_warn(c("!" = "Metadata does not contain temporal coverage information. Could not check whether data/metadata date formats are congruent."))
-    return(invisible(metadata))
-  }
+   # Check if temporal coverage info is complete. Throw a warning if it's missing entirely
+   if (missing_temporal) {
+     cli::cli_warn(c("!" = "Metadata does not contain temporal coverage information. Could not check whether data/metadata date formats are congruent."))
+     return(invisible(metadata))
+   }
 
-  # get dataTable and all children elements
-  data_tbl <- EML::eml_get(metadata, "dataTable")
-  data_tbl$`@context` <- NULL
-  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
-  if ("attributeList" %in% names(data_tbl)) {
-    data_tbl <- list(data_tbl)
-  }
+   # get dataTable and all children elements
+   data_tbl <- EML::eml_get(metadata, "dataTable")
+   data_tbl$`@context` <- NULL
+   # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+   if ("attributeList" %in% names(data_tbl)) {
+     data_tbl <- list(data_tbl)
+   }
 
-  # Get list of date/time attributes for each table in the metadata
-  dttm_attrs <- lapply(data_tbl, function(tbl) {
-    attrs <- suppressMessages(EML::get_attributes(tbl$attributeList))
-    attrs <- attrs$attributes
-    attrs <- dplyr::filter(attrs, domain == "dateTimeDomain")
-    return(attrs)
-  })
-  dttm_attrs$`@context` <- NULL
+   # Get list of date/time attributes for each table in the metadata
+   dttm_attrs <- lapply(data_tbl, function(tbl) {
+     attrs <- suppressMessages(EML::get_attributes(tbl$attributeList))
+     attrs <- attrs$attributes
+     attrs <- dplyr::filter(attrs, domain == "dateTimeDomain")
+     return(attrs)
+   })
+   dttm_attrs$`@context` <- NULL
 
-  names(dttm_attrs) <- unlist(lapply(data_tbl, function(x) {
-    x[["entityName"]]
-    }))
+   names(dttm_attrs) <- unlist(lapply(data_tbl, function(x) {
+     x[["entityName"]]
+     }))
 
-  #get a list of
+  #get a list of date columns from each data file:
+   data_files <- list.files(path = directory, pattern = ".csv")
+
+   for(data_file in data_files){
+     dttm_col_names <- dttm_attrs[[data_file]]$attributeName
+
+     #if there aren't any date-time columns, skip them:
+     if (length(dttm_col_names) == 0) {
+       next()
+     }
+
+     dttm_formats <- dttm_attrs[[data_file]]$formatString
+
+     #consider only dates with years in them:
+     is_time <- grepl("Y", dttm_formats)
+     dttm_formats <- dttm_formats[is_time]
+     dttm_col_names <- dttm_col_names[is_time]
+
+     # Convert date/time formats to be compatible with R;
+     # and put them in a list so we can use do.call(cols)
+     dttm_formats_r <- convert_datetime_format(dttm_formats)
+     dttm_col_spec <- dttm_formats_r %>%
+       as.list() %>%
+       lapply(readr::col_datetime)
+     names(dttm_col_spec) <- dttm_col_names
+     names(dttm_formats_r) <- dttm_col_names
+     names(dttm_formats) <- dttm_col_names
 
 
-
-
-
-
-
-
+   }
 
 }
 
@@ -729,7 +752,7 @@ test_dates_parse <- function(directory = here::here(),
 
 #' Test Date Range
 #'
-#' @description `test_date_range()` verifies that dates in the dataset are consistent with the date range in the metadata.
+#' @description `test_date_range()` verifies that dates in the dataset are consistent with the date range in the metadata. **Known Bug:** the function returns "unsupported error" if any dates are concatenated with times, even if the date/time combo is correctly formatted (i.e. ISO YYYY-MM-DDThh:mm:ss) in the data and correctly specified in the metadata. If this your case your best options (unitl it can be fixed) are: 1) Move times into a separate column or 2) if the date/time column has a unique name you can skip that column using the skip_cols parameter.
 #'
 #' @details This function checks columns that are identified as date/time in the metadata. If the metadata lacks a date range, the function fails with a warning. It fails with a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and result failing the test with an error.
 #'
@@ -750,6 +773,8 @@ test_dates_parse <- function(directory = here::here(),
 test_date_range <- function(directory = here::here(),
                             metadata = load_metadata(directory),
                             skip_cols = NA){
+
+  #----
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   missing_temporal <- is.null(arcticdatautils::eml_get_simple(metadata, "temporalCoverage"))
@@ -819,7 +844,7 @@ test_date_range <- function(directory = here::here(),
   }
 
   names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
-
+  #----
   # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
   data_files <- list.files(path = directory, pattern = ".csv")
   dataset_out_of_range <- sapply(data_files, function(data_file) {
@@ -830,13 +855,8 @@ test_date_range <- function(directory = here::here(),
     }
     # Get format string for each date/time column and filter out anything that doesn't have a year associated with it
     dttm_formats <- dttm_attrs[[data_file]]$formatString
-
-    #is_time <- grepl("Y", dttm_formats) #trying to account for both Y and y:
     is_time <- grepl("Y", dttm_formats)
-
-    #commenting out this next line fixes one error and causes about a dozen more!
     dttm_formats <- dttm_formats[is_time]
-
     dttm_col_names <- dttm_col_names[is_time]
 
     # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
@@ -907,6 +927,7 @@ test_date_range <- function(directory = here::here(),
 
       return(bad_cols)
     }, simplify = FALSE, USE.NAMES = TRUE)
+
     tbl_out_of_range <- purrr::discard(tbl_out_of_range, is.null)
     if (length(names(tbl_out_of_range)) > 0) {
       return(paste(tbl_out_of_range, collapse = ", "))  # List out of range date columns
