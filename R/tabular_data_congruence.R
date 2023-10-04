@@ -1239,7 +1239,7 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
 
 #' Test File Names for Invalid Characters
 #'
-#' @description `test_valid_filenames()` checks for file names in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter. Currently, invalid filenames will result in the test failing with a warning, otherwise the test passes.
+#' @description `test_valid_filenames()` checks for file names in the metadata that contain invalid special characters. Only underscores, hyphens, and alphanumeric characters are permitted, and names must begin with a letter. Currently, invalid filenames will result in the test failing with a warning, otherwise the test passes.
 #'
 #' @details You should run `test_file_name_match()` before you run this function, since this function only checks the file names in the metadata.
 #'
@@ -1266,7 +1266,7 @@ test_valid_filenames <- function(metadata = load_metadata(here::here())) {
 
   # Check each file name. Throw a warning if any contain special characters
   bad_start <- grepl("^[^a-zA-Z]", file_names)  # File names must start with a letter
-  special_chars <- grepl("[^a-zA-Z0-9_\\.]", file_names)  # No special characters in file names (only alphanumeric and underscores allowed)
+  special_chars <- grepl("[^a-zA-Z0-9_\\.\\-]", file_names)  # No special characters in file names (only alphanumeric and underscores allowed)
 
   bad_names <- file_names[bad_start | special_chars]
 
