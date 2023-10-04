@@ -715,18 +715,22 @@ test_dates_parse <- function(directory = here::here(),
      x[["entityName"]]
      }))
 
-  #get a list of date columns from each data file:
+   #get a list of date columns from each data file:
    data_files <- list.files(path = directory, pattern = ".csv")
 
-   for(data_file in data_files){
-     dttm_col_names <- dttm_attrs[[data_file]]$attributeName
+   #assume everything is fine, until it isn't.
+   error_log <- NULL
 
-     #if there aren't any date-time columns, skip them:
+   #check each data file:
+   for(i in 1:length(seq_along(data_files))){
+     dttm_col_names <- dttm_attrs[[i]]$attributeName
+
+     #if there aren't any date-time columns, skip the file:
      if (length(dttm_col_names) == 0) {
        next()
      }
 
-     dttm_formats <- dttm_attrs[[data_file]]$formatString
+     dttm_formats <- dttm_attrs[[i]]$formatString
 
      #consider only dates with years in them:
      is_time <- grepl("Y", dttm_formats)
@@ -734,7 +738,7 @@ test_dates_parse <- function(directory = here::here(),
      dttm_col_names <- dttm_col_names[is_time]
 
      # Convert date/time formats to be compatible with R;
-     # and put them in a list so we can use do.call(cols)
+     # and put them in a list so we can use do.call(cols). Not that we do.
      dttm_formats_r <- convert_datetime_format(dttm_formats)
      dttm_col_spec <- dttm_formats_r %>%
        as.list() %>%
@@ -743,16 +747,71 @@ test_dates_parse <- function(directory = here::here(),
      names(dttm_formats_r) <- dttm_col_names
      names(dttm_formats) <- dttm_col_names
 
+     #identify common missing values; add custom missing values from metadata
+     na_strings <- c("", "NA")
+     if ("missingValueCode" %in% names(dttm_attrs[[i]])) {
+       na_strings <- unique(c(na_strings,
+                       (dttm_attrs[[i]]$missingValueCode)))
+     }
 
+     #read in date/time columns from data
+     dttm_data <- suppressWarnings(
+       readr::read_csv(
+         file.path(directory, data_files[i]),
+         col_select = dplyr::all_of(dttm_col_names),
+         na = na_strings,
+         #col_types = cols(.default="c"),
+         show_col_types = FALSE))
+     #convert to characters
+     dttm_data <- dttm_data %>% dplyr::mutate(across(everything(),
+                                                     as.character))
+
+     #This is SLOW for large datasets. Refactor with apply methods?
+     # Look at each column in the file i:
+     for(j in 1:length(seq_along(dttm_col_names))){
+       #remove <NA>s:
+       drop_missing <- na.omit(dttm_data[j])
+       #remove na_strings for "NA" -9999 or other predefined value):
+       drop_missing <- subset(drop_missing, drop_missing[1] != na_strings)
+
+       #for each cell in that column, check date format matches metadata:
+       for(k in 1:nrow(drop_missing)){
+         #date_check TRUE if data/metadata formats match
+         #date_check FALSE if data/metadata formats don't match
+         #date_check FALSE if an error occurs
+         date_check <- tryCatch(
+           suppressWarnings(!is.na(as.Date.character(drop_missing[k,1],
+                                                      dttm_formats_r[j]))),
+           error = function(err) {FALSE})
+         if(!date_check){
+
+           error_log<-append(error_log,
+                         paste0("--> {.file ", data_files[i], "}: ",
+                                dttm_col_names[j]))
+           #if one FALSE is found, exit the loop and check the next column. This does speed things up a bit.
+           break
+         }
+       }
+     }
    }
+   # if there are no date format mismatches:
+   if(is.null(error_log)){
+     cli::cli_inform(c("v" = "Metadata and data date formatting is in congruence."))
+   }
+   else{
+     # really only need to say it once per file/column combo
+     msg <- error_log
+     err <- paste0("Metadata/data date format mismatches found. Further temporal coverage tests will fail until this error is resolved:")
+     cli::cli_abort(c("x" = err, msg))
+    }
+  }
 
-}
 
 
 
 #' Test Date Range
 #'
-#' @description `test_date_range()` verifies that dates in the dataset are consistent with the date range in the metadata. **Known Bug:** the function returns "unsupported error" if any dates are concatenated with times, even if the date/time combo is correctly formatted (i.e. ISO YYYY-MM-DDThh:mm:ss) in the data and correctly specified in the metadata. If this your case your best options (unitl it can be fixed) are: 1) Move times into a separate column or 2) if the date/time column has a unique name you can skip that column using the skip_cols parameter.
+#' @description `test_date_range()` verifies that dates in the dataset are consistent with the date range in the metadata. **Known Bug:** the function returns "unsupported error" if any dates are concatenated with times, even if the date/time combo is correctly formatted (i.e. ISO YYYY-MM-DDThh:mm:ss) in the data and correctly specified in the metadata. If this your case your best options (unti it can be fixed) are: 1) Move times into a separate column or 2) if the date/time column has a unique name you can skip that column using the skip_cols parameter.
 #'
 #' @details This function checks columns that are identified as date/time in the metadata. If the metadata lacks a date range, the function fails with a warning. It fails with a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and result failing the test with an error.
 #'
@@ -883,7 +942,7 @@ test_date_range <- function(directory = here::here(),
         col_types = do.call(readr::cols, dttm_col_spec),
         show_col_types = FALSE))
 
-    #WTF does this do?
+    #Arooo?
     char_data <- suppressWarnings(
       readr::read_csv(file.path(directory, data_file),
                       col_select = dplyr::all_of(dttm_col_names),
