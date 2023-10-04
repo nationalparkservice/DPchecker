@@ -423,3 +423,25 @@ test_orcid_match <- function(metadata = load_metadata(directory)){
   return(invisible(metadata))
 }
 
+#' Test for public GPS point coordinates
+#'
+#' @description `test_public_points()` will look for GPS point coordinates in metadata, if the data package is not public will warn users that they are potentially publishing confidential unclassified information (CUI). If the data package is set to public, the function will pass. If the data package is restricted but no GPS points are detected, the function will pass. If the data package is set to restricted and GPS points are detected, the function will fail with a warning.
+#'
+#' @details The contents of metadata are public even if the data itself is restricted. This means that if people have GPS coordinates (a common type of data that must be redacted or fuzzed before it can be made public) in their metadata, these data will be public. The function will warn people of that potentiality.
+#'
+#' @param metadata
+#'
+#' @return
+#' @export
+#'
+#' @examples
+test_public_points <- function(metadata = load_metadata(directory)){
+  is_eml(metadata)
+
+  goe_cov <- metadata[["dataset"]][["coverage"]][["geographicCoverage"]]
+
+
+
+
+
+}
