@@ -697,3 +697,26 @@ test_creator <- function(metadata = load_metadata(directory)){
 
 }
 
+#' Test for Keywords
+#'
+#' @description `test_keywords()` tests to see whether metadata contains at least one "Keywords Set".
+#'
+#' @inheritParams test_pub_date
+#'
+#' @return invisilbe(meatadatda)
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_keywords()
+#' }
+test_keywords <- function (metadata = load_metadata(directory)){
+  is_eml(metadata)
+  #get creators
+  keywords <- metadata[["dataset"]][["keywordSet"]]
+  if(is.null(keywords)){
+    cli::cli_abort(c("x" = "No keywords detected. Metadata must contain at least one keyword."))
+  } else{
+    cli::cli_inform(c("v" = "Metadata contains keyword(s)."))
+  }
+}
