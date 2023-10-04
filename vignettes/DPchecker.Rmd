@@ -130,7 +130,8 @@ These functions check to make sure the values and fields in the metadata file ac
 * All data files are listed in metadata and all metadata file names refer to data files ([`test_file_name_match()`](../reference/test_file_name_match.html))
 * All columns in data match all columns in metadata ([`test_fields_match()`](../reference/test_fields_match.html))
 * Columns indicated as numeric in metadata contain only numeric values and missing value codes in the data ([`test_numeric_fields()`](../reference/test_numeric_fields.html))
-* Columns indicated as date/time in metadata contain values that fall within the stated temporal coverage in metadata ([`test_date_range()`](../reference/test_date_range.html))
+* Columns indicated as dates in metadata have matching date formats in the metadata and the data. This checks each cell in each date column against the format provided in the metadata and so can take some time for larger data packages ([`test_dates_parse()`](../reference/test_dates_parse.html))
+* Columns indicated as dates in metadata contain values that fall within the stated temporal coverage in metadata ([`test_date_range()`](../reference/test_date_range.html))
 
 ## Data Compliance
 These functions check the data files for compliance. Please resolve any errors before uploading your data. 
