@@ -434,6 +434,15 @@ run_congruence_checks <- function(directory = here::here(),
                warn_count <<- warn_count + 1
                cli::cli_bullets(c(w$message, w$body))
              })
+    tryCatch(test_dates_parse(directory, metadata),
+             error = function(e) {
+               err_count <<- err_count + 1
+               cli::cli_bullets(c(e$message, e$body))
+             },
+             warning = function(w) {
+               warn_count <<- warn_count + 1
+               cli::cli_bullets(c(w$message, w$body))
+             })
     tryCatch(test_date_range(directory, metadata, skip_cols = skip_cols),
              error = function(e) {
                err_count <<- err_count + 1
