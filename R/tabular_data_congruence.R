@@ -760,11 +760,15 @@ test_dates_parse <- function(directory = here::here(),
          file.path(directory, data_files[i]),
          col_select = dplyr::all_of(dttm_col_names),
          na = na_strings,
-         #col_types = cols(.default="c"),
+         col_types = readr::cols(.default = "c"),
          show_col_types = FALSE))
-     #convert to characters
-     dttm_data <- dttm_data %>% dplyr::mutate(across(everything(),
-                                                     as.character))
+     #convert to characters - unnecessary now that cols(.cdefault = "c") works
+     #dttm_data <- dttm_data %>% dplyr::mutate(across(everything(),
+     #                                                as.character))
+
+     #if date-times contain a "T" as in ISO 8601 formatting, replace with a space:
+     dttm_data<- data.frame(lapply(dttm_data, function(x) gsub("T", " ", x)))
+
 
      #This is SLOW for large datasets. Refactor with apply methods?
      # Look at each column in the file i:
@@ -1303,8 +1307,9 @@ convert_datetime_format <- function(eml_format_string) {
     stringr::str_replace_all("(hh)|(HH)", "%H") %>%
     stringr::str_replace_all("mm", "%M") %>%
     stringr::str_replace_all("(ss)|(SS)", "%S") %>%
-    stringr::str_replace_all("M", "%m") %>%
-    stringr::str_replace_all("D", "%d")
+    #stringr::str_replace_all("M", "%m") %>%
+    stringr::str_replace_all("D", "%d") %>%
+    stringr::str_replace_all("T", " ")
 
   return(r_format_string)
 }
