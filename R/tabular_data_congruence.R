@@ -762,9 +762,7 @@ test_dates_parse <- function(directory = here::here(),
          na = na_strings,
          col_types = readr::cols(.default = "c"),
          show_col_types = FALSE))
-     #convert to characters - unnecessary now that cols(.cdefault = "c") works
-     #dttm_data <- dttm_data %>% dplyr::mutate(across(everything(),
-     #                                                as.character))
+
 
      #if date-times contain a "T" as in ISO 8601 formatting, replace with a space:
      dttm_data<- data.frame(lapply(dttm_data, function(x) gsub("T", " ", x)))
@@ -837,7 +835,6 @@ test_date_range <- function(directory = here::here(),
                             metadata = load_metadata(directory),
                             skip_cols = NA){
 
-  #----
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
   missing_temporal <- is.null(arcticdatautils::eml_get_simple(metadata, "temporalCoverage"))
@@ -907,7 +904,7 @@ test_date_range <- function(directory = here::here(),
   }
 
   names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
-  #----
+
   # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
   data_files <- list.files(path = directory, pattern = ".csv")
   dataset_out_of_range <- sapply(data_files, function(data_file) {
@@ -924,6 +921,7 @@ test_date_range <- function(directory = here::here(),
 
     # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
     dttm_formats_r <- convert_datetime_format(dttm_formats)
+
     dttm_col_spec <- dttm_formats_r %>%
       as.list() %>%
       lapply(readr::col_datetime)
@@ -943,7 +941,7 @@ test_date_range <- function(directory = here::here(),
         file.path(directory, data_file),
         col_select = dplyr::all_of(dttm_col_names),
         na = na_strings,
-        col_types = do.call(readr::cols, dttm_col_spec),
+        #col_types = do.call(readr::cols, dttm_col_spec),
         show_col_types = FALSE))
 
     #Arooo?
@@ -965,9 +963,26 @@ test_date_range <- function(directory = here::here(),
       #returns bad min/max dates because dates are not parsed as dates yet?
       max_date <- max(col_data, na.rm = TRUE)
       min_date <- min(col_data, na.rm = TRUE)
+
+
       #something funky here.... the next line returns NA
       format_str_r <- dttm_formats_r[col]
       bad_cols <- NULL
+
+
+      max_date <- as.Date(format(max_date, format = dttm_formats_r[col]))
+      min_date <- as.Date(format(min_date, format = dttm_formats_r[col]))
+
+      #if time provided, set time to zero (midnight)
+  #    max_hour <- lubridate::hour(max_date)
+  #    max_min <- lubridate::minute(max_date)
+  #    max_sec <- lubridate::second(max_date)
+  #    max_date <- max_date - lubridate::hours(max_hour) - lubridate::minutes(max_min) - lubridate::seconds(max_sec)
+
+   #   min_hour <- lubridate::hour(min_date)
+  #    min_min <- lubridate::minute(min_date)
+   #   min_sec <- lubridate::second(min_date)
+  #    min_date <- min_date - lubridate::hours(min_hour) - lubridate::minutes(min_min) - lubridate::seconds(min_sec)
 
       # Set metadata day and/or month to 1 if not present in format string so that date comparisons work correctly
       if (!grepl("d", format_str_r)) {
