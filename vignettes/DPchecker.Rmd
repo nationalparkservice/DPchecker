@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 # Install DP checker
 
-You can install [DPchecker](https://nationalparkservice.github.io/DPchecker/) as part of the [NPSdataverse](https://roblbaker.github.io/NPSdataverse/) using: 
+You can install [DPchecker](https://nationalparkservice.github.io/DPchecker/) as part of the [NPSdataverse](https://nationalparkservice.github.io/NPSdataverse/) using: 
 
 ```{r verse_install, eval=FALSE}
 install.packages("devtools")
@@ -73,7 +73,7 @@ Warnings are helpful indications that the data package creator may want to look 
 
 # Tests conducted
 
-DPchecker v0.3.1 runs two types of tests: metadata only tests and tests to determine whether the metadata and data files are congruent.  Metadata tests can be broken down in to two sub-categories, metadata compliance and metadata completeness. The tests run and the order in which they are run are listed below.
+DPchecker v0.3.2 runs two types of tests: metadata only tests and tests to determine whether the metadata and data files are congruent.  Metadata tests can be broken down in to two sub-categories, metadata compliance and metadata completeness. The tests run and the order in which they are run are listed below.
 
 ## Metadata compliance
 These tests determine whether the metadata is schema valid and adheres to some rules for data packages. They only require the *_metadata.xml file to run and do not require that the data files be present. These include:
@@ -101,6 +101,7 @@ These tests ensure that the EML elements necessary for DataStore to properly ext
 * Creator element exists and if individual creators exist, they all have valid (<3 words) surNames ([`test_creator()`](../reference/test_creator.html))
 * Publication date is present and in the correct ISO-8601 format ([`test_pub_date()`](../reference/test_pub_date.html))
 * Data package title is present in metadata ([`test_dp_title()`](../reference/test_dp_title.html))
+* Data package metadata contains at least one keyword ([`test_keywords()`](../reference/test_keywords.html))
 * Metadata states data was created by or for NPS ([`test_by_for_nps()`](../reference/test_by_for_nps.html))
 * Metadata indicates the publisher is the National Park Service ([`test_publisher_name()`](../reference/test_publisher_name.html))
 * Metadata indicates the publisher state is CO  ([`test_publisher_state()`](../reference/test_publisher_state.html))
@@ -130,9 +131,11 @@ These functions check to make sure the values and fields in the metadata file ac
 * All data files are listed in metadata and all metadata file names refer to data files ([`test_file_name_match()`](../reference/test_file_name_match.html))
 * All columns in data match all columns in metadata ([`test_fields_match()`](../reference/test_fields_match.html))
 * Columns indicated as numeric in metadata contain only numeric values and missing value codes in the data ([`test_numeric_fields()`](../reference/test_numeric_fields.html))
-* Columns indicated as date/time in metadata contain values that fall within the stated temporal coverage in metadata ([`test_date_range()`](../reference/test_date_range.html))
+* Columns indicated as dates in metadata have matching date formats in the metadata and the data. This checks each cell in each date column against the format provided in the metadata and so can take some time for larger data packages ([`test_dates_parse()`](../reference/test_dates_parse.html))
+* Columns indicated as dates in metadata contain values that fall within the stated temporal coverage in metadata ([`test_date_range()`](../reference/test_date_range.html))
 
-## Data Compliance
-These functions check the data files for compliance. Please resolve any errors before uploading your data. 
+## Data and Metadata Compliance
+These functions check the data and metadata files for compliance. Please resolve any errors before uploading your data. 
 
-* Data files do not contain any email addresses that constitute personally identifiable information (PII) ([`test_pii_data_emails()`](../reference/test_pii_data)
+* Data files do not contain any email addresses that constitute personally identifiable information (PII) ([`test_pii_data_emails()`](../reference/test_pii_data.html)
+* Metadata do not contain GPS coordinates if the data package is not public ([`test_public_points()`](../reference/test_public_points.html))

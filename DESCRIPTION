@@ -1,6 +1,6 @@
 Package: DPchecker
 Title: Checks Data Packages for Congruence
-Version: 0.3.1
+Version: 0.3.2
 Authors@R: c(
     person("Rob", "Baker", email = "robert_baker@nps.gov", role = c("cre", "aut"), comment = c(ORCID = "0000-0001-7591-5035")),
     person(c("Sarah", "E."), "Wright", email = "sarah_wright@nps.gov", role = "aut"),
@@ -31,7 +31,8 @@ Imports:
     tibble,
     crayon,
     httr,
-    jsonlite
+    jsonlite,
+    stats
 Remotes: 
     https://github.com/NCEAS/arcticdatautils
 URL: https://nationalparkservice.github.io/DPchecker/

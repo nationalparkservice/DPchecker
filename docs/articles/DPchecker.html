@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DPchecker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,6 +40,9 @@
 </li>
 <li class="nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul>
 <form class="form-inline my-2 my-lg-0" role="search">
@@ -71,11 +74,11 @@
 <h2 id="install-dp-checker">Install DP checker<a class="anchor" aria-label="anchor" href="#install-dp-checker"></a>
 </h2>
 <p>You can install <a href="https://nationalparkservice.github.io/DPchecker/" class="external-link">DPchecker</a> as
-part of the <a href="https://roblbaker.github.io/NPSdataverse/" class="external-link">NPSdataverse</a>
+part of the <a href="https://nationalparkservice.github.io/NPSdataverse/" class="external-link">NPSdataverse</a>
 using:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"devtools"</span><span class="op">)</span></span>
-<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://remotes.r-lib.org/reference/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"nationalparkservice/NPSdataverse"</span><span class="op">)</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/remotes/man/install_github.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"nationalparkservice/NPSdataverse"</span><span class="op">)</span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/nationalparkservice/NPSdataverse" class="external-link">NPSdataverse</a></span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -161,7 +164,7 @@ creator consider writing a more informative abstract.</p>
 <div class="section level2">
 <h2 id="tests-conducted">Tests conducted<a class="anchor" aria-label="anchor" href="#tests-conducted"></a>
 </h2>
-<p>DPchecker v0.3.1 runs two types of tests: metadata only tests and
+<p>DPchecker v0.3.2 runs two types of tests: metadata only tests and
 tests to determine whether the metadata and data files are congruent.
 Metadata tests can be broken down in to two sub-categories, metadata
 compliance and metadata completeness. The tests run and the order in
@@ -216,6 +219,7 @@ and do not require that the data files be present.</p>
 have valid (&lt;3 words) surNames (<a href="../reference/test_creator.html"><code>test_creator()</code></a>)</li>
 <li>Publication date is present and in the correct ISO-8601 format (<a href="../reference/test_pub_date.html"><code>test_pub_date()</code></a>)</li>
 <li>Data package title is present in metadata (<a href="../reference/test_dp_title.html"><code>test_dp_title()</code></a>)</li>
+<li>Data package metadata contains at least one keyword (<a href="../reference/test_keywords.html"><code>test_keywords()</code></a>)</li>
 <li>Metadata states data was created by or for NPS (<a href="../reference/test_by_for_nps.html"><code>test_by_for_nps()</code></a>)</li>
 <li>Metadata indicates the publisher is the National Park Service (<a href="../reference/test_publisher_name.html"><code>test_publisher_name()</code></a>)</li>
 <li>Metadata indicates the publisher state is CO (<a href="../reference/test_publisher_state.html"><code>test_publisher_state()</code></a>)</li>
@@ -264,19 +268,25 @@ refer to data files (<a href="../reference/test_file_name_match.html"><code>test
 <li>All columns in data match all columns in metadata (<a href="../reference/test_fields_match.html"><code>test_fields_match()</code></a>)</li>
 <li>Columns indicated as numeric in metadata contain only numeric values
 and missing value codes in the data (<a href="../reference/test_numeric_fields.html"><code>test_numeric_fields()</code></a>)</li>
-<li>Columns indicated as date/time in metadata contain values that fall
+<li>Columns indicated as dates in metadata have matching date formats in
+the metadata and the data. This checks each cell in each date column
+against the format provided in the metadata and so can take some time
+for larger data packages (<a href="../reference/test_dates_parse.html"><code>test_dates_parse()</code></a>)</li>
+<li>Columns indicated as dates in metadata contain values that fall
 within the stated temporal coverage in metadata (<a href="../reference/test_date_range.html"><code>test_date_range()</code></a>)</li>
 </ul>
 </div>
 <div class="section level3">
-<h3 id="data-compliance">Data Compliance<a class="anchor" aria-label="anchor" href="#data-compliance"></a>
+<h3 id="data-and-metadata-compliance">Data and Metadata Compliance<a class="anchor" aria-label="anchor" href="#data-and-metadata-compliance"></a>
 </h3>
-<p>These functions check the data files for compliance. Please resolve
-any errors before uploading your data.</p>
+<p>These functions check the data and metadata files for compliance.
+Please resolve any errors before uploading your data.</p>
 <ul>
 <li>Data files do not contain any email addresses that constitute
-personally identifiable information (PII) (<a href="../reference/test_pii_data"><code>test_pii_data_emails()</code></a>
+personally identifiable information (PII) (<a href="../reference/test_pii_data.html"><code>test_pii_data_emails()</code></a>
 </li>
+<li>Metadata do not contain GPS coordinates if the data package is not
+public (<a href="../reference/test_public_points.html"><code>test_public_points()</code></a>)</li>
 </ul>
 </div>
 </div>

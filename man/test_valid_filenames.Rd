@@ -13,7 +13,7 @@ test_valid_filenames(metadata = load_metadata(here::here()))
 Invisibly returns \code{metadata}.
 }
 \description{
-\code{test_valid_filenames()} checks for file names in the metadata that contain invalid special characters. Only underscores and alphanumeric characters are permitted, and names must begin with a letter. Currently, invalid filenames will result in the test failing with a warning, otherwise the test passes.
+\code{test_valid_filenames()} checks for file names in the metadata that contain invalid special characters. Only underscores, hyphens, and alphanumeric characters are permitted, and names must begin with a letter. Currently, invalid filenames will result in the test failing with a warning, otherwise the test passes.
 }
 \details{
 You should run \code{test_file_name_match()} before you run this function, since this function only checks the file names in the metadata.

@@ -245,6 +245,15 @@ run_congruence_checks <- function(directory = here::here(),
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(w$message, w$body))
            })
+  tryCatch(test_keywords(metadata),
+           error = function(e) {
+             err_count <<- err_count + 1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
   tryCatch(test_by_for_nps(metadata),
            error = function(e) {
              err_count <<- err_count + 1
@@ -290,7 +299,6 @@ run_congruence_checks <- function(directory = here::here(),
              warn_count <<- warn_count + 1
              cli::cli_bullets(c(w$message, w$body))
            })
-
   tryCatch(test_methods(metadata),
            error = function(e) {
              err_count <<- err_count + 1
@@ -434,6 +442,15 @@ run_congruence_checks <- function(directory = here::here(),
                warn_count <<- warn_count + 1
                cli::cli_bullets(c(w$message, w$body))
              })
+    tryCatch(test_dates_parse(directory, metadata),
+             error = function(e) {
+               err_count <<- err_count + 1
+               cli::cli_bullets(c(e$message, e$body))
+             },
+             warning = function(w) {
+               warn_count <<- warn_count + 1
+               cli::cli_bullets(c(w$message, w$body))
+             })
     tryCatch(test_date_range(directory, metadata, skip_cols = skip_cols),
              error = function(e) {
                err_count <<- err_count + 1
@@ -444,7 +461,7 @@ run_congruence_checks <- function(directory = here::here(),
                cli::cli_bullets(c(w$message, w$body))
              })
 
-    cli::cli_h2("Checking data compliance")
+    cli::cli_h2("Checking data and metadata compliance")
     tryCatch(test_pii_data_emails(directory),
              error = function(e) {
                err_count <<- err_count + 1
@@ -453,6 +470,15 @@ run_congruence_checks <- function(directory = here::here(),
              warning = function(w) {
                warn_count <<- warn_count + 1
                cli::cli_verbatim (c(w$message, w$body))
+             })
+    tryCatch(test_public_points(metadata),
+             error = function(e) {
+               err_count <<- err_count + 1
+               cli::cli_bullets(c(e$message, e$body))
+             },
+             warning = function(w) {
+               warn_count <<- warn_count + 1
+               cli::cli_bullets(c(w$message, w$body))
              })
 
   }

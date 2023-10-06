@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DPchecker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,6 +23,9 @@
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -46,12 +49,12 @@
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">run_congruence_checks</span><span class="op">(</span></span>
-<span>  directory <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>,</span>
+<span>  directory <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/here/man/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  metadata <span class="op">=</span> <span class="fu"><a href="load_metadata.html">load_metadata</a></span><span class="op">(</span><span class="va">directory</span><span class="op">)</span>,</span>
 <span>  check_metadata_only <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  skip_cols <span class="op">=</span> <span class="cn">NA</span>,</span>
 <span>  <span class="va">output_filename</span>,</span>
-<span>  output_dir <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://here.r-lib.org//reference/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span></span>
+<span>  output_dir <span class="op">=</span> <span class="fu">here</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/here/man/here.html" class="external-link">here</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -127,6 +130,7 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   words.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> Publication date, 2022, predates the Data Package Reference Type.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Data package title is present in metadata.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata contains keyword(s).</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata states data was created by or for NPS.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata indicates the publisher is the National Park Service.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata indicates the publisher state is CO.</span>
@@ -164,17 +168,20 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All columns in data match all columns in metadata.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Columns indicated as numeric in metadata contain only numeric values and</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   valid missing value codes.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata and data date formatting is in congruence.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Columns indicated as date/time in metadata are within the stated temporal</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   coverage range.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Checking data compliance</span> ──</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Checking data and metadata compliance</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Data files do not appear to contain any personal emails.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> CUI is not set to PUBLIC. GPS coordinates detected in metadata will be</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> publicly available. Are you sure?</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Summary</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> 2 errors to address</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 5 warnings to look into</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 6 warnings to look into</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
