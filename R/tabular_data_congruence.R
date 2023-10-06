@@ -767,7 +767,6 @@ test_dates_parse <- function(directory = here::here(),
      #if date-times contain a "T" as in ISO 8601 formatting, replace with a space:
      dttm_data<- data.frame(lapply(dttm_data, function(x) gsub("T", " ", x)))
 
-
      #This is SLOW for large datasets. Refactor with apply methods?
      # Look at each column in the file i:
      for(j in 1:length(seq_along(dttm_col_names))){
@@ -807,9 +806,6 @@ test_dates_parse <- function(directory = here::here(),
      cli::cli_abort(c("x" = err, msg))
     }
   }
-
-
-
 
 #' Test Date Range
 #'
