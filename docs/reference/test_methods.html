@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">DPchecker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">0.3.2</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -23,6 +23,9 @@
 </li>
 <li class="active nav-item">
   <a class="nav-link" href="../reference/index.html">Reference</a>
+</li>
+<li class="nav-item">
+  <a class="nav-link" href="../news/index.html">Changelog</a>
 </li>
       </ul><form class="form-inline my-2 my-lg-0" role="search">
         <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off"></form>
@@ -40,7 +43,7 @@
     </div>
 
     <div class="ref-description section level2">
-    <p><code>test_methods()</code> first extracts the methods from an EML object. If methods are not present, the test fails with an error. If the methods are present, the tests asks 1) Is the section longer than 20 words? If not, the test fails with a warning.  2) Does the methods section contain unconventional characters such as &amp;#13;? If so, the test fails with a warning. 2) Does the methods section contain additional spaces (more than two consecuitive spaces)? If so, the test fails with a warning. If all of the tests pass, the test as whole passes. For any error or warning, users are advised to use <code>EMLeditor::set_methods()</code> to correct the problem.</p>
+    <p><code>test_methods()</code> first extracts the methods from an EML object. If methods are not present, the test fails with an error. If the methods are present, the tests asks 1) Is the section longer than 20 words? If not, the test fails with a warning.  2) Does the methods section contain unconventional characters such as &amp;#13;? If so, the test fails with a warning. 2) Does the methods section contain additional spaces (more than two consecuitive spaces)? If so, the test fails with a warning. If all of the tests pass, the test as whole passes. For any error or warning, users are advised to use <code><a href="https://rdrr.io/pkg/EMLeditor/man/set_methods.html" class="external-link">EMLeditor::set_methods()</a></code> to correct the problem.</p>
     </div>
 
     <div class="section level2">

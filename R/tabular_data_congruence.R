@@ -671,6 +671,10 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 
 #' Test data and metadata data formats match
 #'
+#' @description `test_dates_parse()` will examine all data columns that are described as containing dates and times. Although it can handle multiple different formats, the ISO-8601 format for dates and times is HIHGLY recommended (ISO is YYYY-MM-DDThh:mm:ss or just YYYY-MM-DD). The function will compare the format provided in the data files to the format indicated in metadata. If there are no dates indicated in the metadata, the test fails with a warning. If there are dates and the formats match, the test passes. If the formats do not match, the test fails with an error. The specific files and columns that failed are indicated in the results.
+#'
+#' @details `test_dates_parse()` will examine EVERY cell in a column of dates until it hits a date format that does not match the format specified in metadata. For large datasets, this process can take a minute or two. If there is even one typo in your data file, it will cause the function to throw an error. Frequent source of error include viewing dates in Excel, which can be deceptive, typos, and changes in the date format over time or with changing personnel.
+#'
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
 #'
@@ -771,7 +775,7 @@ test_dates_parse <- function(directory = here::here(),
      # Look at each column in the file i:
      for(j in 1:length(seq_along(dttm_col_names))){
        #remove <NA>s:
-       drop_missing <- na.omit(dttm_data[j])
+       drop_missing <- stats::na.omit(dttm_data[j])
        #remove na_strings for "NA" -9999 or other predefined value):
        drop_missing <- subset(drop_missing, drop_missing[1] != na_strings)
 
@@ -809,9 +813,9 @@ test_dates_parse <- function(directory = here::here(),
 
 #' Test Date Range
 #'
-#' @description `test_date_range()` verifies that dates in the dataset are consistent with the date range in the metadata. **Known Bug:** the function returns "unsupported error" if any dates are concatenated with times, even if the date/time combo is correctly formatted (i.e. ISO YYYY-MM-DDThh:mm:ss) in the data and correctly specified in the metadata. If this your case your best options (unti it can be fixed) are: 1) Move times into a separate column or 2) if the date/time column has a unique name you can skip that column using the skip_cols parameter.
+#' @description `test_date_range()` verifies that dates in the dataset are consistent with the date range in the metadata. It is HIGHLY recommended that you provide dates and times in ISO-8601 formatting: YYYY-MM-DDThh:mm:ss (if you don't have time you can us just the YYYY-MM-DD component).
 #'
-#' @details This function checks columns that are identified as date/time in the metadata. If the metadata lacks a date range, the function fails with a warning. It fails with a warning if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and result failing the test with an error.
+#' @details This function checks columns that are identified as date/time in the metadata. If the metadata lacks a date range, the function fails with a warning. It fails with an error if the dates contained in the columns are outside of the temporal coverage specified in the metadata. If the date/time format string specified in the metadata does not match the actual format of the date in the CSV, it will likely fail to parse and result failing the test with an error. Failure to parse is indicated in the results with the text "(failed to parse)".
 #'
 #' This test will also inform the user which file and columns are causing the test to fail and how it is failing (i.e. outside of the date range or failed to parse).
 #'

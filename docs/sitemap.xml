@@ -22,6 +22,9 @@
     <loc>/LICENSE.html</loc>
   </url>
   <url>
+    <loc>/news/index.html</loc>
+  </url>
+  <url>
     <loc>/reference/convert_datetime_format.html</loc>
   </url>
   <url>
@@ -43,6 +46,9 @@
     <loc>/reference/load_metadata.html</loc>
   </url>
   <url>
+    <loc>/reference/pipe.html</loc>
+  </url>
+  <url>
     <loc>/reference/run_congruence_checks.html</loc>
   </url>
   <url>
@@ -62,6 +68,9 @@
   </url>
   <url>
     <loc>/reference/test_datatable_urls_doi.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_dates_parse.html</loc>
   </url>
   <url>
     <loc>/reference/test_date_range.html</loc>
@@ -106,6 +115,9 @@
     <loc>/reference/test_int_rights.html</loc>
   </url>
   <url>
+    <loc>/reference/test_keywords.html</loc>
+  </url>
+  <url>
     <loc>/reference/test_license.html</loc>
   </url>
   <url>
@@ -137,6 +149,9 @@
   </url>
   <url>
     <loc>/reference/test_pii_meta_emails.html</loc>
+  </url>
+  <url>
+    <loc>/reference/test_public_points.html</loc>
   </url>
   <url>
     <loc>/reference/test_publisher.html</loc>

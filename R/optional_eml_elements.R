@@ -429,7 +429,7 @@ test_orcid_match <- function(metadata = load_metadata(directory)){
 #'
 #' @details The contents of metadata are public even if the data itself is restricted. This means that if GPS coordinates (a common type of data that must be redacted or fuzzed before it can be made public) exist in metadata, these GPS coordinates will be publicly available. The function will warn people of that potentiality. The function will only flag GPS points (not bounding boxes or polygons or other shapes). The function only checks for GPS points in the geographicCoverage element.
 #'
-#' @param metadata
+#' @inheritParams test_pub_date
 #'
 #' @return invisible(metadata)
 #' @export
