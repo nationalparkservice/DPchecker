@@ -20,6 +20,6 @@ The contents of metadata are public even if the data itself is restricted. This 
 }
 \examples{
 \dontrun{
-test_orcid_match()
+test_public_points()
 }
 }
