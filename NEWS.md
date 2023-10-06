@@ -1,5 +1,6 @@
-# DPchecker 0.3.1
+# DPchecker 0.3.2
 
+* Adjusted `test_date_range()` so that it can handle data columns that contain both dates and times. Times are truncated to midnight such that if the data collected on the first day indicated is considered "in range" and data collected on the last day indicated is considered "in range".
 * Added `test_public_points()` to the list of functions in the DPchecker.Rmd file.
 * Added `test_public_points()` to the list of functions run by `run_congruence_checks()`.
 * Added `test_public_points()` function to test whether metadata contains GPS coordinates if the package is not public.
