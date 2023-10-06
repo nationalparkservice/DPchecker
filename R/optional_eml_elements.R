@@ -436,7 +436,7 @@ test_orcid_match <- function(metadata = load_metadata(directory)){
 #'
 #' @examples
 #' \dontrun{
-#' test_orcid_match()
+#' test_public_points()
 #' }
 test_public_points <- function(metadata = load_metadata(directory)){
   #check whether metadata is a properly formated EML document
