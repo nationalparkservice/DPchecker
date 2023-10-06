@@ -726,7 +726,10 @@ test_dates_parse <- function(directory = here::here(),
    error_log <- NULL
 
    #check each data file:
+   #problem: assumes file order and table order are the same!
    for(i in 1:length(seq_along(data_files))){
+
+     file_name <- data_tbl[[i]][["physical"]][["objectName"]]
      dttm_col_names <- dttm_attrs[[i]]$attributeName
 
      #if there aren't any date-time columns, skip the file:
@@ -761,7 +764,7 @@ test_dates_parse <- function(directory = here::here(),
      #read in date/time columns from data
      dttm_data <- suppressWarnings(
        readr::read_csv(
-         file.path(directory, data_files[i]),
+         file.path(directory, file_name),
          col_select = dplyr::all_of(dttm_col_names),
          na = na_strings,
          col_types = readr::cols(.default = "c"),
