@@ -389,7 +389,7 @@ test_datatable_urls <- function (metadata = load_metadata(directory)) {
 
 #' Tests for data table URL formatting & correspondance with DOI
 #'
-#' @description `test_datatable_urls_doi()` passes if all data tables have URLs that are properly formatted (i.e. "https://irma.nps.gov/DataStore/Reference/Profile/xxxxxxx") where "xxxxxx" is identical to the DOI specified in the metadata. Fails with a warning if there is no DOI specified in metadata. If a DOI is specified in metadata, but the data table URL does not properly coincide with the url for the landing page that the doi points to for any one table, the test fails with a warning (and indicates which table failed).
+#' @description `test_datatable_urls_doi()` passes if all data tables have URLs that are properly formatted (i.e. "https://irma.nps.gov/DataStore/Reference/Profile/xxxxxxx") where "xxxxxx" is identical to the DOI specified in the metadata. Fails with a warning if there is no DOI specified in metadata. If a DOI is specified in metadata, but the data table URL does not properly coincide with the url for the landing page that the doi points to for any one table, the test fails with a warning (and indicates which table failed). If data table urls do not exist, fails with an error and indicates how to add them.
 #'
 #' @inheritParams test_metadata_version
 #'
