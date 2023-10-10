@@ -1,3 +1,7 @@
+# DPchecker development version
+
+* Adjusted `test_datatable_urls()` and `test_datatable_urls_doi()` so that they work properly when there are no data table urls present in metadata.
+
 # DPchecker 0.3.2
 
 * Adjusted `test_date_range()` so that it can handle data columns that contain both dates and times. Times are truncated to midnight such that if the data collected on the first day indicated is considered "in range" and data collected on the last day indicated is considered "in range".
