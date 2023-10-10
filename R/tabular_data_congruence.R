@@ -366,25 +366,30 @@ test_datatable_urls <- function (metadata = load_metadata(directory)) {
     data_tbl <- list(data_tbl)
   }
     #check for data table urls and get datastore reference IDs
-  url_count <- 0
+  err_log <- NULL
   for(i in seq_along(data_tbl)){
     url <- data_tbl[[i]][["physical"]][["distribution"]][["online"]][["url"]]
-    if(is.na(url)){
+    if(is.null(url)){
       tbl_name <- data_tbl[[i]][["physical"]][["objectName"]]
-      cli::cli_abort(c("x" = "The data table corresponding to ", crayon::blue$bold(tbl_name), "lacks a URL. Use {.fn EMLeditor::set_data_urls} to add URLs."))
-      url_count <- (url_count + 1)
+      err_log<-append(err_log,
+                        paste0("--> {.file ", tbl_name, "} "))
     }
   }
-  if(url_count == 0){
+  if(is.null(err_log)){
     cli::cli_inform(c(
       "v" = "Metadata contains URLs for all data tables."))
+  } else {
+    # really only need to say it once per file/column combo
+    msg <- err_log
+    err <- paste0("Metadata lacks URL(s) for the following dtata files. Use {.fn EMLeditor::set_data_urls} to add them.")
+    cli::cli_abort(c("x" = err, msg))
   }
   return(invisible(metadata))
 }
 
 #' Tests for data table URL formatting & correspondance with DOI
 #'
-#' @description `test_datatable_urls_doi()` passes if all data tables have URLs that are properly formatted (i.e. "https://irma.nps.gov/DataStore/Reference/Profile/xxxxxxx") where "xxxxxx" is identical to the DOI specified in the metadata. Fails with a warning if there is no DOI specified in metadata. If a DOI is specified in metadata, but the data table URL does not properly coincide with the url for the landing page that the doi points to for any one table, the test fails with a warning (and indicates which table failed).
+#' @description `test_datatable_urls_doi()` passes if all data tables have URLs that are properly formatted (i.e. "https://irma.nps.gov/DataStore/Reference/Profile/xxxxxxx") where "xxxxxx" is identical to the DOI specified in the metadata. Fails with a warning if there is no DOI specified in metadata. If a DOI is specified in metadata, but the data table URL does not properly coincide with the url for the landing page that the doi points to for any one table, the test fails with a warning (and indicates which table failed). If data table urls do not exist, fails with an error and indicates how to add them.
 #'
 #' @inheritParams test_metadata_version
 #'
@@ -422,6 +427,10 @@ test_datatable_urls_doi <-  function (metadata = load_metadata(directory)) {
     bad_url <- 0
     for(i in seq_along(data_tbl)){
       url <- data_tbl[[i]][["physical"]][["distribution"]][["online"]][["url"]]
+      if(is.null(url)){
+        cli::cli_abort(c("x" = "One or more data files lack URLs. Could not test whether URLs are properly formatted or correspond to the corect DOI. Use {.fn EMLeditor::set_data_urls} to add them."))
+        return(invisible(metadata))
+      }
       prefix <- stringr::str_sub(url, 1, stringr::str_length(url)-7)
       suffix <- stringr::str_sub(url, -7, -1)
 
