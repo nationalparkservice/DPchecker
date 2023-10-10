@@ -427,6 +427,10 @@ test_datatable_urls_doi <-  function (metadata = load_metadata(directory)) {
     bad_url <- 0
     for(i in seq_along(data_tbl)){
       url <- data_tbl[[i]][["physical"]][["distribution"]][["online"]][["url"]]
+      if(is.null(url)){
+        cli::cli_abort(c("x" = "One or more data files lack URLs. Could not test whether URLs are properly formatted or correspond to the corect DOI. Use {.fn EMLeditor::set_data_urls} to add them."))
+        return(invisible(metadata))
+      }
       prefix <- stringr::str_sub(url, 1, stringr::str_length(url)-7)
       suffix <- stringr::str_sub(url, -7, -1)
 
