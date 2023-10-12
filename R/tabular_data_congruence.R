@@ -981,29 +981,27 @@ test_date_range <- function(directory = here::here(),
       format_str_r <- dttm_formats_r[col]
       bad_cols <- NULL
 
+      #this should strip time from the dates
+      max_date <- as.Date(format(max_date, format = dttm_formats_r[col]),
+                          format = dttm_formats_r[col])
+      min_date <- as.Date(format(min_date, format = dttm_formats_r[col]),
+                          format = dttm_formats_r[col])
 
-      max_date <- as.Date(format(max_date, format = dttm_formats_r[col]))
-      min_date <- as.Date(format(min_date, format = dttm_formats_r[col]))
+      #if no month/day in data format, reset to data date month/day to 1:
 
-      #if time provided, set time to zero (midnight)
-  #    max_hour <- lubridate::hour(max_date)
-  #    max_min <- lubridate::minute(max_date)
-  #    max_sec <- lubridate::second(max_date)
-  #    max_date <- max_date - lubridate::hours(max_hour) - lubridate::minutes(max_min) - lubridate::seconds(max_sec)
-
-   #   min_hour <- lubridate::hour(min_date)
-  #    min_min <- lubridate::minute(min_date)
-   #   min_sec <- lubridate::second(min_date)
-  #    min_date <- min_date - lubridate::hours(min_hour) - lubridate::minutes(min_min) - lubridate::seconds(min_sec)
 
       # Set metadata day and/or month to 1 if not present in format string so that date comparisons work correctly
       if (!grepl("d", format_str_r)) {
         lubridate::day(meta_end_date) <- 1
         lubridate::day(meta_begin_date) <- 1
+        lubridate::day(max_date) <- 1
+        lubridate::day(min_date) <- 1
       }
       if (!grepl("m|b", format_str_r)) {
         lubridate::month(meta_end_date) <- 1
         lubridate::month(meta_begin_date) <- 1
+        lubridate::month(max_date) <- 1
+        lubridate::month(min_date) <- 1
       }
       # Compare min and max dates in data to begin and end dates in metadata
       if (max_date > meta_end_date || min_date < meta_begin_date) {
@@ -1336,7 +1334,7 @@ convert_datetime_format <- function(eml_format_string) {
     stringr::str_replace_all("(ss)|(SS)", "%S") %>%
     #stringr::str_replace_all("M", "%m") %>%
     stringr::str_replace_all("D", "%d") %>%
-    stringr::str_replace_all("T", " ")
+    #stringr::str_replace_all("T", " ")
 
   return(r_format_string)
 }
