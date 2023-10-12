@@ -784,9 +784,9 @@ test_dates_parse <- function(directory = here::here(),
       col_data <- dttm_data[[j]]
       orig_na_count <- sum(is.na(char_data[[j]]))
       if (all(is.na(col_data))) {
-        error_log <- append(error_log, paste0("---> {.file ", data_file, "} {.field ", dttm_col_names[j], "} (failed to parse)"))
+        error_log <- append(error_log, paste0("  ", "---> {.file ", data_file, "} {.field ", dttm_col_names[j], "} (failed to parse)"))
       } else if (sum(is.na(col_data)) > orig_na_count) {
-        error_log <- append(error_log, paste0("---> {.file ", data_file, "} {.field ", dttm_col_names[j], "} (partially failed to parse)"))
+        error_log <- append(error_log, paste0("  ---> {.file ", data_file, "} {.field ", dttm_col_names[j], "} (partially failed to parse)"))
       }
     }
   }
@@ -796,7 +796,8 @@ test_dates_parse <- function(directory = here::here(),
   else{
     # really only need to say it once per file/column combo
     msg <- error_log
-    err <- paste0("Metadata/data date format mismatches found. Further temporal coverage tests will fail until this error is resolved:")
+    names(msg) <- rep(" ", length(msg))
+    err <- paste0("Metadata/data date format mismatches found. Further temporal coverage tests will fail until this error is resolved:\n")
     cli::cli_abort(c("x" = err, msg))
   }
 }
