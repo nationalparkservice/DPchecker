@@ -953,7 +953,7 @@ test_date_range <- function(directory = here::here(),
         file.path(directory, data_file),
         col_select = dplyr::all_of(dttm_col_names),
         na = na_strings,
-        #col_types = do.call(readr::cols, dttm_col_spec),
+        col_types = do.call(readr::cols, dttm_col_spec),
         show_col_types = FALSE))
 
     #Arooo?
@@ -1129,7 +1129,7 @@ test_doi <- function(metadata = load_metadata(directory)) {
 
 #' Check DOI formatting
 #'
-#' @description `test_doi_format()` runs some basic formatting checks. If your DOI is absent, the test will fail with an error. If the DOI is not exactly 37 characters AND does not contain "doi: https://doi.org/10.57830/" the test will fail with an error. The test passes if the entry in the alternateIdentifier field is exactly 37 characters long and contains "doi: https://doi.org/10.57830/". Please note that this is a very cursory formatting check; it does not check to make sure the DOI is active (it probably should not be at this stage of data package authoring). It does not check to make sure it is correct or that it correctly corresponds to anything on DataStore or elsewhere whithin the metadata.
+#' @description `test_doi_format()` runs some basic formatting checks. If your DOI is absent, the test will fail with an error. If the DOI is not exactly 37 characters AND does not contain "doi: https://doi.org/10.57830/" the test will fail with an error. The test passes if the entry in the alternateIdentifier field is exactly 37 characters long and contains "doi: https://doi.org/10.57830/". Please note that this is a very cursory formatting check; it does not check to make sure the DOI is active (it probably should not be at this stage of data package authoring). It does not check to make sure it is correct or that it correctly corresponds to anything on DataStore or elsewhere within the metadata.
 #'
 #' @inheritParams test_metadata_version
 #'
