@@ -756,9 +756,9 @@ test_dates_parse <- function(directory = here::here(),
      # Convert date/time formats to be compatible with R;
      # and put them in a list so we can use do.call(cols). Not that we do.
      dttm_formats_r <- convert_datetime_format(dttm_formats)
-     dttm_col_spec <- dttm_formats_r %>%
-       as.list() %>%
-       lapply(readr::col_datetime)
+     dttm_col_spec <- dttm_formats_r #%>%
+       #as.list() %>%
+       #lapply(readr::col_datetime)
      names(dttm_col_spec) <- dttm_col_names
      names(dttm_formats_r) <- dttm_col_names
      names(dttm_formats) <- dttm_col_names
@@ -769,8 +769,11 @@ test_dates_parse <- function(directory = here::here(),
        na_strings <- unique(c(na_strings,
                        (dttm_attrs[[i]]$missingValueCode)))
      }
+     #remove actual NAs; they will be dealt with separately later on.
+     na_strings<-subset(na_strings, !is.na(na_strings))
 
      #read in date/time columns from data
+     #original way:
      dttm_data <- suppressWarnings(
        readr::read_csv(
          file.path(directory, file_name),
@@ -779,15 +782,32 @@ test_dates_parse <- function(directory = here::here(),
          col_types = readr::cols(.default = "c"),
          show_col_types = FALSE))
 
+     #range way
+     #dttm_data <- suppressWarnings(
+    #   readr::read_csv(
+    #     file.path(directory, file_name),
+    #     col_select = dplyr::all_of(dttm_col_names),
+    #     na = na_strings,
+    #     col_types = dttm_col_spec,
+    #     show_col_types = FALSE))
+
+     #range comparison
+    # char_data <- suppressWarnings(
+    #   readr::read_csv(file.path(directory, data_name),
+    #                   col_select = dplyr::all_of(dttm_col_names),
+    #                   na = na_strings,
+    #                   col_types = rep("c", length(dttm_col_names)),
+    #                   show_col_types = FALSE))
+
 
      #if date-times contain a "T" as in ISO 8601 formatting, replace with a space:
-     dttm_data<- data.frame(lapply(dttm_data, function(x) gsub("T", " ", x)))
+     #dttm_data<- data.frame(lapply(dttm_data, function(x) gsub("T", " ", x)))
 
      #This is SLOW for large datasets. Refactor with apply methods?
      # Look at each column in the file i:
      for(j in 1:length(seq_along(dttm_col_names))){
        #remove <NA>s:
-       drop_missing <- stats::na.omit(dttm_data[j])
+       drop_missing <- data.frame(stats::na.omit(dttm_data[j]))
        #remove na_strings for "NA" -9999 or other predefined value):
        drop_missing <- subset(drop_missing, drop_missing[1] != na_strings)
 
