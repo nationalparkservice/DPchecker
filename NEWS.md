@@ -1,5 +1,6 @@
 # DPchecker development version
 
+* Bug fixes for `test_date_range()` and `test_dates_parse()`.
 * Adjusted `test_datatable_urls()` and `test_datatable_urls_doi()` so that they work properly when there are no data table urls present in metadata.
 
 # DPchecker 0.3.2
