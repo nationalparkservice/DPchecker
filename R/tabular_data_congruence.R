@@ -694,134 +694,114 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #' dir <- DPchecker_example("BICY_veg")
 #' test_dates_parse(dir)
 test_dates_parse <- function(directory = here::here(),
-                             metadata = load_metadata(directory)){
+                            metadata = load_metadata(directory)){
 
-   is_eml(metadata)  # Throw an error if metadata isn't an emld object
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-   missing_temporal <- is.null(
-     metadata[["dataset"]][["coverage"]][["temporalCoverage"]])
+  missing_temporal <- is.null(arcticdatautils::eml_get_simple(metadata, "temporalCoverage"))
 
-   # Check if temporal coverage info is complete. Throw a warning if it's missing entirely
-   if (missing_temporal) {
-     cli::cli_warn(c("!" = "Metadata does not contain temporal coverage information. Could not check whether data/metadata date formats are congruent."))
-     return(invisible(metadata))
-   }
+  # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
+  # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
+  if (missing_temporal) {
+    cli::cli_warn(c("!" = "Could not check date range. Metadata does not contain temporal coverage information."))
+    return(invisible(metadata))
+  }
 
-   # get dataTable and all children elements
-   data_tbl <- EML::eml_get(metadata, "dataTable")
-   data_tbl$`@context` <- NULL
-   # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
-   if ("attributeList" %in% names(data_tbl)) {
-     data_tbl <- list(data_tbl)
-   }
+  # get dataTable and all children elements
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  data_tbl$`@context` <- NULL
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
 
-   # Get list of date/time attributes for each table in the metadata
-   dttm_attrs <- lapply(data_tbl, function(tbl) {
-     attrs <- suppressMessages(EML::get_attributes(tbl$attributeList))
-     attrs <- attrs$attributes
-     attrs <- dplyr::filter(attrs, domain == "dateTimeDomain")
-     return(attrs)
-   })
-   dttm_attrs$`@context` <- NULL
+  # Get list of date/time attributes for each table in the metadata
+  dttm_attrs <- lapply(data_tbl, function(tbl) {
+    attrs <- suppressMessages(EML::get_attributes(tbl$attributeList))
+    attrs <- attrs$attributes
+    attrs <- dplyr::filter(attrs, domain == "dateTimeDomain")
+    return(attrs)
+  })
+  dttm_attrs$`@context` <- NULL
 
-   names(dttm_attrs) <- unlist(lapply(data_tbl, function(x) {
-     x[["entityName"]]
-     }))
+  names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
 
-   #get a list of date columns from each data file:
-   data_files <- list.files(path = directory, pattern = ".csv")
+  # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
+  data_files <- list.files(path = directory, pattern = ".csv")
 
-   #assume everything is fine, until it isn't.
-   error_log <- NULL
+  #log errors. Assume none until one is found.
+  error_log <- NULL
 
-   #check each data file:
-   #problem: assumes file order and table order are the same!
-   for(i in 1:length(seq_along(data_files))){
+  for(i in 1:length(seq_along(data_files))){
+    data_file <- data_tbl[[i]][["physical"]][["objectName"]]
 
-     file_name <- data_tbl[[i]][["physical"]][["objectName"]]
-     dttm_col_names <- dttm_attrs[[i]]$attributeName
+    dttm_col_names <- dttm_attrs[[data_file]]$attributeName
+    # If the table doesn't have any date/time columns listed in the metadata, it automatically passes
+    if (length(dttm_col_names) == 0) {
+      next
+    }
+    # Get format string for each date/time column and filter out anything that doesn't have a year associated with it
+    dttm_formats <- dttm_attrs[[data_file]]$formatString
+    is_time <- grepl("Y", dttm_formats)
+    dttm_formats <- dttm_formats[is_time]
+    dttm_col_names <- dttm_col_names[is_time]
 
-     #if there aren't any date-time columns, skip the file:
-     if (length(dttm_col_names) == 0) {
-       next()
-     }
+    # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
+    dttm_formats_r <- convert_datetime_format(dttm_formats)
 
-     dttm_formats <- dttm_attrs[[i]]$formatString
+    dttm_col_spec <- dttm_formats_r %>%
+      as.list() %>%
+      lapply(readr::col_datetime)
+    names(dttm_col_spec) <- dttm_col_names
+    names(dttm_formats_r) <- dttm_col_names
+    names(dttm_formats) <- dttm_col_names
 
-     #consider only dates with years in them:
-     is_time <- grepl("Y", dttm_formats)
-     dttm_formats <- dttm_formats[is_time]
-     dttm_col_names <- dttm_col_names[is_time]
+    # Read date/time columns, find max/min, and compare with max and min dates in metadata
+    na_strings <- c("", "NA")
+    if ("missingValueCode" %in% names(dttm_attrs[[data_file]])) {
+      na_strings <- c(na_strings,
+                      unique(dttm_attrs[[data_file]]$missingValueCode))
+    }
 
-     # Convert date/time formats to be compatible with R;
-     # and put them in a list so we can use do.call(cols). Not that we do.
-     dttm_formats_r <- convert_datetime_format(dttm_formats)
-     dttm_col_spec <- dttm_formats_r %>%
-       as.list() %>%
-       lapply(readr::col_datetime)
-     names(dttm_col_spec) <- dttm_col_names
-     names(dttm_formats_r) <- dttm_col_names
-     names(dttm_formats) <- dttm_col_names
+    dttm_data <- suppressWarnings(
+      readr::read_csv(
+        file.path(directory, data_file),
+        col_select = dplyr::all_of(dttm_col_names),
+        na = na_strings,
+        col_types = do.call(readr::cols, dttm_col_spec),
+        show_col_types = FALSE))
 
-     #identify common missing values; add custom missing values from metadata
-     na_strings <- c("", "NA")
-     if ("missingValueCode" %in% names(dttm_attrs[[i]])) {
-       na_strings <- unique(c(na_strings,
-                       (dttm_attrs[[i]]$missingValueCode)))
-     }
+    #Arooo?
+    char_data <- suppressWarnings(
+      readr::read_csv(file.path(directory, data_file),
+                      col_select = dplyr::all_of(dttm_col_names),
+                      na = na_strings,
+                      col_types = rep("c", length(dttm_col_names)),
+                      show_col_types = FALSE))
 
-     #read in date/time columns from data
-     dttm_data <- suppressWarnings(
-       readr::read_csv(
-         file.path(directory, file_name),
-         col_select = dplyr::all_of(dttm_col_names),
-         na = na_strings,
-         col_types = readr::cols(.default = "c"),
-         show_col_types = FALSE))
+    for(j in 1:length(seq_along(dttm_col_names))){
 
-
-     #if date-times contain a "T" as in ISO 8601 formatting, replace with a space:
-     dttm_data<- data.frame(lapply(dttm_data, function(x) gsub("T", " ", x)))
-
-     #This is SLOW for large datasets. Refactor with apply methods?
-     # Look at each column in the file i:
-     for(j in 1:length(seq_along(dttm_col_names))){
-       #remove <NA>s:
-       drop_missing <- stats::na.omit(dttm_data[j])
-       #remove na_strings for "NA" -9999 or other predefined value):
-       drop_missing <- subset(drop_missing, drop_missing[1] != na_strings)
-
-       #for each cell in that column, check date format matches metadata:
-       for(k in 1:nrow(drop_missing)){
-         #date_check TRUE if data/metadata formats match
-         #date_check FALSE if data/metadata formats don't match
-         #date_check FALSE if an error occurs
-         date_check <- tryCatch(
-           suppressWarnings(!is.na(as.Date.character(drop_missing[k,1],
-                                                      dttm_formats_r[j]))),
-           error = function(err) {FALSE})
-         if(!date_check){
-
-           error_log<-append(error_log,
-                         paste0("--> {.file ", data_files[i], "}: ",
-                                dttm_col_names[j]))
-           #if one FALSE is found, exit the loop and check the next column. This does speed things up a bit.
-           break
-         }
-       }
-     }
-   }
-   # if there are no date format mismatches:
-   if(is.null(error_log)){
-     cli::cli_inform(c("v" = "Metadata and data date formatting is in congruence."))
-   }
-   else{
-     # really only need to say it once per file/column combo
-     msg <- error_log
-     err <- paste0("Metadata/data date format mismatches found. Further temporal coverage tests will fail until this error is resolved:")
-     cli::cli_abort(c("x" = err, msg))
+      col_data <- dttm_data[[j]]
+      orig_na_count <- sum(is.na(char_data[[j]]))
+      if (all(is.na(col_data))) {
+        error_log <- append(error_log, paste0("  ", "---> {.file ", data_file, "} {.field ", dttm_col_names[j], "} (failed to parse)"))
+      } else if (sum(is.na(col_data)) > orig_na_count) {
+        error_log <- append(error_log, paste0("  ---> {.file ", data_file, "} {.field ", dttm_col_names[j], "} (partially failed to parse)"))
+      }
     }
   }
+  if(is.null(error_log)){
+    cli::cli_inform(c("v" = "Metadata and data date formatting is in congruence."))
+  }
+  else{
+    # really only need to say it once per file/column combo
+    msg <- error_log
+    names(msg) <- rep(" ", length(msg))
+    err <- paste0("Metadata/data date format mismatches found. Further temporal coverage tests will fail until this error is resolved:\n")
+    cli::cli_abort(c("x" = err, msg))
+  }
+}
+
 
 #' Test Date Range
 #'
@@ -953,7 +933,7 @@ test_date_range <- function(directory = here::here(),
         file.path(directory, data_file),
         col_select = dplyr::all_of(dttm_col_names),
         na = na_strings,
-        #col_types = do.call(readr::cols, dttm_col_spec),
+        col_types = do.call(readr::cols, dttm_col_spec),
         show_col_types = FALSE))
 
     #Arooo?
@@ -981,29 +961,27 @@ test_date_range <- function(directory = here::here(),
       format_str_r <- dttm_formats_r[col]
       bad_cols <- NULL
 
+      #this should strip time from the dates
+      max_date <- as.Date(format(max_date, format = dttm_formats_r[col]),
+                          format = dttm_formats_r[col])
+      min_date <- as.Date(format(min_date, format = dttm_formats_r[col]),
+                          format = dttm_formats_r[col])
 
-      max_date <- as.Date(format(max_date, format = dttm_formats_r[col]))
-      min_date <- as.Date(format(min_date, format = dttm_formats_r[col]))
+      #if no month/day in data format, reset to data date month/day to 1:
 
-      #if time provided, set time to zero (midnight)
-  #    max_hour <- lubridate::hour(max_date)
-  #    max_min <- lubridate::minute(max_date)
-  #    max_sec <- lubridate::second(max_date)
-  #    max_date <- max_date - lubridate::hours(max_hour) - lubridate::minutes(max_min) - lubridate::seconds(max_sec)
-
-   #   min_hour <- lubridate::hour(min_date)
-  #    min_min <- lubridate::minute(min_date)
-   #   min_sec <- lubridate::second(min_date)
-  #    min_date <- min_date - lubridate::hours(min_hour) - lubridate::minutes(min_min) - lubridate::seconds(min_sec)
 
       # Set metadata day and/or month to 1 if not present in format string so that date comparisons work correctly
       if (!grepl("d", format_str_r)) {
         lubridate::day(meta_end_date) <- 1
         lubridate::day(meta_begin_date) <- 1
+        lubridate::day(max_date) <- 1
+        lubridate::day(min_date) <- 1
       }
       if (!grepl("m|b", format_str_r)) {
         lubridate::month(meta_end_date) <- 1
         lubridate::month(meta_begin_date) <- 1
+        lubridate::month(max_date) <- 1
+        lubridate::month(min_date) <- 1
       }
       # Compare min and max dates in data to begin and end dates in metadata
       if (max_date > meta_end_date || min_date < meta_begin_date) {
@@ -1129,7 +1107,7 @@ test_doi <- function(metadata = load_metadata(directory)) {
 
 #' Check DOI formatting
 #'
-#' @description `test_doi_format()` runs some basic formatting checks. If your DOI is absent, the test will fail with an error. If the DOI is not exactly 37 characters AND does not contain "doi: https://doi.org/10.57830/" the test will fail with an error. The test passes if the entry in the alternateIdentifier field is exactly 37 characters long and contains "doi: https://doi.org/10.57830/". Please note that this is a very cursory formatting check; it does not check to make sure the DOI is active (it probably should not be at this stage of data package authoring). It does not check to make sure it is correct or that it correctly corresponds to anything on DataStore or elsewhere whithin the metadata.
+#' @description `test_doi_format()` runs some basic formatting checks. If your DOI is absent, the test will fail with an error. If the DOI is not exactly 37 characters AND does not contain "doi: https://doi.org/10.57830/" the test will fail with an error. The test passes if the entry in the alternateIdentifier field is exactly 37 characters long and contains "doi: https://doi.org/10.57830/". Please note that this is a very cursory formatting check; it does not check to make sure the DOI is active (it probably should not be at this stage of data package authoring). It does not check to make sure it is correct or that it correctly corresponds to anything on DataStore or elsewhere within the metadata.
 #'
 #' @inheritParams test_metadata_version
 #'
@@ -1336,7 +1314,7 @@ convert_datetime_format <- function(eml_format_string) {
     stringr::str_replace_all("(ss)|(SS)", "%S") %>%
     #stringr::str_replace_all("M", "%m") %>%
     stringr::str_replace_all("D", "%d") %>%
-    stringr::str_replace_all("T", " ")
+    #stringr::str_replace_all("T", " ")
 
   return(r_format_string)
 }
