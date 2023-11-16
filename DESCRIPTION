@@ -32,7 +32,9 @@ Imports:
     crayon,
     httr,
     jsonlite,
-    stats
+    stats,
+    QCkit
 Remotes: 
     https://github.com/NCEAS/arcticdatautils
+    https://github.com/nationalparkservice/QCkit
 URL: https://nationalparkservice.github.io/DPchecker/
