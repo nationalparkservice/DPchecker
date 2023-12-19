@@ -35,6 +35,6 @@ Imports:
     stats,
     QCkit
 Remotes: 
-    https://github.com/NCEAS/arcticdatautils
+    https://github.com/NCEAS/arcticdatautils,
     https://github.com/nationalparkservice/QCkit
 URL: https://nationalparkservice.github.io/DPchecker/
