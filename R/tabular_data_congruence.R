@@ -779,7 +779,7 @@ test_dates_parse <- function(directory = here::here(),
                       col_types = rep("c", length(dttm_col_names)),
                       show_col_types = FALSE))
 
-    for(j in 1:length(seq_along(dttm_col_names))){
+    for(j in seq_along(dttm_col_names)){
 
       col_data <- dttm_data[[j]]
       orig_na_count <- sum(is.na(char_data[[j]]))
