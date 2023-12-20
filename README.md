@@ -1,7 +1,9 @@
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![R-CMD-check](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml)
+[![CodeFactor](https://www.codefactor.io/repository/github/roblbaker/dpchecker/badge)](https://www.codefactor.io/repository/github/roblbaker/dpchecker)
 <!-- badges: end -->
+
+<!-- CMD-check badge...for once it's working...[![R-CMD-check](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml) -->
 
 
 # DPchecker
