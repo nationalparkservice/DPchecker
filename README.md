@@ -1,11 +1,12 @@
 <!-- badges: start -->
+[![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
 [![R-CMD-check](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 
 # DPchecker
 
-#### v0.3.2
+#### v0.3.3
 
 DPchecker (Data Package checker) is a package with a series of functions for NPS data package authors and reviewers to check for internal consistency among data/meta data and with the data package standards.
 
