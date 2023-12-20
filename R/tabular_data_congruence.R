@@ -153,7 +153,7 @@ test_validate_schema <- function(metadata = load_metadata(here::here())) {
     cli::cli_inform(c("v" = "Your metadata is schema valid."))
   } else {
     attribs <- attributes(val)
-    issues <- c()
+    issues <- NULL
     if ("errors" %in% names(attribs)) {
       names(attribs$errors) <- rep("x", length(attribs$errors))
       issues <- c(issues, attribs$errors)
@@ -732,7 +732,7 @@ test_dates_parse <- function(directory = here::here(),
   #log errors. Assume none until one is found.
   error_log <- NULL
 
-  for(i in 1:length(seq_along(data_files))){
+  for(i in seq_along(data_files)){
     data_file <- data_tbl[[i]][["physical"]][["objectName"]]
 
     dttm_col_names <- dttm_attrs[[data_file]]$attributeName
