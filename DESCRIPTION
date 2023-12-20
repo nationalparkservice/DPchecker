@@ -1,6 +1,6 @@
 Package: DPchecker
 Title: Checks Data Packages for Congruence
-Version: 0.3.2
+Version: 0.3.3
 Authors@R: c(
     person("Rob", "Baker", email = "robert_baker@nps.gov", role = c("cre", "aut"), comment = c(ORCID = "0000-0001-7591-5035")),
     person(c("Sarah", "E."), "Wright", email = "sarah_wright@nps.gov", role = "aut"),
@@ -33,7 +33,8 @@ Imports:
     httr,
     jsonlite,
     stats,
-    QCkit
+    QCkit,
+    lifecycle
 Remotes: 
     https://github.com/NCEAS/arcticdatautils,
     https://github.com/nationalparkservice/QCkit
