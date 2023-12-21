@@ -2,6 +2,8 @@
 
 * Bug fixes for `test_date_range()` and `test_dates_parse()`.
 * Adjusted `test_datatable_urls()` and `test_datatable_urls_doi()` so that they work properly when there are no data table urls present in metadata.
+* Move convert_datetime_format to QCkit; add QCkit as re-export to DPchecker
+* Updated tabular_data_congruence.R for speed and stability as per codefactor suggests
 
 # DPchecker 0.3.2
 

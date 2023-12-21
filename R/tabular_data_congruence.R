@@ -153,7 +153,7 @@ test_validate_schema <- function(metadata = load_metadata(here::here())) {
     cli::cli_inform(c("v" = "Your metadata is schema valid."))
   } else {
     attribs <- attributes(val)
-    issues <- c()
+    issues <- NULL
     if ("errors" %in% names(attribs)) {
       names(attribs$errors) <- rep("x", length(attribs$errors))
       issues <- c(issues, attribs$errors)
@@ -703,7 +703,7 @@ test_dates_parse <- function(directory = here::here(),
   # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
   # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
   if (missing_temporal) {
-    cli::cli_warn(c("!" = "Could not check date range. Metadata does not contain temporal coverage information."))
+    cli::cli_warn(c("!" = "Could not check date formats. Metadata does not contain temporal coverage information."))
     return(invisible(metadata))
   }
 
@@ -732,7 +732,7 @@ test_dates_parse <- function(directory = here::here(),
   #log errors. Assume none until one is found.
   error_log <- NULL
 
-  for(i in 1:length(seq_along(data_files))){
+  for(i in seq_along(data_files)){
     data_file <- data_tbl[[i]][["physical"]][["objectName"]]
 
     dttm_col_names <- dttm_attrs[[data_file]]$attributeName
@@ -771,6 +771,7 @@ test_dates_parse <- function(directory = here::here(),
         col_types = do.call(readr::cols, dttm_col_spec),
         show_col_types = FALSE))
 
+
     #Arooo?
     char_data <- suppressWarnings(
       readr::read_csv(file.path(directory, data_file),
@@ -779,14 +780,31 @@ test_dates_parse <- function(directory = here::here(),
                       col_types = rep("c", length(dttm_col_names)),
                       show_col_types = FALSE))
 
-    for(j in 1:length(seq_along(dttm_col_names))){
+    for(j in seq_along(dttm_col_names)){
 
       col_data <- dttm_data[[j]]
       orig_na_count <- sum(is.na(char_data[[j]]))
-      if (all(is.na(col_data))) {
-        error_log <- append(error_log, paste0("  ", "---> {.file ", data_file, "} {.field ", dttm_col_names[j], "} (failed to parse)"))
+      #if entire column is NA:
+      if (all(is.na(col_data)) & all(is.na(char_data[[j]]))) {
+        error_log <- append(error_log,
+                            paste0("  ",
+                                   "---> {.file ",
+                                   data_file,
+                                   "} {.field ",
+                                   dttm_col_names[j],
+                                   "} contains no data. Remove this column or use defined missing value codes to indicate data are missing." ))
+      } else if (all(is.na(col_data))) {
+        #if entire column failed to parse:
+        error_log <- append(error_log,
+                            paste0("  ", "---> {.file ", data_file,
+                                   "} {.field ", dttm_col_names[j],
+                                   "} (failed to parse)"))
+        #if part of the column failed to parse:
       } else if (sum(is.na(col_data)) > orig_na_count) {
-        error_log <- append(error_log, paste0("  ---> {.file ", data_file, "} {.field ", dttm_col_names[j], "} (partially failed to parse)"))
+        error_log <- append(error_log,
+                            paste0("  ---> {.file ", data_file, "} {.field ",
+                                   dttm_col_names[j],
+                                   "} (partially failed to parse)"))
       }
     }
   }
