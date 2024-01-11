@@ -32,7 +32,6 @@ Imports:
     crayon,
     httr,
     jsonlite,
-    stats,
     QCkit,
     lifecycle
 Remotes: 
