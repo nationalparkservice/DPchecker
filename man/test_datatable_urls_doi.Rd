@@ -2,7 +2,7 @@
 % Please edit documentation in R/tabular_data_congruence.R
 \name{test_datatable_urls_doi}
 \alias{test_datatable_urls_doi}
-\title{Tests for data table URL formatting & correspondance with DOI}
+\title{Tests for data table URL formatting & correspondence with DOI}
 \usage{
 test_datatable_urls_doi(metadata = load_metadata(directory))
 }
