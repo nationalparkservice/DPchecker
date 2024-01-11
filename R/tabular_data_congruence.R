@@ -387,7 +387,7 @@ test_datatable_urls <- function (metadata = load_metadata(directory)) {
   return(invisible(metadata))
 }
 
-#' Tests for data table URL formatting & correspondance with DOI
+#' Tests for data table URL formatting & correspondence with DOI
 #'
 #' @description `test_datatable_urls_doi()` passes if all data tables have URLs that are properly formatted (i.e. "https://irma.nps.gov/DataStore/Reference/Profile/xxxxxxx") where "xxxxxx" is identical to the DOI specified in the metadata. Fails with a warning if there is no DOI specified in metadata. If a DOI is specified in metadata, but the data table URL does not properly coincide with the url for the landing page that the doi points to for any one table, the test fails with a warning (and indicates which table failed). If data table urls do not exist, fails with an error and indicates how to add them.
 #'
@@ -584,6 +584,78 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
   return(invisible(metadata))
 }
 
+#' Looks for undocumented missing data (NAs)
+#'
+#' @description `test_missing_data` scans the data package for common missing data specified as NA. If there are no missing data (NAs) or if all NAs are documented as missing data in the metadata, the test passes. If missing data are found but not documented in the metadata the test fails with an error.
+#'
+#' Commonly, R will interpret blank cells as missing and fill in NA. To pass this test, you will need to either delete columns with missing data (if they are completely blank) or add NA as a missing data code during metadata creation.
+#'
+#' This is a fairly simple test and ONLY checks for NA. Although there are many common missing data codes (-99999, "Missing", "NaN" etc) we cannot anticipate all of them.
+#'
+#' Why is it important to document missing data? If a user wants to use your data and some of it is missing without an explanation or acknowledgement, the user cannot trust any of the data in your data package to be complete.
+#'
+#' @inheritParams load_data
+#' @inheritParams test_metadata_version
+#'
+#' @return Invisibly returns `metadata`.
+#' @export
+#' @examples
+#' \dontrun{
+#' test_missing_data(directory = here::here(),
+#'  metaata = load_metadata(directory))
+#' }
+test_missing_data <- function(directory = here::here(),
+                                    metadata = load_metadata(directory)) {
+  is_eml(metadata)  # Throw an error if metadata isn't an emld object
+
+  # get dataTable and all children elements
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  data_tbl$`@context` <- NULL
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+  # get a list of the data files
+  data_files <- list.files(path = directory, pattern = ".csv")
+
+  #load files and test for NAs
+  error_log <- NULL
+  for (i in 1:length(seq_along(data_files))) {
+    #load each file
+    dat <- suppressMessages(readr::read_csv(paste0(directory,
+                                                  "/",
+                                                  data_files[i]),
+                           show_col_types = FALSE))
+    #look in each column in the given file
+    for (j in 1:ncol(dat)) {
+      #look for NAs; if NAs found, look for correct missing data codes
+      if (sum(is.na(dat[,j])) > 0) {
+        missing <- data_tbl[[i]][["attributeList"]][["attribute"]][[j]][["missingValueCode"]][["code"]]
+        if(is.null(missing) || ("NA" != missing)) {
+          error_log <- append(error_log,
+                              paste0("  ",
+                                     "---> {.file ",
+                                     data_files[i],
+                                     "} {.field ",
+                                     names(dat)[j],
+                                     "} contains missing data without a corresponding missing data code in metadata." ))
+        }
+      }
+    }
+  }
+  if(is.null(error_log)){
+    cli::cli_inform(c("v" = "Missing data listed as NA is accounted for in metadata"))
+   }
+  else{
+    # really only need to say it once per file/column combo
+    msg <- error_log
+    names(msg) <- rep(" ", length(msg))
+    err <- paste0("Undocumented missing data detected. Please document all missing data in metadata:\n")
+    cli::cli_abort(c("x" = err, msg))
+  }
+  return(invisible(metadata))
+}
+
 #' Test Numeric Fields
 #'
 #' @description `test_numeric_fields()` verifies that all columns listed as numeric in the metadata are free of non-numeric data. If non-numeric data are encountered, the test fails with an error.
@@ -681,7 +753,6 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 
   return(invisible(metadata))
 }
-
 
 #' Test data and metadata data formats match
 #'
