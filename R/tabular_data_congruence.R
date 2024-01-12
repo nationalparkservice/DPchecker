@@ -531,14 +531,19 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
   metadata_attrs <- lapply(data_tbl, function(tbl) {arcticdatautils::eml_get_simple(tbl, "attributeName")})
   metadata_attrs$`@context` <- NULL
 
-  table_names <- EML::eml_get(data_tbl, "objectName")
-  table_names$`@context` <- NULL
+  #list all data files that are in data package
+  data_files <- list.files(path = directory, pattern = ".csv")
+
+  #get names of each file to add to attributes table
+  table_names <- NULL
+  for (i in 1:length(seq_along(data_files))) {
+    tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
+    table_names <- append(table_names, tbl_nam)
+  }
+  #list metadata atttributes by file name
   names(metadata_attrs) <- table_names
-  # for some reason this returns an error? replaced with the above 3 lines:
-  #names(metadata_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
 
   # Get list of column names for each table in the csv data
-  data_files <- list.files(path = directory, pattern = ".csv")
   data_colnames <- sapply(data_files, function(data_file) {names(readr::read_csv(file.path(directory, data_file), n_max = 1, show_col_types = FALSE))}, USE.NAMES = TRUE, simplify = FALSE)
 
   # Quick check that tables match
