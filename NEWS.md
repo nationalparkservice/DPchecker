@@ -1,5 +1,6 @@
 # DPchecker development version
 
+* Bugfixes for `test_valid_fieldnames()`, `test_valid_filenames()`, `test_numeric_fields()`, `test_dates_parse()`, and `test_date_range()` - all the same bug; must be something deep in a dependency chain changed.
 * Bugfix attempt for `test_fields_match()` reportedly needs more testing
 * Add function `test_missing_data()` which scans data for NAs not documented in metadata
 
