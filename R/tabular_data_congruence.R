@@ -488,7 +488,7 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
   if (length(meta_only) == 0 && length(dir_only) == 0) {
     cli::cli_inform(c("v" = "All data files are listed in metadata and all metadata files names refer to data files."))
   } else if (length(meta_only) > 0 || length(dir_only) > 0) {
-    msg <- c()
+    msg <- NULL
     if (length(meta_only > 0)) {
       names(meta_only) <- rep("*", length(meta_only))
       msg <- c("x" = "{length(meta_only)} file{?s} listed in metadata but missing from data folder", meta_only)
@@ -536,7 +536,7 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 
   #get names of each file to add to attributes table
   table_names <- NULL
-  for (i in 1:length(seq_along(data_files))) {
+  for (i in seq_along(data_files)) {
     tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
     table_names <- append(table_names, tbl_nam)
   }
@@ -625,14 +625,14 @@ test_missing_data <- function(directory = here::here(),
 
   #load files and test for NAs
   error_log <- NULL
-  for (i in 1:length(seq_along(data_files))) {
+  for (i in seq_along(data_files)) {
     #load each file
     dat <- suppressMessages(readr::read_csv(paste0(directory,
                                                   "/",
                                                   data_files[i]),
                            show_col_types = FALSE))
     #look in each column in the given file
-    for (j in 1:ncol(dat)) {
+    for (j in seq_len(ncol(dat))) {
       #look for NAs; if NAs found, look for correct missing data codes
       if (sum(is.na(dat[,j])) > 0) {
         missing <- data_tbl[[i]][["attributeList"]][["attribute"]][[j]][["missingValueCode"]][["code"]]
@@ -702,7 +702,7 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 
   #get names of each file to add to attributes table
   table_names <- NULL
-  for (i in 1:length(seq_along(data_files))) {
+  for (i in seq_along(data_files)) {
     tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
     table_names <- append(table_names, tbl_nam)
   }
@@ -818,7 +818,7 @@ test_dates_parse <- function(directory = here::here(),
 
   #get names of each file to add to dttm attributes table
   table_names <- NULL
-  for (i in 1:length(seq_along(data_tbl))) {
+  for (i in seq_along(data_tbl)) {
     tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
     table_names <- append(table_names, tbl_nam)
   }
@@ -1014,7 +1014,7 @@ test_date_range <- function(directory = here::here(),
 
   #get names of each file to add to dttm attributes table
   table_names <- NULL
-  for (i in 1:length(seq_along(data_tbl))) {
+  for (i in seq_along(data_tbl)) {
     tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
     table_names <- append(table_names, tbl_nam)
   }
@@ -1340,7 +1340,7 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
 
   #get names of each file to add to attributes table
   table_names <- NULL
-  for (i in 1:length(seq_along(data_tbl))) {
+  for (i in seq_along(data_tbl)) {
     tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
     table_names <- append(table_names, tbl_nam)
   }
@@ -1403,7 +1403,7 @@ test_valid_filenames <- function(metadata = load_metadata(here::here())) {
 
   #get names of each file to add to attributes table
   file_names <- NULL
-  for (i in 1:length(seq_along(data_tbl))) {
+  for (i in seq_along(data_tbl)) {
     tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
     file_names <- append(file_names, tbl_nam)
   }
