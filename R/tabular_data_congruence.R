@@ -1385,8 +1385,12 @@ test_valid_filenames <- function(metadata = load_metadata(here::here())) {
     data_tbl <- list(data_tbl)
   }
 
-  # Get vector of filenames from the metadata
-  file_names <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+  #get names of each file to add to attributes table
+  file_names <- NULL
+  for (i in 1:length(seq_along(data_tbl))) {
+    tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
+    file_names <- append(file_names, tbl_nam)
+  }
 
   # Check each file name. Throw a warning if any contain special characters
   bad_start <- grepl("^[^a-zA-Z]", file_names)  # File names must start with a letter
