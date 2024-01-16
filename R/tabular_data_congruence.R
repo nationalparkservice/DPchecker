@@ -825,8 +825,6 @@ test_dates_parse <- function(directory = here::here(),
   #list metadata attributes by file name
   names(dttm_attrs) <- table_names
 
-  #names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
-
   # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
   #log errors. Assume none until one is found.
   error_log <- NULL
@@ -1011,10 +1009,20 @@ test_date_range <- function(directory = here::here(),
     }
   }
 
-  names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+  #get list of file names
+  data_files <- list.files(path = directory, pattern = ".csv")
+
+  #get names of each file to add to dttm attributes table
+  table_names <- NULL
+  for (i in 1:length(seq_along(data_tbl))) {
+    tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
+    table_names <- append(table_names, tbl_nam)
+  }
+  #list metadata attributes by file name
+  names(dttm_attrs) <- table_names
+  #names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
 
   # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
-  data_files <- list.files(path = directory, pattern = ".csv")
   dataset_out_of_range <- sapply(data_files, function(data_file) {
     dttm_col_names <- dttm_attrs[[data_file]]$attributeName
     # If the table doesn't have any date/time columns listed in the metadata, it automatically passes
