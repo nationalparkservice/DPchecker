@@ -696,10 +696,18 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
     return(attrs)
   })
   numeric_attrs$`@context` <- NULL
-  names(numeric_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
 
   # Get list of column names for each table in the csv data
   data_files <- list.files(path = directory, pattern = ".csv")
+
+  #get names of each file to add to attributes table
+  table_names <- NULL
+  for (i in 1:length(seq_along(data_files))) {
+    tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
+    table_names <- append(table_names, tbl_nam)
+  }
+  #list nmeric attributes by file name
+  names(numeric_attrs) <- table_names
 
   data_non_numeric <- sapply(data_files, function(data_file) {
     num_col_names <- numeric_attrs[[data_file]]$attributeName
@@ -805,14 +813,21 @@ test_dates_parse <- function(directory = here::here(),
   })
   dttm_attrs$`@context` <- NULL
 
-  names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
-
-  # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
+  #get list of file names
   data_files <- list.files(path = directory, pattern = ".csv")
 
+  #get names of each file to add to dttm attributes table
+  table_names <- NULL
+  for (i in 1:length(seq_along(data_tbl))) {
+    tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
+    table_names <- append(table_names, tbl_nam)
+  }
+  #list metadata attributes by file name
+  names(dttm_attrs) <- table_names
+
+  # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
   #log errors. Assume none until one is found.
   error_log <- NULL
-
   for(i in seq_along(data_files)){
     data_file <- data_tbl[[i]][["physical"]][["objectName"]]
 
@@ -994,10 +1009,19 @@ test_date_range <- function(directory = here::here(),
     }
   }
 
-  names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+  #get list of file names
+  data_files <- list.files(path = directory, pattern = ".csv")
+
+  #get names of each file to add to dttm attributes table
+  table_names <- NULL
+  for (i in 1:length(seq_along(data_tbl))) {
+    tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
+    table_names <- append(table_names, tbl_nam)
+  }
+  #list metadata attributes by file name
+  names(dttm_attrs) <- table_names
 
   # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
-  data_files <- list.files(path = directory, pattern = ".csv")
   dataset_out_of_range <- sapply(data_files, function(data_file) {
     dttm_col_names <- dttm_attrs[[data_file]]$attributeName
     # If the table doesn't have any date/time columns listed in the metadata, it automatically passes
@@ -1313,7 +1337,15 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
   # Get list of columns for each table in the metadata
   metadata_attrs <- lapply(data_tbl, function(tbl) {arcticdatautils::eml_get_simple(tbl, "attributeName")})
   metadata_attrs$`@context` <- NULL
-  names(metadata_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  #get names of each file to add to attributes table
+  table_names <- NULL
+  for (i in 1:length(seq_along(data_tbl))) {
+    tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
+    table_names <- append(table_names, tbl_nam)
+  }
+  #list metadata attributes by file name
+  names(metadata_attrs) <- table_names
 
   # Check each table. Throw a warning if they contain special characters
   bad_fieldnames <- sapply(names(metadata_attrs), function(tbl) {
@@ -1369,8 +1401,12 @@ test_valid_filenames <- function(metadata = load_metadata(here::here())) {
     data_tbl <- list(data_tbl)
   }
 
-  # Get vector of filenames from the metadata
-  file_names <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+  #get names of each file to add to attributes table
+  file_names <- NULL
+  for (i in 1:length(seq_along(data_tbl))) {
+    tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
+    file_names <- append(file_names, tbl_nam)
+  }
 
   # Check each file name. Throw a warning if any contain special characters
   bad_start <- grepl("^[^a-zA-Z]", file_names)  # File names must start with a letter

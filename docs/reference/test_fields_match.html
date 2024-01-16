@@ -80,7 +80,75 @@
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="DPchecker_example.html">DPchecker_example</a></span><span class="op">(</span><span class="st">"BICY_veg"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Data are provided for example use only. Do not assume that they are complete, accurate, or up to date.</span>
 <span class="r-in"><span><span class="fu">test_fields_match</span><span class="op">(</span><span class="va">dir</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Called from: eval(expr, p)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#524: data_tbl &lt;- EML::eml_get(metadata, "dataTable")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#526: if ("attributeList" %in% names(data_tbl)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     data_tbl &lt;- list(data_tbl)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#531: metadata_attrs &lt;- lapply(data_tbl, function(tbl) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     arcticdatautils::eml_get_simple(tbl, "attributeName")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> })</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#532: metadata_attrs$`@context` &lt;- NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#535: data_files &lt;- list.files(path = directory, pattern = ".csv")</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#538: table_names &lt;- NULL</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#539: for (i in 1:length(seq_along(data_files))) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     tbl_nam &lt;- data_tbl[[i]][["physical"]][["objectName"]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     table_names &lt;- append(table_names, tbl_nam)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#540: tbl_nam &lt;- data_tbl[[i]][["physical"]][["objectName"]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#541: table_names &lt;- append(table_names, tbl_nam)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#540: tbl_nam &lt;- data_tbl[[i]][["physical"]][["objectName"]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#541: table_names &lt;- append(table_names, tbl_nam)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#540: tbl_nam &lt;- data_tbl[[i]][["physical"]][["objectName"]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#541: table_names &lt;- append(table_names, tbl_nam)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#544: names(metadata_attrs) &lt;- table_names</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#547: data_colnames &lt;- sapply(data_files, function(data_file) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     names(readr::read_csv(file.path(directory, data_file), n_max = 1, </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         show_col_types = FALSE))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }, USE.NAMES = TRUE, simplify = FALSE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#550: if (!(all(names(data_colnames) %in% names(metadata_attrs)) &amp; </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     all(names(metadata_attrs) %in% names(data_colnames)))) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     cli::cli_abort(c(x = "Mismatch in data file column names and the attributes listed in metadata."))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#555: mismatches &lt;- sapply(data_files, function(data_file) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     meta_cols &lt;- metadata_attrs[[data_file]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     data_cols &lt;- data_colnames[[data_file]]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     if (length(meta_cols) == length(data_cols) &amp;&amp; all(meta_cols == </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         data_cols)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         return(NULL)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else if (all(meta_cols %in% data_cols) &amp;&amp; all(data_cols %in% </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         meta_cols)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         return(c(` ` = paste0("--&gt; {.file ", data_file, "}: Metadata column order does not match data column order")))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         missing_from_meta &lt;- data_cols[!(data_cols %in% meta_cols)]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (length(missing_from_meta) &gt; 0) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             missing_from_meta &lt;- paste0("----Missing from metadata: ", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 paste0("{.field ", missing_from_meta, "}", collapse = ", "))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             names(missing_from_meta) &lt;- " "</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         missing_from_data &lt;- meta_cols[!(meta_cols %in% data_cols)]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         if (length(missing_from_data) &gt; 0) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             missing_from_data &lt;- paste0("----Missing from data file: ", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                 paste0("{.field ", missing_from_data, "}", collapse = ", "))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             names(missing_from_data) &lt;- " "</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         msg &lt;- c(` ` = paste0("--&gt; {.file ", data_file, "}:"), </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>             missing_from_meta, missing_from_data)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         return(msg)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }, USE.NAMES = FALSE, simplify = FALSE)</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#579: mismatches &lt;- purrr::discard(mismatches, is.null) %&gt;% unlist()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#583: if (!is.null(mismatches)) {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     cli::cli_abort(c(x = "Column mismatch between data and metadata.", </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>         mismatches))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> } else {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     cli::cli_inform(c(v = "All columns in data match all columns in metadata."))</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#586: cli::cli_inform(c(v = "All columns in data match all columns in metadata."))</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> All columns in data match all columns in metadata.</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> debug at C:/Users/rlbaker/Documents/RDev/DPchecker_devspace/R/tabular_data_congruence.R#589: return(invisible(metadata))</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
