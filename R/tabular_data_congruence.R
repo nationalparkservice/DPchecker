@@ -813,14 +813,23 @@ test_dates_parse <- function(directory = here::here(),
   })
   dttm_attrs$`@context` <- NULL
 
-  names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
-
-  # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
+  #get list of file names
   data_files <- list.files(path = directory, pattern = ".csv")
 
+  #get names of each file to add to dttm attributes table
+  table_names <- NULL
+  for (i in 1:length(seq_along(data_tbl))) {
+    tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
+    table_names <- append(table_names, tbl_nam)
+  }
+  #list metadata attributes by file name
+  names(dttm_attrs) <- table_names
+
+  #names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
   #log errors. Assume none until one is found.
   error_log <- NULL
-
   for(i in seq_along(data_files)){
     data_file <- data_tbl[[i]][["physical"]][["objectName"]]
 
