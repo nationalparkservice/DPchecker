@@ -1321,7 +1321,15 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
   # Get list of columns for each table in the metadata
   metadata_attrs <- lapply(data_tbl, function(tbl) {arcticdatautils::eml_get_simple(tbl, "attributeName")})
   metadata_attrs$`@context` <- NULL
-  names(metadata_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
+
+  #get names of each file to add to attributes table
+  table_names <- NULL
+  for (i in 1:length(seq_along(data_tbl))) {
+    tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
+    table_names <- append(table_names, tbl_nam)
+  }
+  #list metadata attributes by file name
+  names(metadata_attrs) <- table_names
 
   # Check each table. Throw a warning if they contain special characters
   bad_fieldnames <- sapply(names(metadata_attrs), function(tbl) {
