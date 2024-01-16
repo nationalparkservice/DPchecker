@@ -706,8 +706,8 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
     tbl_nam <- data_tbl[[i]][["physical"]][["objectName"]]
     table_names <- append(table_names, tbl_nam)
   }
-  #list metadata atttributes by file name
-  names(metadata_attrs) <- table_names
+  #list nmeric attributes by file name
+  names(numeric_attrs) <- table_names
 
   data_non_numeric <- sapply(data_files, function(data_file) {
     num_col_names <- numeric_attrs[[data_file]]$attributeName
