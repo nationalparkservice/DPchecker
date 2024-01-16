@@ -1020,7 +1020,6 @@ test_date_range <- function(directory = here::here(),
   }
   #list metadata attributes by file name
   names(dttm_attrs) <- table_names
-  #names(dttm_attrs) <- arcticdatautils::eml_get_simple(data_tbl, "objectName")
 
   # For each csv table, check that date/time columns are consistent with temporal coverage in metadata. List out tables and columns that are not in compliance.
   dataset_out_of_range <- sapply(data_files, function(data_file) {
