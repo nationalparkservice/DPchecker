@@ -1,4 +1,4 @@
-# DPchecker development version
+# DPchecker 0.3.4 (in development)
 
 2024-01-26
 
