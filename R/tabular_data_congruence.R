@@ -842,6 +842,9 @@ test_dates_parse <- function(directory = here::here(),
     dttm_formats <- dttm_formats[is_time]
     dttm_col_names <- dttm_col_names[is_time]
 
+    #ignore files that have only times, no dates or date-times:
+    if (length(seq_along(dttm_col_names)) == 0) { next }
+
     # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
     dttm_formats_r <- convert_datetime_format(dttm_formats)
 
@@ -1033,6 +1036,11 @@ test_date_range <- function(directory = here::here(),
     is_time <- grepl("Y", dttm_formats)
     dttm_formats <- dttm_formats[is_time]
     dttm_col_names <- dttm_col_names[is_time]
+
+    #ignore files that have only times, no dates or date-times:
+    if (length(seq_along(dttm_col_names == 0))) {
+      return(NULL)
+    }
 
     # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
     dttm_formats_r <- convert_datetime_format(dttm_formats)
