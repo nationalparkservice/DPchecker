@@ -838,9 +838,12 @@ test_dates_parse <- function(directory = here::here(),
     }
     # Get format string for each date/time column and filter out anything that doesn't have a year associated with it
     dttm_formats <- dttm_attrs[[data_file]]$formatString
-    is_time <- grepl("Y", dttm_formats)
-    dttm_formats <- dttm_formats[is_time]
-    dttm_col_names <- dttm_col_names[is_time]
+    has_date <- grepl("Y", dttm_formats)
+    dttm_formats <- dttm_formats[has_date]
+    dttm_col_names <- dttm_col_names[has_date]
+
+    #ignore files that have only times, no dates or date-times:
+    if (length(seq_along(dttm_col_names)) == 0) { next }
 
     # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
     dttm_formats_r <- convert_datetime_format(dttm_formats)
@@ -1030,9 +1033,14 @@ test_date_range <- function(directory = here::here(),
     }
     # Get format string for each date/time column and filter out anything that doesn't have a year associated with it
     dttm_formats <- dttm_attrs[[data_file]]$formatString
-    is_time <- grepl("Y", dttm_formats)
-    dttm_formats <- dttm_formats[is_time]
-    dttm_col_names <- dttm_col_names[is_time]
+    has_date <- grepl("Y", dttm_formats)
+    dttm_formats <- dttm_formats[has_date]
+    dttm_col_names <- dttm_col_names[has_date]
+
+    #ignore files that have only times, no dates or date-times:
+    if (length(seq_along(dttm_col_names)) == 0) {
+      return(NULL)
+    }
 
     # Convert date/time formats to be compatible with R, and put them in a list so we can use do.call(cols)
     dttm_formats_r <- convert_datetime_format(dttm_formats)
