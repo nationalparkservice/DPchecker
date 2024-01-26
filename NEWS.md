@@ -1,5 +1,7 @@
 # DPchecker development version
 
+2024-01-26
+* Bugfixes for `test_dates_parse()` and `test_date_range()`: now ignore files that have times but no dates or date times.
 * Bugfixes for `test_valid_fieldnames()`, `test_valid_filenames()`, `test_numeric_fields()`, `test_dates_parse()`, and `test_date_range()` - all the same bug; must be something deep in a dependency chain changed.
 * Bugfix attempt for `test_fields_match()` reportedly needs more testing
 * Add function `test_missing_data()` which scans data for NAs not documented in metadata
