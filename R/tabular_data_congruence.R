@@ -591,7 +591,7 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 
 #' Looks for undocumented missing data (NAs)
 #'
-#' @description `test_missing_data` scans the data package for common missing data specified as NA. If there are no missing data (NAs) or if all NAs are documented as missing data in the metadata, the test passes. If missing data are found but not documented in the metadata the test fails with an error.
+#' @description `test_missing_data` scans the data package for common missing data (blanks). If there are no blanks or if missing data coded as NA is documented as missing data in the metadata, the test passes. If missing data (blanks or NA) are found but not documented in the metadata the test fails with an error.
 #'
 #' Commonly, R will interpret blank cells as missing and fill in NA. To pass this test, you will need to either delete columns with missing data (if they are completely blank) or add NA as a missing data code during metadata creation.
 #'
