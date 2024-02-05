@@ -641,9 +641,17 @@ test_missing_data <- function(directory = here::here(),
                               paste0("  ",
                                      "---> {.file ",
                                      data_files[i],
-                                     "} {.field ",
-                                     names(dat)[j],
                                      "} contains missing data without a corresponding missing data code in metadata." ))
+          break
+          #Use this code if you want to log every column instead of every file:
+          #error_log <- append(error_log,
+          #                    paste0("  ",
+          #                           "---> {.file ",
+          #                           data_files[i],
+          #                           "} {.field ",
+          #                           names(dat)[j],
+          #                           "} contains missing data without a corresponding missing data code in metadata." ))
+
         }
       }
     }
@@ -969,22 +977,16 @@ test_date_range <- function(directory = here::here(),
     warning("Your metadata lacks a begining date.")
     firstDate <- NA
   } else {
-    firstDate <- firstDate %>%
-      as.Date() %>%
-      format("%d %B %Y")
+    meta_begin_date <- firstDate %>% as.Date()
   }
-  meta_begin_date <- readr::parse_datetime(firstDate, format = "%d %B %Y")
 
   lastDate<- arcticdatautils::eml_get_simple(metadata, "endDate")
   if (is.null(lastDate)) {
     warning("Your metadata lacks an ending date.")
     LastDate <- NA
   } else {
-    lastDate <- lastDate %>%
-      as.Date() %>%
-      format("%d %B %Y")
+    meta_end_date <- lastDate %>% as.Date()
   }
-  meta_end_date <- readr::parse_datetime(lastDate, format = "%d %B %Y")
 
   meta_date_range <- c(begin = meta_begin_date, end = meta_end_date)
 
