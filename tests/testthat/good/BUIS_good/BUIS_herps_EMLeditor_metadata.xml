@@ -766,8 +766,8 @@ were conducted during both day and night on both of these days. The survey condu
             </nominal>
           </measurementScale>
           <missingValueCode>
-            <code>NA</code>
-            <codeExplanation>No data collected.</codeExplanation>
+            <code>blank</code>
+            <codeExplanation>No data collected. Cell intentionally left blank.</codeExplanation>
           </missingValueCode>
         </attribute>
         <attribute>
