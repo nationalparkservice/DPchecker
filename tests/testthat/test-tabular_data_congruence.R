@@ -208,10 +208,17 @@ test_that("test_numeric_fields displays error message if columns reported as num
 })
 
 # ---- test_missing_data ----
-test_that("test_missing_data displays error message undocumented missing data", {
+test_that("test_missing_data displays file-level error message", {
   expect_error(test_missing_data(here::here(good_dir, "BICY_good")),
                  "Undocumented missing data detected. Please document all missing data in metadata:\\W*Mini_BICY_Veg_Intercept_Cleaned.csv\\W*contains missing data without a corresponding\\W*missing data code in metadata.\\W*Mini_BICY_Veg_Transect_Cleaned.csv\\W*contains missing data without a corresponding\\W*missing data code in metadata.")
 })
+
+test_that("test_mising_data displays test pass message at column levels", {
+  expect_message(test_missing_data(here::here(good_dir, "BUIS_good"),
+                                 detail_level = "columns"),
+  "Missing data listed as NA is accounted for in metadata")
+})
+
 
 
 
