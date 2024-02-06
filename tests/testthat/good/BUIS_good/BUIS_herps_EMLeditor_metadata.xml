@@ -462,6 +462,10 @@ were conducted during both day and night on both of these days. The survey condu
               <formatString>YYYY-MM-DD</formatString>
             </dateTime>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>eventDate_flag</attributeName>
@@ -476,6 +480,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>lifeStage</attributeName>
@@ -490,6 +498,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>sex</attributeName>
@@ -504,6 +516,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>locality</attributeName>
@@ -518,6 +534,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>recordedBy</attributeName>
@@ -532,6 +552,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>verbatimCoordinateSystem</attributeName>
@@ -546,6 +570,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>geodeticDatum</attributeName>
@@ -560,6 +588,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>decimalLatitude</attributeName>
@@ -579,6 +611,10 @@ were conducted during both day and night on both of these days. The survey condu
               </numericDomain>
             </ratio>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>decimalLongitude</attributeName>
@@ -598,6 +634,10 @@ were conducted during both day and night on both of these days. The survey condu
               </numericDomain>
             </ratio>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>verbatimCoordinates</attributeName>
@@ -612,6 +652,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>Point_ID</attributeName>
@@ -626,6 +670,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>coordinateUncertaintyInMeters</attributeName>
@@ -645,6 +693,10 @@ were conducted during both day and night on both of these days. The survey condu
               </numericDomain>
             </ratio>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>coordinate_flag</attributeName>
@@ -659,6 +711,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>catalogNumber</attributeName>
@@ -673,6 +729,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>samplingProtocol</attributeName>
@@ -687,6 +747,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>occurrenceRemarks</attributeName>
@@ -701,6 +765,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>order</attributeName>
@@ -715,6 +783,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>family</attributeName>
@@ -729,6 +801,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>genus</attributeName>
@@ -743,6 +819,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>specificEpithet</attributeName>
@@ -757,6 +837,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>infraspecificEpithet</attributeName>
@@ -771,6 +855,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>vernacularName</attributeName>
@@ -785,6 +873,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>scientificName</attributeName>
@@ -799,6 +891,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>scientificName_flag</attributeName>
@@ -813,6 +909,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>establishmentMeans</attributeName>
@@ -827,6 +927,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>eventRemarks</attributeName>
@@ -841,6 +945,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>custom_SpeciesCode</attributeName>
@@ -855,6 +963,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>custom_CaptureID</attributeName>
@@ -874,6 +986,10 @@ were conducted during both day and night on both of these days. The survey condu
               </numericDomain>
             </ratio>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>custom_SnoutToVentLengthInMm</attributeName>
@@ -893,6 +1009,10 @@ were conducted during both day and night on both of these days. The survey condu
               </numericDomain>
             </ratio>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>custom_Substrate</attributeName>
@@ -907,6 +1027,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>custom_Collected</attributeName>
@@ -926,6 +1050,10 @@ were conducted during both day and night on both of these days. The survey condu
               </numericDomain>
             </ratio>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>custom_SpecimenID</attributeName>
@@ -945,6 +1073,10 @@ were conducted during both day and night on both of these days. The survey condu
               </numericDomain>
             </ratio>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>custom_CollectionDate</attributeName>
@@ -955,6 +1087,10 @@ were conducted during both day and night on both of these days. The survey condu
               <formatString>YYYY-MM-DD</formatString>
             </dateTime>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>custom_SacrificeDate</attributeName>
@@ -965,6 +1101,10 @@ were conducted during both day and night on both of these days. The survey condu
               <formatString>YYYY-MM-DD</formatString>
             </dateTime>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>custom_Fixative</attributeName>
@@ -979,6 +1119,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
         <attribute>
           <attributeName>custom_Preservative</attributeName>
@@ -993,6 +1137,10 @@ were conducted during both day and night on both of these days. The survey condu
               </nonNumericDomain>
             </nominal>
           </measurementScale>
+          <missingValueCode>
+            <code>NA</code>
+            <codeExplanation>No data collected.</codeExplanation>
+          </missingValueCode>
         </attribute>
       </attributeList>
       <numberOfRecords>46</numberOfRecords>
