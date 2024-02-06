@@ -6,29 +6,38 @@
 \usage{
 test_missing_data(
   directory = here::here(),
-  metadata = load_metadata(directory)
+  metadata = load_metadata(directory),
+  detail_level = "files"
 )
 }
 \arguments{
 \item{directory}{the directory where the data file(s) are found (i.e. your data package). Defaults to the current working directory. On exit, returns to the current working directory.}
 
 \item{metadata}{The metadata object returned by \code{load_metadata}. If parameter not provided, defaults to calling \code{load_metadata} in current project directory.}
+
+\item{detail_level}{String. Choose either "files" or "columns". Defaults to "files".}
 }
 \value{
 Invisibly returns \code{metadata}.
 }
 \description{
-\code{test_missing_data} scans the data package for common missing data specified as NA. If there are no missing data (NAs) or if all NAs are documented as missing data in the metadata, the test passes. If missing data are found but not documented in the metadata the test fails with an error.
+\code{test_missing_data} scans the data package for common missing data (blanks). If there are no blanks or if missing data coded as NA is documented as missing data in the metadata, the test passes. If missing data (blanks or NA) are found but not documented in the metadata the test fails with an error.
 
 Commonly, R will interpret blank cells as missing and fill in NA. To pass this test, you will need to either delete columns with missing data (if they are completely blank) or add NA as a missing data code during metadata creation.
 
 This is a fairly simple test and ONLY checks for NA. Although there are many common missing data codes (-99999, "Missing", "NaN" etc) we cannot anticipate all of them.
+
+When running \code{test_missing_data()} via \code{run_congruence_checks()}, the default for "detail_level" will be used and only file-level information about undocumented missing values will be reported to condense the error message output. When attempting to identify specifically which data have undocumented missing values, it may be helpful to run \code{test_missing_data()} with the parameter "detail_level" set to "columns". This will output a list of all columns within each file with undocumented missing data.
 
 Why is it important to document missing data? If a user wants to use your data and some of it is missing without an explanation or acknowledgement, the user cannot trust any of the data in your data package to be complete.
 }
 \examples{
 \dontrun{
 test_missing_data(directory = here::here(),
- metaata = load_metadata(directory))
+  metadata = load_metadata(directory))
+
+test_missing_data(directory = here::here(),
+  metadata = load_metadata(directory),
+  detail_level = "columns")
 }
 }
