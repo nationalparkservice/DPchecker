@@ -591,11 +591,11 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 
 #' Looks for undocumented missing data (NAs)
 #'
-#' @description `test_missing_data` scans the data package for common missing data (blanks). If there are no blanks or if missing data coded as NA is documented as missing data in the metadata, the test passes. If missing data (blanks or NA) are found but not documented in the metadata the test fails with an error.
+#' @description `test_missing_data` scans the data package for common missing data (blanks/empty cells or NA in a cell). If there are no blanks or NAs, the test passes. If missing data are found and properly documented (missingValueCode is either "NA", "empty", or "blank"), the test passes. If any missing data is detected but not properly documented in the metadata, the test fails with an error.
 #'
-#' Commonly, R will interpret blank cells as missing and fill in NA. To pass this test, you will need to either delete columns with missing data (if they are completely blank) or add NA as a missing data code during metadata creation.
+#' Commonly, R will interpret blank cells as missing and fill in NA. To pass this test, you will need to either delete columns or tables with missing data (if they are completely blank), or add the appropriate as a missing data code during metadata creation (in the corresponding attributes.txt file).
 #'
-#' This is a fairly simple test and ONLY checks for NA. Although there are many common missing data codes (-99999, "Missing", "NaN" etc) we cannot anticipate all of them.
+#' This is a fairly simple test and ONLY checks for NA and blanks. Although there are many common missing data codes (-99999, "Missing", "NaN" etc) we cannot anticipate all of them.
 #'
 #' When running `test_missing_data()` via `run_congruence_checks()`, the default for "detail_level" will be used and only file-level information about undocumented missing values will be reported to condense the error message output. When attempting to identify specifically which data have undocumented missing values, it may be helpful to run `test_missing_data()` with the parameter "detail_level" set to "columns". This will output a list of all columns within each file with undocumented missing data.
 #'
@@ -638,6 +638,8 @@ test_missing_data <- function(directory = here::here(),
 
   #load files and test for NAs
   error_log <- NULL
+  #acceptable missing data codes if NA (or blank) cells found:
+  missing_types <- c("NA", "blank", "empty")
   for (i in seq_along(data_files)) {
     #load each file
     dat <- suppressMessages(readr::read_csv(paste0(directory,
@@ -649,7 +651,7 @@ test_missing_data <- function(directory = here::here(),
       #look for NAs; if NAs found, look for correct missing data codes
       if (sum(is.na(dat[,j])) > 0) {
         missing <- data_tbl[[i]][["attributeList"]][["attribute"]][[j]][["missingValueCode"]][["code"]]
-        if(is.null(missing) || ("NA" != missing)) {
+        if(is.null(missing) || sum(missing != missing_types) < 1) {
           #file level error message output:
           if (detail_level == "files") {
             error_log <- append(error_log,

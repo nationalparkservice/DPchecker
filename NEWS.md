@@ -2,6 +2,7 @@
 
 2024-02-05
 * Fix bug in `test_date_range()` that was adding UTC to temporalCoverage
+* `test_missing_data()` now also handles the missing data codes "blank" and "empty".
 * Update `test_missing_data()` to default to flag whole files, not each column that has undocumented missing data. This condenses the error output when running `run_congruence_checks()`. When trouble shooting and attempting to pinpoint data that lack missing values, `test_missing_data()` can be run with the parameter detail_level = "columns".
 2024-01-26
 * Bugfixes for `test_dates_parse()` and `test_date_range()`: now ignore files that have times but no dates or date times.
