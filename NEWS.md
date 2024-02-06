@@ -1,8 +1,8 @@
-# DPchecker 0.3.4 (in development)
+# DPchecker 0.3.4
 
 2024-02-05
 * Fix bug in `test_date_range()` that was adding UTC to temporalCoverage
-* Update `test_missing_data()` to flag whole files, not each column that has undocumented missing data.
+* Update `test_missing_data()` to default to flag whole files, not each column that has undocumented missing data. This condenses the error output when running `run_congruence_checks()`. When trouble shooting and attempting to pinpoint data that lack missing values, `test_missing_data()` can be run with the parameter detail_level = "columns".
 2024-01-26
 * Bugfixes for `test_dates_parse()` and `test_date_range()`: now ignore files that have times but no dates or date times.
 * Bugfixes for `test_valid_fieldnames()`, `test_valid_filenames()`, `test_numeric_fields()`, `test_dates_parse()`, and `test_date_range()` - all the same bug; must be something deep in a dependency chain changed.
