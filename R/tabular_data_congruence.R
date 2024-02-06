@@ -597,21 +597,34 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
 #'
 #' This is a fairly simple test and ONLY checks for NA. Although there are many common missing data codes (-99999, "Missing", "NaN" etc) we cannot anticipate all of them.
 #'
+#' When running `test_missing_data()` via `run_congruence_checks()`, the default for "detail_level" will be used and only file-level information about undocumented missing values will be reported to condense the error message output. When attempting to identify specifically which data have undocumented missing values, it may be helpful to run `test_missing_data()` with the parameter "detail_level" set to "columns". This will output a list of all columns within each file with undocumented missing data.
+#'
 #' Why is it important to document missing data? If a user wants to use your data and some of it is missing without an explanation or acknowledgement, the user cannot trust any of the data in your data package to be complete.
 #'
 #' @inheritParams load_data
 #' @inheritParams test_metadata_version
+#' @param detail_level String. Choose either "files" or "columns". Defaults to "files".
 #'
 #' @return Invisibly returns `metadata`.
 #' @export
 #' @examples
 #' \dontrun{
 #' test_missing_data(directory = here::here(),
-#'  metaata = load_metadata(directory))
+#'   metadata = load_metadata(directory))
+#'
+#' test_missing_data(directory = here::here(),
+#'   metadata = load_metadata(directory),
+#'   detail_level = "columns")
 #' }
 test_missing_data <- function(directory = here::here(),
-                                    metadata = load_metadata(directory)) {
+                              metadata = load_metadata(directory),
+                              detail_level = "files") {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
+
+  detail_level <- tolower(detail_level)
+  # verify detail_level; stop if does not equal one of 2 valid choices:
+  #arg_choices <- c("files", "columns")
+  #detail_level <- match.arg(arg_choices)
 
   # get dataTable and all children elements
   data_tbl <- EML::eml_get(metadata, "dataTable")
@@ -637,21 +650,25 @@ test_missing_data <- function(directory = here::here(),
       if (sum(is.na(dat[,j])) > 0) {
         missing <- data_tbl[[i]][["attributeList"]][["attribute"]][[j]][["missingValueCode"]][["code"]]
         if(is.null(missing) || ("NA" != missing)) {
-          error_log <- append(error_log,
+          #file level error message output:
+          if (detail_level == "files") {
+            error_log <- append(error_log,
                               paste0("  ",
                                      "---> {.file ",
                                      data_files[i],
                                      "} contains missing data without a corresponding missing data code in metadata." ))
           break
-          #Use this code if you want to log every column instead of every file:
-          #error_log <- append(error_log,
-          #                    paste0("  ",
-          #                           "---> {.file ",
-          #                           data_files[i],
-          #                           "} {.field ",
-          #                           names(dat)[j],
-          #                           "} contains missing data without a corresponding missing data code in metadata." ))
-
+          }
+          #column level error message output:
+          if (detail_level == "columns") {
+            error_log <- append(error_log,
+                                paste0("  ",
+                                       "---> {.file ",
+                                       data_files[i],
+                                       "} {.field ",
+                                       names(dat)[j],
+                                       "} contains missing data without a corresponding missing data code in metadata."))
+          }
         }
       }
     }
