@@ -376,12 +376,16 @@ test_orcid_match <- function(metadata = load_metadata(directory)){
     }
   }
 
-  #if there are any orcids, record orcids bad orcids:
+  #if there are any orcids, record orcids & bad orcids:
   if(!is.null(existing_orcid)){
     bad_orcid <- NULL
     wrong_person <- NULL
     for(i in seq_along(surName)){
       orcid_url <- existing_orcid[i]
+      is_it_na <- stringr::str_sub(orcid_url, start = -2)
+      if(is_it_na == "NA") {
+        next
+      }
       #api request to ORCID:
 
       tryCatch({test_req <- httr::GET(orcid_url)},
