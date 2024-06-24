@@ -1,5 +1,7 @@
 # DPchecker 0.3.4
 
+2024-06-24
+* Fixed bug in `test_missing_data()` where if the order of files listed in metadata did not match the order of files produced by `list.files()` the function would evaluate the wrong file and produce inadvertent and unhelpful errors.
 2024-02-05
 * Fix bug in `test_date_range()` that was adding UTC to temporalCoverage
 * `test_missing_data()` now also handles the missing data codes "blank" and "empty".
