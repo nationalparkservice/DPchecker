@@ -627,8 +627,7 @@ test_missing_data <- function(directory = here::here(),
   #detail_level <- match.arg(arg_choices)
 
   # get dataTable and all children elements
-  data_tbl <- EML::eml_get(metadata, "dataTable")
-  data_tbl$`@context` <- NULL
+  data_tbl <- metadata[["dataset"]][["dataTable"]]
   # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
   if ("attributeList" %in% names(data_tbl)) {
     data_tbl <- list(data_tbl)
@@ -650,36 +649,44 @@ test_missing_data <- function(directory = here::here(),
     for (j in seq_len(ncol(dat))) {
       #look for NAs; if NAs found, look for correct missing data codes
       if (sum(is.na(dat[,j])) > 0) {
-        missing <- data_tbl[[i]][["attributeList"]][["attribute"]][[j]][["missingValueCode"]][["code"]]
-        if(is.null(missing) || sum(missing != missing_types) < 1) {
-          #file level error message output:
-          if (detail_level == "files") {
-            error_log <- append(error_log,
+        for(k in 1:length(seq_along(data_tbl))){
+          if(data_tbl[[k]][["physical"]][["objectName"]] != data_files[i]){
+            next
+          } else {
+            missing <- data_tbl[[k]][["attributeList"]][["attribute"]][[j]][["missingValueCode"]][["code"]]
+              if(is.null(missing) || sum(missing != missing_types) < 1) {
+              #file level error message output:
+              if (detail_level == "files") {
+                error_log <- append(error_log,
                               paste0("  ",
                                      "---> {.file ",
                                      data_files[i],
                                      "} contains missing data without a corresponding missing data code in metadata." ))
-          break
-          }
-          #column level error message output:
-          if (detail_level == "columns") {
-            error_log <- append(error_log,
+              break
+              }
+              #column level error message output:
+              if (detail_level == "columns") {
+                error_log <- append(error_log,
                                 paste0("  ",
                                        "---> {.file ",
                                        data_files[i],
                                        "} {.field ",
                                        names(dat)[j],
                                        "} contains missing data without a corresponding missing data code in metadata."))
+                }
+              }
+            }
           }
         }
       }
     }
-  }
   if(is.null(error_log)){
-    cli::cli_inform(c("v" = "Missing data listed as NA is accounted for in metadata"))
+    cli::cli_inform(c(
+      "v" = "Missing data listed as NA is accounted for in metadata"))
    }
   else{
     # really only need to say it once per file/column combo
+    error_log <- unique(error_log)
     msg <- error_log
     names(msg) <- rep(" ", length(msg))
     err <- paste0("Undocumented missing data detected. Please document all missing data in metadata:\n")
