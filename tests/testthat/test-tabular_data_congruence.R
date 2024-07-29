@@ -216,7 +216,7 @@ test_that("test_missing_data displays file-level error message", {
 test_that("test_mising_data displays test pass message at column levels", {
   expect_message(test_missing_data(here::here(good_dir, "BUIS_good"),
                                  detail_level = "columns"),
-  "Missing data listed as NA is accounted for in metadata")
+  'Missing data listed as NA, "blank", or "empty" is accounted for in metadata')
 })
 
 

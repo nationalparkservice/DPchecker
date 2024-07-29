@@ -641,10 +641,11 @@ test_missing_data <- function(directory = here::here(),
   missing_types <- c("NA", "blank", "empty")
   for (i in seq_along(data_files)) {
     #load each file
-    dat <- suppressMessages(readr::read_csv(paste0(directory,
-                                                  "/",
-                                                  data_files[i]),
-                           show_col_types = FALSE))
+    dat <- suppressWarnings(suppressMessages
+                            (readr::read_csv(paste0(directory,
+                                                    "/",
+                                                    data_files[i]),
+                                             show_col_types = FALSE)))
     #look in each column in the given file
     for (j in seq_len(ncol(dat))) {
       #look for NAs; if NAs found, look for correct missing data codes
@@ -682,7 +683,7 @@ test_missing_data <- function(directory = here::here(),
     }
   if(is.null(error_log)){
     cli::cli_inform(c(
-      "v" = "Missing data listed as NA is accounted for in metadata"))
+      "v" = 'Missing data listed as NA, "blank", or "empty" is accounted for in metadata'))
    }
   else{
     # really only need to say it once per file/column combo

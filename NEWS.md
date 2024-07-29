@@ -2,6 +2,7 @@
 
 2024-07-29
 * Update license to CC0
+* Bug fix from `test_missing_data()`
 
 2024-06-24
 * Fixed bug in `test_missing_data()` where if the order of files listed in metadata did not match the order of files produced by `list.files()` the function would evaluate the wrong file and produce inadvertent and unhelpful errors.
