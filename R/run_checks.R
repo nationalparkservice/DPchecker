@@ -363,7 +363,7 @@ run_congruence_checks <- function(directory = here::here(),
              cli::cli_bullets(c(w$message, w$body))
            })
 
-  cli::cli_h2("Checking additional metadata elements")
+  cli::cli_h2("Checking additional/optional metadata elements")
 
   tryCatch(test_orcid_exists(metadata),
            error = function(e) {
@@ -408,6 +408,15 @@ run_congruence_checks <- function(directory = here::here(),
            },
            warning = function(w) {
              warn_count <<- warn_count + 1
+             cli::cli_bullets(c(w$message, w$body))
+           })
+  tryCatch(test_project(metadata),
+           error = function(e) {
+             err_count <<- err_count +1
+             cli::cli_bullets(c(e$message, e$body))
+           },
+           warning = function(w) {
+             warn_count <<- warn_count +1
              cli::cli_bullets(c(w$message, w$body))
            })
 
