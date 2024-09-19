@@ -73,7 +73,7 @@ Warnings are helpful indications that the data package creator may want to look 
 
 # Tests conducted
 
-DPchecker v0.3.2 runs two types of tests: metadata only tests and tests to determine whether the metadata and data files are congruent.  Metadata tests can be broken down in to two sub-categories, metadata compliance and metadata completeness. The tests run and the order in which they are run are listed below.
+DPchecker v0.3.2 and above runs two types of tests: metadata only tests and tests to determine whether the metadata and data files are congruent.  Metadata tests can be broken down in to two sub-categories, metadata compliance and metadata completeness. The tests run and the order in which they are run are listed below.
 
 ## Metadata compliance
 These tests determine whether the metadata is schema valid and adheres to some rules for data packages. They only require the *_metadata.xml file to run and do not require that the data files be present. These include:
