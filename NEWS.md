@@ -1,3 +1,8 @@
+# DPchecker 0.3.5 (develoment version)
+* Add `test_project()` function to test for DataStore projects.
+* Add unit tests for all optional eml elements
+* Update documentation to reflect new `test_project()` function.
+
 # DPchecker 0.3.4
 
 2024-07-29
