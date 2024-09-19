@@ -552,7 +552,7 @@ test_project <- function (metadata = load_metadata(directory)) {
     return(invisible(metadata))
   }
 
-  msg <- "The metadata contain a DataStore Project reference."
+  msg <- "The metadata contains at least one DataStore Project reference."
   cli::cli_inform(c("v" = msg))
 }
 
