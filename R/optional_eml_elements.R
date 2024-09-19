@@ -503,3 +503,56 @@ test_public_points <- function(metadata = load_metadata(directory)){
   }
   return(invisible(metadata))
 }
+
+
+#' Test for a DataStore project
+#'
+#' @inheritParams test_pub_date
+#'
+#' @return invisible(metadata)
+#' @export
+#'
+#' @examples
+#'  \dontrun{
+#' test_project()
+#' }
+test_project <- function (metadata = load_metadata(directory)) {
+  #check whether EML is schema valid
+  is_eml(metadata)
+  #get project element
+  proj <- metadata[["dataset"]][["project"]]
+
+  #if there is no project information:
+  missing_proj <- is.null(proj)
+  if (missing_proj) {
+    msg <- paste0("No project associated with the metadata. ",
+                  "To add a DataStore project, use ",
+                  "{.fun EMLeditor::set_project}.")
+    cli::cli_warn(c("!" = msg))
+    return(invisible(metadata))
+  }
+
+  #drop `@context` item from proj
+  proj$`@context` <- NULL
+
+  # If there's only project coverage element, proj ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  relist <- ("title" %in% names(proj) | "references" %in% names(proj))
+  if (relist) {
+    proj <- list(proj)
+  }
+
+  #if there are projects, but no DataStore project:
+  proj_test <- unlist(proj)
+  DS_proj <- "id" %in% names(proj_test)
+  if (!DS_proj) {
+    msg <- paste0("No project associated with the metadata. ",
+                  "To add a DataStore project, use ",
+                  "{.fun EMLeditor::set_project}.")
+    cli::cli_warn(c("!" = msg))
+    return(invisible(metadata))
+  }
+
+  msg <- "The metadata contains at least one DataStore Project reference."
+  cli::cli_inform(c("v" = msg))
+}
+

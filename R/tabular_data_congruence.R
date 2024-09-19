@@ -381,7 +381,7 @@ test_datatable_urls <- function (metadata = load_metadata(directory)) {
   } else {
     # really only need to say it once per file/column combo
     msg <- err_log
-    err <- paste0("Metadata lacks URL(s) for the following dtata files. Use {.fn EMLeditor::set_data_urls} to add them.")
+    err <- paste0("Metadata lacks URL(s) for the following data files. Use {.fn EMLeditor::set_data_urls} to add them.")
     cli::cli_abort(c("x" = err, msg))
   }
   return(invisible(metadata))
