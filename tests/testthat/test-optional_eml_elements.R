@@ -51,8 +51,6 @@ test_that("test_orcid_format identifies properly formatted orcids",
             }
           )
 
-# ---- test_orcid_resolves
-
 # ----- test_orcid_resolves ----
 test_that("test_orcid_resolves correctly identifies orcids that resolve",
           {
