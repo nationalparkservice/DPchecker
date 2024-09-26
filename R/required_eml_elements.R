@@ -465,7 +465,7 @@ test_cui_dissemination <- function(metadata = load_metadata(directory)) {
 #' }
 test_license <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)
-  license_list <- c("Public Domain", "CC0 1.0 Universal", "No License/Controlled Unclassified Information")
+  license_list <- c("Public Domain", "CC0 1.0 Universal", "Unlicensed (not for public dissemination)")
 
   license <- metadata$dataset$licensed$licenseName
   if(is.null(license)){
