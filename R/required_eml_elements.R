@@ -482,14 +482,14 @@ test_license <- function(metadata = load_metadata(directory)) {
         cli::cli_abort(c(
           "x" = "Metadata license and CUI dissemination code do not agree. Use {.fn EMLeditor::set_int_rights} or {.fn EMLeditor::set_cui}."))
       }
-      else if(diss_code != "PUBLIC" & license != "No License/Controlled Unclassified Information"){
+      else if(diss_code != "PUBLIC" & license != "Unlicensed (not for public dissemination)"){
         cli::cli_abort(c(
           "x" = "Metadata license and CUI dissemination code do not agree. Use {.fn EMLeditor::set_int_rights} or {.fn EMLeditor::set_cui}."))
       }
       else {
         cli::cli_inform(c("v" = "Metadata contains a valid license name."))
       }
-      if(license == "No License/Controlled Unclassified Information"){
+      if(license == "Unlicensed (not for public dissemination)"){
       cli::cli_warn(c("!" = "Metadata license name indicates that the data package is NOT public. Are you sure?"))
       }
     }
