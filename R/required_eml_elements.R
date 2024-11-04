@@ -627,7 +627,13 @@ test_storage_type <- function(metadata = load_metadata(directory)) {
   else {
     cli::cli_abort(c("x" = "Metadata attribute and storage type mis-match: attributes must have exactly one storage type."))
   }
-  attr_storage_list <- c("string", "float", "date", "factor", "character", "dateTime")
+  attr_storage_list <- c("string",
+                         "float",
+                         "date",
+                         "factor",
+                         "character",
+                         "dateTime",
+                         "integer")
   if(sum(!attr_storage_type %in% attr_storage_list) > 0){
     cli::cli_warn(c("!" = "Some attribute storage types are not accepted values."))
   }
