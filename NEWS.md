@@ -1,4 +1,7 @@
 # DPchecker 0.3.5 (develoment version)
+## 2024-011-05
+* Bugfix for `test_storage_type()` data packages built in ezEML that have only 1 .csv file.
+
 * Add `test_project()` function to test for DataStore projects.
 * Add unit tests for all optional eml elements
 * Update documentation to reflect new `test_project()` function.
