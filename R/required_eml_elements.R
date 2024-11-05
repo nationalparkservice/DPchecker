@@ -608,30 +608,41 @@ test_storage_type <- function(metadata = load_metadata(directory)) {
                       function (tbl)
                       {list(arcticdatautils::eml_get_simple(tbl,
                                                             "storageType"))})
-  #if EZeml added typeSystem="XML Schema Datatypes" to storageType element:
-  if(sum(grepl("XML Schema Datatype", attr_storage_type)) > 0){
-    attr_storage_type <-attr_storage_type[-length(seq_along(attr_storage_type))]
+  #if ezEML with multiple .csv (remove typeSystem="XML Schema Datatypes"):
+  if (sum(grepl("XML Schema Datatype", attr_storage_type)) > 1) {
+    attr_storage_type <- attr_storage_type[-length(seq_along(attr_storage_type))]
+    attr_storage_type <- unlist(attr_storage_type)
+    attr_storage_type <- attr_storage_type[names(attr_storage_type) %in% c("")]
+  }
+  # if ezEML with only one .csv (remove typeSystem= "XML Schema Datatypes":
+  else if (sum(grepl("XML Schema Datatype", attr_storage_type)) == 1) {
     attr_storage_type <- unlist(attr_storage_type)
     attr_storage_type <- attr_storage_type[names(attr_storage_type) %in% c("")]
   }
   # else not an ezEML product:
-  else{
+  else {
     attr_storage_type$`@context` <- NULL
     attr_storage_type <- unlist(attr_storage_type)
   }
 
   #comparisons:
-  if(identical(seq_along(metadata_attrs), seq_along(attr_storage_type))){
+  if (identical(seq_along(metadata_attrs), seq_along(attr_storage_type))) {
     cli::cli_inform(c("v" = "All attributes listed in metadata have a storage type associated with them."))
   }
   else {
     cli::cli_abort(c("x" = "Metadata attribute and storage type mis-match: attributes must have exactly one storage type."))
   }
-  attr_storage_list <- c("string", "float", "date", "factor", "character", "dateTime")
-  if(sum(!attr_storage_type %in% attr_storage_list) > 0){
+  attr_storage_list <- c("string",
+                         "float",
+                         "date",
+                         "factor",
+                         "character",
+                         "dateTime",
+                         "integer")
+  if (sum(!attr_storage_type %in% attr_storage_list) > 0) {
     cli::cli_warn(c("!" = "Some attribute storage types are not accepted values."))
   }
-  else{
+  else {
     cli::cli_inform(c("v" = "All attribute storage types are valid values."))
   }
   return(invisible(metadata))
