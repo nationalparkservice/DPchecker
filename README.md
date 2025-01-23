@@ -19,8 +19,8 @@ You can install the development version of DPchecker from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("nationalparkservice/DPchecker")
+# install.packages("pak")
+pak::pkg_install("nationalparkservice/DPchecker")
 ```
 
 ## Examples:
