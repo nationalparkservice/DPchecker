@@ -8,8 +8,6 @@
 
 # DPchecker
 
-#### v0.3.3
-
 DPchecker (Data Package checker) is a package with a series of functions for NPS data package authors and reviewers to check for internal consistency among data/meta data and with the data package standards.
 
 Currently, *only EML metadata and .csv data files* are supported. It is recommended that you store all data files and the single metadata file (filename must end in "metadata.xml") in the same directory.
@@ -21,8 +19,8 @@ You can install the development version of DPchecker from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
-devtools::install_github("nationalparkservice/DPchecker")
+# install.packages("pak")
+pak::pkg_install("nationalparkservice/DPchecker")
 ```
 
 ## Examples:
