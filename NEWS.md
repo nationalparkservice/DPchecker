@@ -1,3 +1,7 @@
+# DPchecker 1.0.1 (under development)
+## 2025-02-07
+* Bug fix for test_int_rights: update CC0 license name text to match EMLeditor's input and DataStore backend.
+
 # DPchecker 1.0.0 
 ## 2024-11-05
 * Bugfix for `test_storage_type()` data packages built in ezEML that have only 1 .csv file.

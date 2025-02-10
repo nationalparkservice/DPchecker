@@ -452,7 +452,7 @@ test_cui_dissemination <- function(metadata = load_metadata(directory)) {
 
 #' Test for presence of a license name
 #'
-#' @description `test_license()` examines the licenseName element of EML metadata. If there is no license name, the test fails with ab error. If the license name does not match a list of valid license names, the test fails. If the metadata contain a valid license name, but the license name and CUI dissemination code do not agree, the test fails with an error. Otherwise, the test passes.  Additionally, if the license name is not "Public Domain" or "CC0 1.0 Universal", the function will produce a warning that the data package is not public.
+#' @description `test_license()` examines the licenseName element of EML metadata. If there is no license name, the test fails with ab error. If the license name does not match a list of valid license names, the test fails. If the metadata contain a valid license name, but the license name and CUI dissemination code do not agree, the test fails with an error. Otherwise, the test passes.  Additionally, if the license name is not "Public Domain" or "Creative Commons Zero v1.0 Universal", the function will produce a warning that the data package is not public.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -465,7 +465,9 @@ test_cui_dissemination <- function(metadata = load_metadata(directory)) {
 #' }
 test_license <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)
-  license_list <- c("Public Domain", "CC0 1.0 Universal", "Unlicensed (not for public dissemination)")
+  license_list <- c("Public Domain",
+                    "Creative Commons Zero v1.0 Universal",
+                    "Unlicensed (not for public dissemination)")
 
   license <- metadata$dataset$licensed$licenseName
   if(is.null(license)){
