@@ -1,4 +1,6 @@
 # DPchecker 1.0.1 (under development)
+## 2025-02-25
+  * Update `CONTRIBUTING.md`
 ## 2025-02-22
   * Add `CONTRIBUTING.md` file.
   
