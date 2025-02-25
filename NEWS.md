@@ -1,4 +1,9 @@
 # DPchecker 1.0.1 (under development)
+## 2025-02-25
+  * Update `CONTRIBUTING.md`
+## 2025-02-22
+  * Add `CONTRIBUTING.md` file.
+  
 ## 2025-02-07
 * Bug fix for test_int_rights: update CC0 license name text to match EMLeditor's input and DataStore backend.
 
