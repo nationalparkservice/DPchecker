@@ -496,7 +496,7 @@ test_public_points <- function(metadata = load_metadata(directory)){
         cli::cli_inform(c("v" = "CUI is set to PUBLIC and all GPS coordinates will be publicly available."))
       }
       else {
-        # if CUI is not public, warn the user that GPS coordiantes will be public.
+        # if CUI is not public, warn the user that GPS coordinates will be public.
         cli::cli_warn(c("!" = "CUI is not set to PUBLIC. GPS coordinates detected in metadata will be publicly available. Are you sure?"))
       }
     }
@@ -545,7 +545,7 @@ test_project <- function (metadata = load_metadata(directory)) {
   proj_test <- unlist(proj)
   DS_proj <- "id" %in% names(proj_test)
   if (!DS_proj) {
-    msg <- paste0("No project associated with the metadata. ",
+    msg <- paste0("No DataStore project associated with the metadata. ",
                   "To add a DataStore project, use ",
                   "{.fun EMLeditor::set_project}.")
     cli::cli_warn(c("!" = msg))
@@ -554,5 +554,62 @@ test_project <- function (metadata = load_metadata(directory)) {
 
   msg <- "The metadata contains at least one DataStore Project reference."
   cli::cli_inform(c("v" = msg))
+  return(invisible(metadata))
 }
 
+#' Test for content unit links
+#'
+#' @inheritParams test_pub_date
+#'
+#' @return invisible(metadata)
+#' @export
+#'
+#' @examples
+#'  \dontrun{
+#' test_content_units()
+#' }
+test_content_units <- function(metadata = load_metadata(directory)) {
+  #check whether EML is schema valid
+  is_eml(metadata)
+
+  #get geographic coverage from metadata
+  geo_cov <- metadata[["dataset"]][["coverage"]][["geographicCoverage"]]
+
+  #test for existence of geography; if absent warn and suggest solution
+  if (is.null(geo_cov)) {
+    msg1 <- "Metadata does not contain park content unit links."
+    msg <- "to add content unit links."
+    cli::cli_warn(
+      c("!" = "{msg1}, Use {.fn EMLeditor::set_content_units} {msg}"))
+      }
+
+  #if geography is present:
+  else {
+    units <- FALSE
+    for (i in 1:length(seq_along(geo_cov))) {
+      #test for content unit links:
+      if (grepl("NPS Content Unit Link:",
+                geo_cov[[i]]$geographicDescription)) {
+        units <- TRUE
+      }
+      # exit the for-loop after the first instance of a content unit:
+      if (units == TRUE) {
+        break
+      }
+    }
+    # if content units are present, pass the test
+    if (units) {
+      cli::cli_inform(c("v" = "Metadata contains NPS content unit links."))
+    }
+    #if content units are not present, fail with a warning and suggest solution
+    if (!units) {
+      msg1 <- "Metadata does not contain park content unit links."
+      msg <- "to add content unit links."
+      cli::cli_warn(
+        c("!" = "{msg1}, Use {.fn EMLeditor::set_content_units} {msg}"))
+
+    }
+  }
+
+  return(invisible(metadata))
+}
