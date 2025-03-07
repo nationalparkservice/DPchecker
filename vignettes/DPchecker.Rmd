@@ -86,6 +86,7 @@ These tests determine whether the metadata is schema valid and adheres to some r
 * Metadata indicates that data files do not have footers ([`test_footer()`](../reference/test_footer.html))
 * Metadata contains taxonomic coverage element ([`test_taxonomic_cov()`](../reference/test_taxonomic_cov.html))
 * Metadata contains geographic coverage element ([`test_geographic_cov()`](../reference/test_geographic_cov.html))
+* Metadata contain NPS content unit links ([test_content_units()](../reference/test_content_units.html))
 * Metadata contains a Digital Object Identifier (DOI) ([`test_doi()`](../reference/test_doi.html))
 * Metadata DOI is properly formatted ([`test_doi_format()`](../reference/test_doi_format.html))
 * Metadata contains URLs for each data table  ([test_datatable_urls](../reference/test_datatable_urls.html))
