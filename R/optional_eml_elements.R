@@ -575,6 +575,14 @@ test_content_units <- function(metadata = load_metadata(directory)) {
   #get geographic coverage from metadata
   geo_cov <- metadata[["dataset"]][["coverage"]][["geographicCoverage"]]
 
+  #drop `@context` item from geo_cov
+  geo_cov$`@context` <- NULL
+
+  # If there's only geographic coverage element, geo_cov ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("geographicDescription" %in% names(geo_cov)) {
+    geo_cov <- list(geo_cov)
+  }
+
   #test for existence of geography; if absent warn and suggest solution
   if (is.null(geo_cov)) {
     msg1 <- "Metadata does not contain park content unit links."
