@@ -102,3 +102,11 @@ test_that("test_content_units passes when content unit links are present",
             expect_message(test_content_units(meta2),
                            "Metadata contains NPS content unit links.")
           })
+
+test_that("test_content_units warns when no geography present",
+          {
+            meta <- bicy_meta
+            meta[["dataset"]][["coverage"]][["geographicCoverage"]] <- NULL
+            expect_warning(test_content_units(metadata = meta),
+                           "Metadata does not contain park content unit links.*")
+          })
