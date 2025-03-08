@@ -33,6 +33,7 @@ Imports:
     httr,
     jsonlite,
     QCkit,
+    EMLeditor,
     lifecycle
 Remotes: 
     https://github.com/NCEAS/arcticdatautils,

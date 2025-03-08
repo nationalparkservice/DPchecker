@@ -88,3 +88,25 @@ test_that("test_project warns when no project is present",
                            "No project associated with the metadata.*")
             }
           )
+
+# ---- test_content_units
+test_that("test_content_units warns when no content units links are present",
+          {
+            expect_warning(test_content_units(metadata = bicy_meta),
+                           "Metadata does not contain park content unit*")
+})
+
+test_that("test_content_units passes when content unit links are present",
+          {
+            meta2 <- EMLeditor::set_content_units(bicy_meta, "ROMO")
+            expect_message(test_content_units(meta2),
+                           "Metadata contains NPS content unit links.")
+          })
+
+test_that("test_content_units warns when no geography present",
+          {
+            meta <- bicy_meta
+            meta[["dataset"]][["coverage"]][["geographicCoverage"]] <- NULL
+            expect_warning(test_content_units(metadata = meta),
+                           "Metadata does not contain park content unit links.*")
+          })

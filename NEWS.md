@@ -1,4 +1,7 @@
 # DPchecker 1.0.1 (under development)
+## 2025-03-07
+  * Add `test_content_units()` function to test for the presence of NPS content unit links. Add `test_content_units()` function to list of functions run by `run_congruence_checks()`. Add unit tests for `test_content_units()`. Add documentation about `test_content_units()` to the Articles.
+  * Add EMLeditor as a dependency to support unit tests for `test_content_units()`.
 ## 2025-02-25
   * Update `CONTRIBUTING.md`
 ## 2025-02-22
