@@ -7,7 +7,7 @@ Authors@R: c(
     person("Issac", "Quevedo", role = "ctb"),
     person("Amelia", "Sherman", role = "ctb"))
 Description: Allows the user (and reviewer) to check a data package and test whether it meets the congruence standards set forth by NPS for upload to DataStore as a datapackage.
-License: CC0
+License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
@@ -16,7 +16,8 @@ Suggests:
     here,
     rstudioapi,
     testthat (>= 3.0.0),
-    knitr
+    knitr,
+    EMLeditor
 Config/testthat/edition: 3
 Imports:
     arcticdatautils (>= 0.7.0),
@@ -33,9 +34,9 @@ Imports:
     httr,
     jsonlite,
     QCkit,
-    EMLeditor,
     lifecycle
 Remotes: 
     https://github.com/NCEAS/arcticdatautils,
-    https://github.com/nationalparkservice/QCkit
+    https://github.com/nationalparkservice/QCkit,
+    https://github.com/nationalparkservice/EMLeditor
 URL: https://nationalparkservice.github.io/DPchecker/
