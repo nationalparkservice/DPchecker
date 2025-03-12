@@ -1,5 +1,7 @@
 # DPchecker 1.0.1 (under development)
 ## 2025-03-10
+  * updated license to MIT, which works for JOSS, NPS, and R!
+## 2025-03-10
   * Updated license to OSI-approved "Zero-Clause BSD" in support of JOSS submission.
   * update R-CMD-check.yml to include error-on: '"error"'. This should allow R CMD CHECK to pass when there are warnings/notes and only fail on actual errors.
 
