@@ -37,5 +37,6 @@ Imports:
     lifecycle
 Remotes: 
     https://github.com/NCEAS/arcticdatautils,
-    https://github.com/nationalparkservice/QCkit
+    https://github.com/nationalparkservice/QCkit,
+    https://github.com/nationalparkservice/EMLeditor
 URL: https://nationalparkservice.github.io/DPchecker/
