@@ -23,7 +23,7 @@ test_pii_data_emails <- function(directory = here::here()) {
     data_emails <- NULL #holds  emails
     email_files <- NULL #holds names of files that contain emails
     personal_emails <- NULL # holds offending emails
-    if(grepl(".csv", file)) {
+    if(grepl(".csv", file, ignore.case = TRUE)) {
       #read data line by line, concatenate lines (emails split across a lines)
       data_lines <- paste(readLines(file), collapse = " ")
       #for each csv file, extract all emails and add them to file_emails

@@ -71,7 +71,7 @@ load_metadata <- function(directory = here::here(), inform_success = FALSE) {
 #' data_pkg_dir <- DPchecker_example("BICY_veg")
 #' my_data <- load_data(data_pkg_dir)
 load_data <- function(directory = here::here()) {
-  data_filenames <- list.files(path = directory, pattern = ".csv")
+  data_filenames <- list.files(path = directory, pattern = ".csv", ignore.case = TRUE)
   tibble_list <- sapply(data_filenames,
                         function(data_file) {readr::read_csv(file.path(directory, data_file), show_col_types = FALSE)},
                         USE.NAMES = TRUE,
@@ -477,7 +477,7 @@ test_file_name_match <- function(directory = here::here(), metadata = load_metad
   files_in_metadata <- unlist(phys)[grepl("objectName", names(unlist(phys)), fixed = T)]
 
   # get filenames from .csv data files in directory:
-  files_in_dir <- list.files(path = directory, pattern = ".csv")
+  files_in_dir <- list.files(path = directory, pattern = ".csv", ignore.case = TRUE)
 
   # items in metadata but not data file names:
   meta_only <- setdiff(files_in_metadata, files_in_dir)
@@ -532,7 +532,7 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
   metadata_attrs$`@context` <- NULL
 
   #list all data files that are in data package
-  data_files <- list.files(path = directory, pattern = ".csv")
+  data_files <- list.files(path = directory, pattern = ".csv", ignore.case = TRUE)
 
   #get names of each file to add to attributes table
   table_names <- NULL
@@ -633,7 +633,7 @@ test_missing_data <- function(directory = here::here(),
     data_tbl <- list(data_tbl)
   }
   # get a list of the data files
-  data_files <- list.files(path = directory, pattern = ".csv")
+  data_files <- list.files(path = directory, pattern = ".csv", ignore.case = TRUE)
 
   #load files and test for NAs
   error_log <- NULL
@@ -733,7 +733,7 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
   numeric_attrs$`@context` <- NULL
 
   # Get list of column names for each table in the csv data
-  data_files <- list.files(path = directory, pattern = ".csv")
+  data_files <- list.files(path = directory, pattern = ".csv", ignore.case = TRUE)
 
   #get names of each file to add to attributes table
   table_names <- NULL
@@ -849,7 +849,7 @@ test_dates_parse <- function(directory = here::here(),
   dttm_attrs$`@context` <- NULL
 
   #get list of file names
-  data_files <- list.files(path = directory, pattern = ".csv")
+  data_files <- list.files(path = directory, pattern = ".csv", ignore.case = TRUE)
 
   #get names of each file to add to dttm attributes table
   table_names <- NULL
@@ -1042,7 +1042,7 @@ test_date_range <- function(directory = here::here(),
   }
 
   #get list of file names
-  data_files <- list.files(path = directory, pattern = ".csv")
+  data_files <- list.files(path = directory, pattern = ".csv", ignore.case = TRUE)
 
   #get names of each file to add to dttm attributes table
   table_names <- NULL
