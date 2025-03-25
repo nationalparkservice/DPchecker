@@ -18,7 +18,7 @@
 #'
 load_metadata <- function(directory = here::here(), inform_success = FALSE) {
   # get list of all files ending in metadata.xml
-  lf <- list.files(path = directory, pattern = "metadata.xml", ignore.case = TRUE)
+  lf <- list.files(path = directory, pattern = "metadata\\.xml", ignore.case = TRUE)
 
   metadata_file <- file.path(directory, lf)
 
