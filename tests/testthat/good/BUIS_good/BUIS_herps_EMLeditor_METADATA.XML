@@ -433,7 +433,7 @@ were conducted during both day and night on both of these days. The survey condu
       <entityName>BUIS_herps</entityName>
       <entityDescription>All the data collected for the Buck Island herpetofauna inventory from 2001</entityDescription>
       <physical>
-        <objectName>BUIS_herps.csv</objectName>
+        <objectName>BUIS_herps.CSV</objectName>
         <size unit="bytes">15701</size>
         <authentication method="MD5">ed3c6bcc251ef21f45ace46d4ae09e70</authentication>
         <dataFormat>

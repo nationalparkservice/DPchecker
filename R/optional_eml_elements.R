@@ -21,7 +21,7 @@ test_pii_meta_emails <- function(directory = here::here()) {
   metadata <- NULL
   #Read in all metadata files as a single line
   for(file in files){
-    if(grepl("metadata.xml", file)) {
+    if(grepl("metadata\\.xml", file, ignore.case = TRUE)) {
       metadata <- append(metadata,
                          paste(suppressWarnings(readLines(file)),
                                collapse = " "))

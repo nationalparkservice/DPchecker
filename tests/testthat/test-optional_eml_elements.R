@@ -8,7 +8,7 @@ buis_meta <- load_metadata(test_path("good", "BUIS_good"))
 test_that("test_pii_meta_emails finds true negatives",
           {
             msg <- "Metadata does not appear to contain any personal emails"
-            expect_message(test_pii_meta_emails(here::here(good_dir,
+            expect_message(test_pii_meta_emails(test_path(good_dir,
                                                            "BICY_good")),
                            msg)
             }
