@@ -1,4 +1,8 @@
 # DPchecker 1.0.1 (under development)
+
+## 2025-03-25
+  * fix bug that caused several functions to fail to detect certain .csv files
+
 ## 2025-03-10
   * updated license to MIT, which works for JOSS, NPS, and R!
 ## 2025-03-10
