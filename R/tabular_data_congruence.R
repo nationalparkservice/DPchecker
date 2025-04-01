@@ -431,6 +431,10 @@ test_datatable_urls_doi <-  function (metadata = load_metadata(directory)) {
         cli::cli_abort(c("x" = "One or more data files lack URLs. Could not test whether URLs are properly formatted or correspond to the corect DOI. Use {.fn EMLeditor::set_data_urls} to add them."))
         return(invisible(metadata))
       }
+      #handle <url function="download> tag from ezEML:
+      if (length(seq_along(url)) > 1) {
+        url <- url$url
+      }
       prefix <- stringr::str_sub(url, 1, stringr::str_length(url)-7)
       suffix <- stringr::str_sub(url, -7, -1)
 
