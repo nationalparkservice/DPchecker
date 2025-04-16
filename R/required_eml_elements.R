@@ -140,7 +140,7 @@ test_dp_title <- function(metadata = load_metadata(directory)) {
 #' }
 test_by_for_nps <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)
-  nps <- QCkit::get_eml_simple(metadata, "byOrForNPS")
+  nps <- EMLeditor::get_eml_simple(metadata, "byOrForNPS")
   missing_nps <- is.null(nps)
   #error if no by or for nps
   if (missing_nps) {
@@ -432,7 +432,7 @@ test_cui_dissemination <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)
   valid_codes <- c("PUBLIC", "NOCON", "DL ONLY", "FEDCON", "FED ONLY")
   # get all additionalMetadata elelements and all children elements
-  diss_code <- QCkit::get_eml_simple(metadata, "CUI")
+  diss_code <- EMLeditor::get_eml_simple(metadata, "CUI")
   if (is.null(diss_code)) {
     cli::cli_abort(c("x" = "Metadata does not contain a CUI dissemination code. Use {.fn EMLeditor::set_cui}."))
   }
@@ -479,7 +479,7 @@ test_license <- function(metadata = load_metadata(directory)) {
         "x" = "The metadata does not contain a valid license name. Use {.fn EMLeditor::set_int_rights} to add a valid license name."))
     }
     if (license %in% license_list) {
-      diss_code <- QCkit::get_eml_simple(metadata, "CUI")
+      diss_code <- EMLeditor::get_eml_simple(metadata, "CUI")
       if (diss_code == "PUBLIC" & license == "No License/Controlled Unclassified Information") {
         cli::cli_abort(c(
           "x" = "Metadata license and CUI dissemination code do not agree. Use {.fn EMLeditor::set_int_rights} or {.fn EMLeditor::set_cui}."))
@@ -549,13 +549,13 @@ test_attribute_defs <- function(metadata = load_metadata(directory)) {
   # Get list of columns for each table in the metadata
   metadata_attrs <- lapply(data_tbl,
                            function(tbl)
-                             {QCkit::get_eml_simple(tbl,
+                             {EMLeditor::get_eml_simple(tbl,
                                                               "attributeName")})
   metadata_attrs$`@context` <- NULL
   #get attribute definitions:
   attr_defs <- lapply(data_tbl,
                       function (tbl)
-                        {list(QCkit::get_eml_simple(tbl,
+                        {list(EMLeditor::get_eml_simple(tbl,
                                                       "attributeDefinition"))})
   attr_defs$`@context` <- NULL
   #unlist:
@@ -601,14 +601,14 @@ test_storage_type <- function(metadata = load_metadata(directory)) {
   # Get list of columns for each table in the metadata
   metadata_attrs <- lapply(data_tbl,
                            function(tbl)
-                           {QCkit::get_eml_simple(tbl,
+                           {EMLeditor::get_eml_simple(tbl,
                                                             "attributeName")})
   metadata_attrs$`@context` <- NULL
   metadata_attrs <- unlist(metadata_attrs)
   #get attribute storage types:
   attr_storage_type <- lapply(data_tbl,
                       function (tbl)
-                      {list(QCkit::get_eml_simple(tbl,
+                      {list(EMLeditor::get_eml_simple(tbl,
                                                             "storageType"))})
   #if ezEML with multiple .csv (remove typeSystem="XML Schema Datatypes"):
   if (sum(grepl("XML Schema Datatype", attr_storage_type)) > 1) {
