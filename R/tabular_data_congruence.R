@@ -458,15 +458,20 @@ test_datatable_urls_doi <-  function (metadata = load_metadata(directory)) {
   return(invisible(metadata))
 }
 
-#' Title
+#' Test for the appropriate attribute for data table URLs in metadata
 #'
-#' @param metadata
+#' @description `test_datatable_url_attributes` tests whether the 'function =' attribute for the <url> element for each data table in metadata is properly specified. If there is no attribute, the function is assumed to be a direct download (as per the EML schema). The user is warned to check that this is the case (as data packages on DataStore will typically have a direct download link to the data file). If the specified attribute is not either "information" or "download", the function will throw an error as these are the only allowable attributes. If the attribute is "download" the function will warn the user and ask them to double check this. If the attribute is "information" and does not correspond to a DataStore reference profile, the function will warn the user and ask them to check this. If the attribute is "information" and a DataStore reference profile page is supplied, the test will pass.
 #'
-#' @returns
+#' @inheritParams test_metadata_version
+#'
+#' @returns invisible(metadata)
 #' @export
 #'
 #' @examples
-test_datatable_URL_attributes <- function(metadata = load_metadata(directory)) {
+#' \dontrun{
+#' test_datatable_url_attributes(metadata)
+#' }
+test_datatable_url_attributes <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)
 
   #get dataTable urls
@@ -483,7 +488,7 @@ test_datatable_URL_attributes <- function(metadata = load_metadata(directory)) {
 
     #if data tables do not have URLs
     if(is.null(url)){
-      cli::cli_abort(c("x" = "One or more data files lack URLs. Could not test whether URLs are properly formatted or correspond to the corect DOI. Use {.fn EMLeditor::set_data_urls} to add them."))
+      cli::cli_abort(c("x" = "One or more data files lack URLs. Could not test whether URL attributes are properly formatted or correctly correspond to the URL. Use {.fn EMLeditor::set_data_urls} to add URLs and attributes."))
       return(invisible(metadata))
     }
 
@@ -491,7 +496,7 @@ test_datatable_URL_attributes <- function(metadata = load_metadata(directory)) {
     if (length(seq_along(url)) == 1) {
 
       #if no attributes, warn and exit:
-      cli::cli_warn(c("!" = "One or more of data file URLs lack \"information\" or \"download\" attributes. Either use {.fn EMLeditor::set_data_urls} to add the appropriate attribute for DataStore or make sure the URL provided is a direct download link."))
+      cli::cli_warn(c("!" = "One or more of data file URLs elements in metadata lack attributes. Either use {.fn EMLeditor::set_data_urls} to add the appropriate attribute for DataStore or make sure the URL provided is a direct download link."))
       return(invisible(metadata))
     }
 
@@ -508,18 +513,18 @@ test_datatable_URL_attributes <- function(metadata = load_metadata(directory)) {
 
       # warn if attribute is download, warn
       if (tag == "download") {
-        cli::cli_warn(c("!" = "One or more URL attributes are set to \"download\". Please make sure this is actually a direct download link to the data file. Use {.fn EMLeditor::set_data_urls} to update this attribute."))
+        cli::cli_warn(c("!" = "One or more data file URL attributes in metadata are set to \"download\". Please make sure this is actually a direct download link to the data file. Use {.fn EMLeditor::set_data_urls} to update this attribute."))
         return(invisible(metadata))
       }
 
-      # if attribute is "information" check that it is a data store profile refernce; warn if it is not:
+      # if attribute is "information" check that it is a data store profile reference; warn if it is not:
       if (tag == "information") {
 
         prefix <- stringr::str_sub(url, 1, stringr::str_length(url)-7)
         suffix <- stringr::str_sub(url, -7, -1)
 
         if(!prefix == "https://irma.nps.gov/DataStore/Reference/Profile/") {
-          cli::cli_warn(c("!" = "One or more URL attributes is set to \"informatoion\" but the URL supplied is not a DataStore reference profile. Please check that the URL goes to the appropriate page and it is not a direct download link for the data file."))
+          cli::cli_warn(c("!" = "One or more data table URL attributes in metadata is set to \"informatoion\" but the URL supplied is not a DataStore reference profile. Please check that the URL goes to the appropriate page and it is not a direct download link for the data file."))
           return(invisible(metadata))
         }
       }
@@ -527,7 +532,7 @@ test_datatable_URL_attributes <- function(metadata = load_metadata(directory)) {
   }
 
   # if you've gotten this far with no errors, it's probably OK:
-  cli::cli_inform(c("v" = "The datatable URLs and URL attributes are properly specified."))
+  cli::cli_inform(c("v" = "Metadata datatable URLs and URL attributes are properly specified."))
 
   return(invisible(metadata))
 }
