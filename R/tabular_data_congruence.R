@@ -432,12 +432,9 @@ test_datatable_urls_doi <-  function (metadata = load_metadata(directory)) {
         return(invisible(metadata))
       }
 
-      #handle <url function="download> tag from ezEML:
+      #ignore <url function="download> or <url function = "information> tags:
       if (length(seq_along(url)) > 1) {
-        bad_url <- bad_url + 1
-        tbl_name <- data_tbl[[i]][["physical"]][["objectName"]]
-        cli::cli_warn(c("!" = "Metadata URL for the data table {.var {tbl_name}} is incorrectly formatted. Use {.fn EMLeditor::set_data_urls} to update the URLs."))
-        return(invisible(metadata))
+        url <- url[[1]]
       }
 
       prefix <- stringr::str_sub(url, 1, stringr::str_length(url)-7)
