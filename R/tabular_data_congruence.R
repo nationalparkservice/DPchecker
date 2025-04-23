@@ -185,7 +185,7 @@ test_validate_schema <- function(metadata = load_metadata(here::here())) {
 test_footer <- function(metadata = load_metadata(here::here())) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-  if (is.null(arcticdatautils::eml_get_simple(metadata, "numFooterLines"))) {
+  if (is.null(EMLeditor::get_eml_simple(metadata, "numFooterLines"))) {
     cli::cli_inform(c("v" = "Metadata indicates data files do not have footers."))
   } else {
     cli::cli_abort(c("x" = "Metadata indicates that data files include footers. Please remove all footers from data files."))
@@ -217,7 +217,7 @@ test_header_num <- function(metadata = load_metadata(here::here())) {
     tbl_metadata <- list(tbl_metadata)  # Handle single data table case
   }
   bad_headers <- sapply(tbl_metadata, function(tbl) {
-    header_lines <- arcticdatautils::eml_get_simple(tbl, "numHeaderLines")
+    header_lines <- EMLeditor::get_eml_simple(tbl, "numHeaderLines")
     return(tibble::tibble(table_name = tbl$entityName,
                           header_lines = ifelse(is.null(header_lines), NA, header_lines)))
   },
@@ -262,7 +262,7 @@ test_delimiter <- function(metadata = load_metadata(here::here())) {
     tbl_metadata <- list(tbl_metadata)  # Handle single data table case
   }
   bad_delimit <- sapply(tbl_metadata, function(tbl) {
-    delimit <- tryCatch(arcticdatautils::eml_get_simple(tbl, "fieldDelimiter"),
+    delimit <- tryCatch(EMLeditor::get_eml_simple(tbl, "fieldDelimiter"),
                         error = function(e) {
                           if (grepl("not recognized", e$message)) {
                             "[INVALID]"
@@ -528,7 +528,7 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
   }
 
   # Get list of attributes for each table in the metadata
-  metadata_attrs <- lapply(data_tbl, function(tbl) {arcticdatautils::eml_get_simple(tbl, "attributeName")})
+  metadata_attrs <- lapply(data_tbl, function(tbl) {EMLeditor::get_eml_simple(tbl, "attributeName")})
   metadata_attrs$`@context` <- NULL
 
   #list all data files that are in data package
@@ -822,7 +822,7 @@ test_dates_parse <- function(directory = here::here(),
 
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-  missing_temporal <- is.null(arcticdatautils::eml_get_simple(metadata, "temporalCoverage"))
+  missing_temporal <- is.null(EMLeditor::get_eml_simple(metadata, "temporalCoverage"))
 
   # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
   # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
@@ -981,7 +981,7 @@ test_date_range <- function(directory = here::here(),
 
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-  missing_temporal <- is.null(arcticdatautils::eml_get_simple(metadata, "temporalCoverage"))
+  missing_temporal <- is.null(EMLeditor::get_eml_simple(metadata, "temporalCoverage"))
 
   # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
   # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
@@ -999,7 +999,7 @@ test_date_range <- function(directory = here::here(),
   }
 
   # Get begin date from metadata
-  firstDate <- arcticdatautils::eml_get_simple(metadata, "beginDate")
+  firstDate <- EMLeditor::get_eml_simple(metadata, "beginDate")
   if (is.null(firstDate)) {
     warning("Your metadata lacks a begining date.")
     firstDate <- NA
@@ -1007,7 +1007,7 @@ test_date_range <- function(directory = here::here(),
     meta_begin_date <- firstDate %>% as.Date()
   }
 
-  lastDate<- arcticdatautils::eml_get_simple(metadata, "endDate")
+  lastDate<- EMLeditor::get_eml_simple(metadata, "endDate")
   if (is.null(lastDate)) {
     warning("Your metadata lacks an ending date.")
     LastDate <- NA
@@ -1200,7 +1200,7 @@ test_date_range <- function(directory = here::here(),
 test_taxonomic_cov <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-  missing_taxonomic <- is.null(arcticdatautils::eml_get_simple(metadata, "taxonomicCoverage"))
+  missing_taxonomic <- is.null(EMLeditor::get_eml_simple(metadata, "taxonomicCoverage"))
 
   if (missing_taxonomic) {
     cli::cli_warn(c("!" = "Metadata does not contain taxonomic coverage information."))
@@ -1226,7 +1226,7 @@ test_taxonomic_cov <- function(metadata = load_metadata(directory)) {
 test_geographic_cov <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-  missing_geographic <- is.null(arcticdatautils::eml_get_simple(metadata, "geographicCoverage"))
+  missing_geographic <- is.null(EMLeditor::get_eml_simple(metadata, "geographicCoverage"))
 
   if (missing_geographic) {
     cli::cli_warn(c("!" = "Metadata does not contain geographic coverage information."))
@@ -1372,7 +1372,7 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
   }
 
   # Get list of columns for each table in the metadata
-  metadata_attrs <- lapply(data_tbl, function(tbl) {arcticdatautils::eml_get_simple(tbl, "attributeName")})
+  metadata_attrs <- lapply(data_tbl, function(tbl) {EMLeditor::get_eml_simple(tbl, "attributeName")})
   metadata_attrs$`@context` <- NULL
 
   #get names of each file to add to attributes table
