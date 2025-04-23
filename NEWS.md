@@ -1,4 +1,9 @@
 # DPchecker 1.0.1 (under development)
+## 2025-04-16
+  * remove arcticdatautils as a dependency and replace functionality with equivalent functions from EMLeditor to reduce the total number of package dependencies.
+
+## 2025-04-01
+  * fix bug that caused `test_datatable_urls_doi` to produce unexpected errors when checking metadata generated from ezEML.
 
 ## 2025-03-25
   * fix bug that caused several functions to fail to detect certain .csv files

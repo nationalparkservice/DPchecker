@@ -20,7 +20,6 @@ Suggests:
     EMLeditor
 Config/testthat/edition: 3
 Imports:
-    arcticdatautils (>= 0.7.0),
     EML,
     readr,
     magrittr,
@@ -36,7 +35,6 @@ Imports:
     QCkit,
     lifecycle
 Remotes: 
-    https://github.com/NCEAS/arcticdatautils,
     https://github.com/nationalparkservice/QCkit,
     https://github.com/nationalparkservice/EMLeditor
 URL: https://nationalparkservice.github.io/DPchecker/

@@ -484,7 +484,7 @@ test_public_points <- function(metadata = load_metadata(directory)){
   } else {
     # if GPS coordinates are detected:
     # get the CUI designation
-    cui <- arcticdatautils::eml_get_simple(metadata, "CUI")
+    cui <- EMLeditor::get_eml_simple(metadata, "CUI")
     if(is.null(cui)){
       #if no CUI designation, fail the test and require designating CUI:
       cli::cli_abort(c("x" = "No CUI designation found. Unable to determine whether GPS points potentially contain CUI. Please use {.fn EMLeditor::set_cui} to designate a CUI dissemination category."))

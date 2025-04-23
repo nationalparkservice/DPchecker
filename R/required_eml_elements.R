@@ -140,22 +140,22 @@ test_dp_title <- function(metadata = load_metadata(directory)) {
 #' }
 test_by_for_nps <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)
-  nps <- arcticdatautils::eml_get_simple(metadata, "byOrForNPS")
+  nps <- EMLeditor::get_eml_simple(metadata, "byOrForNPS")
   missing_nps <- is.null(nps)
   #error if no by or for nps
-  if(missing_nps){
+  if (missing_nps) {
     cli::cli_abort(c("x" = "Metadata does not contain information about whether the data package was created by or for the NPS.  Use {.fn EMLeditor::set_publisher} to revise."))
   }
-  if(!missing_nps){
-    if(nps == "TRUE"){
+  if (!missing_nps) {
+    if (nps == "TRUE") {
       cli::cli_inform(c(
         "v" = "Metadata states data was created by or for NPS."))
     }
-    else if(nps == "FALSE"){
+    else if (nps == "FALSE") {
       cli::cli_warn(c(
         "!" = "Metadata states data was NOT created by or for NPS. Are you sure this is correct?  Use {.fn EMLeditor::set_publisher} to revise."))
     }
-    else if(nps == "NULL"){
+    else if (nps == "NULL") {
       cli::cli_abort(c("x" = 'Metadata indicates "by or for NPS" field set to NULL.  Use {.fn EMLeditor::set_publisher} to revise..'))
     }
   }
@@ -432,18 +432,18 @@ test_cui_dissemination <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)
   valid_codes <- c("PUBLIC", "NOCON", "DL ONLY", "FEDCON", "FED ONLY")
   # get all additionalMetadata elelements and all children elements
-  diss_code <- arcticdatautils::eml_get_simple(metadata, "CUI")
-  if(is.null(diss_code)){
+  diss_code <- EMLeditor::get_eml_simple(metadata, "CUI")
+  if (is.null(diss_code)) {
     cli::cli_abort(c("x" = "Metadata does not contain a CUI dissemination code. Use {.fn EMLeditor::set_cui}."))
   }
-  if(!is.null(diss_code)){
-    if(!diss_code %in% valid_codes){
+  if (!is.null(diss_code)) {
+    if (!diss_code %in% valid_codes) {
       cli::cli_abort(c("x" = "The CUI dissemination code {diss_code} is not a valid code. Use {.fn EMLeditor::set_cui}."))
     }
-    if(diss_code %in% valid_codes){
+    if (diss_code %in% valid_codes) {
       cli::cli_inform(c("v" = "Metadata contains the valid CUI dissemination code {diss_code}."))
     }
-    if(diss_code != "PUBLIC"){
+    if (diss_code != "PUBLIC") {
       cli::cli_warn(c("!" = "Metadata CUI dissemination code {crayon::red$bold(diss_code)} indicates the data package is NOT public. Are you sure?"))
     }
   }
@@ -470,28 +470,28 @@ test_license <- function(metadata = load_metadata(directory)) {
                     "Unlicensed (not for public dissemination)")
 
   license <- metadata$dataset$licensed$licenseName
-  if(is.null(license)){
+  if (is.null(license)) {
     cli::cli_abort(c("x" = "Metadata does not contain a license name. Use {.fn EMLeditor::set_int_rights} to add a license name."))
   }
-  if(!is.null(license)){
-    if(!license %in% license_list){
+  if (!is.null(license)) {
+    if (!license %in% license_list) {
       cli::cli_abort(c(
         "x" = "The metadata does not contain a valid license name. Use {.fn EMLeditor::set_int_rights} to add a valid license name."))
     }
-    if(license %in% license_list){
-      diss_code <- arcticdatautils::eml_get_simple(metadata, "CUI")
-      if(diss_code == "PUBLIC" & license == "No License/Controlled Unclassified Information"){
+    if (license %in% license_list) {
+      diss_code <- EMLeditor::get_eml_simple(metadata, "CUI")
+      if (diss_code == "PUBLIC" & license == "No License/Controlled Unclassified Information") {
         cli::cli_abort(c(
           "x" = "Metadata license and CUI dissemination code do not agree. Use {.fn EMLeditor::set_int_rights} or {.fn EMLeditor::set_cui}."))
       }
-      else if(diss_code != "PUBLIC" & license != "Unlicensed (not for public dissemination)"){
+      else if (diss_code != "PUBLIC" & license != "Unlicensed (not for public dissemination)"){
         cli::cli_abort(c(
           "x" = "Metadata license and CUI dissemination code do not agree. Use {.fn EMLeditor::set_int_rights} or {.fn EMLeditor::set_cui}."))
       }
       else {
         cli::cli_inform(c("v" = "Metadata contains a valid license name."))
       }
-      if(license == "Unlicensed (not for public dissemination)"){
+      if (license == "Unlicensed (not for public dissemination)") {
       cli::cli_warn(c("!" = "Metadata license name indicates that the data package is NOT public. Are you sure?"))
       }
     }
@@ -549,24 +549,24 @@ test_attribute_defs <- function(metadata = load_metadata(directory)) {
   # Get list of columns for each table in the metadata
   metadata_attrs <- lapply(data_tbl,
                            function(tbl)
-                             {arcticdatautils::eml_get_simple(tbl,
+                             {EMLeditor::get_eml_simple(tbl,
                                                               "attributeName")})
   metadata_attrs$`@context` <- NULL
   #get attribute definitions:
   attr_defs <- lapply(data_tbl,
                       function (tbl)
-                        {list(arcticdatautils::eml_get_simple(tbl,
+                        {list(EMLeditor::get_eml_simple(tbl,
                                                       "attributeDefinition"))})
   attr_defs$`@context` <- NULL
   #unlist:
   metadata_attrs <- unlist(metadata_attrs)
   attr_defs <- unlist(attr_defs)
   #comparisons:
-  if(identical(seq_along(metadata_attrs), seq_along(attr_defs))){
+  if (identical(seq_along(metadata_attrs), seq_along(attr_defs))) {
     cli::cli_inform(c(
       "v" = "All attributes listed in metadata have attribute definitions."))
   }
-  if(!identical(seq_along(metadata_attrs), seq_along(attr_defs))){
+  if (!identical(seq_along(metadata_attrs), seq_along(attr_defs))) {
     cli::cli_abort(c(
       "x" = "Some metadata attributes are missing definitions (or vice versa)."))
   }
@@ -601,14 +601,14 @@ test_storage_type <- function(metadata = load_metadata(directory)) {
   # Get list of columns for each table in the metadata
   metadata_attrs <- lapply(data_tbl,
                            function(tbl)
-                           {arcticdatautils::eml_get_simple(tbl,
+                           {EMLeditor::get_eml_simple(tbl,
                                                             "attributeName")})
   metadata_attrs$`@context` <- NULL
   metadata_attrs <- unlist(metadata_attrs)
   #get attribute storage types:
   attr_storage_type <- lapply(data_tbl,
                       function (tbl)
-                      {list(arcticdatautils::eml_get_simple(tbl,
+                      {list(EMLeditor::get_eml_simple(tbl,
                                                             "storageType"))})
   #if ezEML with multiple .csv (remove typeSystem="XML Schema Datatypes"):
   if (sum(grepl("XML Schema Datatype", attr_storage_type)) > 1) {
