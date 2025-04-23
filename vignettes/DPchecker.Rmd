@@ -141,4 +141,3 @@ These functions check to make sure the values and fields in the metadata file ac
 These functions check the data and metadata files for compliance. Please resolve any errors before uploading your data. 
 
 * Data files do not contain any email addresses that constitute personally identifiable information (PII) ([`test_pii_data_emails()`](../reference/test_pii_data.html)
-* Metadata do not contain GPS coordinates if the data package is not public ([`test_public_points()`](../reference/test_public_points.html))

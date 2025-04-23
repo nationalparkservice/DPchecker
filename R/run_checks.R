@@ -498,16 +498,6 @@ run_congruence_checks <- function(directory = here::here(),
                warn_count <<- warn_count + 1
                cli::cli_verbatim (c(w$message, w$body))
              })
-    tryCatch(test_public_points(metadata),
-             error = function(e) {
-               err_count <<- err_count + 1
-               cli::cli_bullets(c(e$message, e$body))
-             },
-             warning = function(w) {
-               warn_count <<- warn_count + 1
-               cli::cli_bullets(c(w$message, w$body))
-             })
-
   }
 
   cli::cli_h2("Summary")

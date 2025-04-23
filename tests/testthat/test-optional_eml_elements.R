@@ -70,17 +70,6 @@ test_that("test_orcid_match correctly identifies when orcid and crearot match",
            }
          )
 
-# ---- test_public_points
-test_that("test_public_points warns GPS points exist in restricted metadata",
-          {
-            msg <- paste0("CUI is not set to PUBLIC. GPS coordinates detected ",
-                          "in metadata will be publicly available. ",
-                          "Are you sure?")
-            expect_warning(test_public_points(metadata = bicy_meta),
-                           msg)
-            }
-          )
-
 # ---- test_project
 test_that("test_project warns when no project is present",
           {
