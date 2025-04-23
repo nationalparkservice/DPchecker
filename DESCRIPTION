@@ -16,8 +16,7 @@ Suggests:
     here,
     rstudioapi,
     testthat (>= 3.0.0),
-    knitr,
-    EMLeditor
+    knitr
 Config/testthat/edition: 3
 Imports:
     EML,
