@@ -431,6 +431,15 @@ test_datatable_urls_doi <-  function (metadata = load_metadata(directory)) {
         cli::cli_abort(c("x" = "One or more data files lack URLs. Could not test whether URLs are properly formatted or correspond to the corect DOI. Use {.fn EMLeditor::set_data_urls} to add them."))
         return(invisible(metadata))
       }
+
+      #handle <url function="download> tag from ezEML:
+      if (length(seq_along(url)) > 1) {
+        bad_url <- bad_url + 1
+        tbl_name <- data_tbl[[i]][["physical"]][["objectName"]]
+        cli::cli_warn(c("!" = "Metadata URL for the data table {.var {tbl_name}} is incorrectly formatted. Use {.fn EMLeditor::set_data_urls} to update the URLs."))
+        return(invisible(metadata))
+      }
+
       prefix <- stringr::str_sub(url, 1, stringr::str_length(url)-7)
       suffix <- stringr::str_sub(url, -7, -1)
 
@@ -528,7 +537,9 @@ test_fields_match <- function(directory = here::here(), metadata = load_metadata
   }
 
   # Get list of attributes for each table in the metadata
-  metadata_attrs <- lapply(data_tbl, function(tbl) {EMLeditor::get_eml_simple(tbl, "attributeName")})
+  metadata_attrs <- lapply(data_tbl,
+                           function(tbl) {EMLeditor::get_eml_simple(tbl,
+                                                                "attributeName")})
   metadata_attrs$`@context` <- NULL
 
   #list all data files that are in data package
@@ -818,11 +829,12 @@ test_numeric_fields <- function(directory = here::here(), metadata = load_metada
 #' dir <- DPchecker_example("BICY_veg")
 #' test_dates_parse(dir)
 test_dates_parse <- function(directory = here::here(),
-                            metadata = load_metadata(directory)){
+                            metadata = load_metadata(directory)) {
 
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-  missing_temporal <- is.null(EMLeditor::get_eml_simple(metadata, "temporalCoverage"))
+  missing_temporal <- is.null(EMLeditor::get_eml_simple(metadata,
+                                                    "temporalCoverage"))
 
   # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
   # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
@@ -981,7 +993,8 @@ test_date_range <- function(directory = here::here(),
 
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-  missing_temporal <- is.null(EMLeditor::get_eml_simple(metadata, "temporalCoverage"))
+  missing_temporal <- is.null(EMLeditor::get_eml_simple(metadata,
+                                                    "temporalCoverage"))
 
   # Check if temporal coverage info is complete. Throw a warning if it's missing entirely and an error if it's only partially complete.
   # The logic being that maybe there's a scenario where temporal coverage isn't relevant to the dataset at all, but if it has date/time info, it has to have both a start and end.
@@ -1034,8 +1047,8 @@ test_date_range <- function(directory = here::here(),
   dttm_attrs$`@context` <- NULL
 
   #### dropping skip_cols from date range check:
-  if(sum(!is.na(skip_cols)) > 0){
-    for(i in seq_along(dttm_attrs)){
+  if (sum(!is.na(skip_cols)) > 0) {
+    for (i in seq_along(dttm_attrs)) {
       dttm_attrs[[i]]<-dplyr::filter(dttm_attrs[[i]],
                                      !attributeName %in% skip_cols)
     }
@@ -1200,7 +1213,8 @@ test_date_range <- function(directory = here::here(),
 test_taxonomic_cov <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-  missing_taxonomic <- is.null(EMLeditor::get_eml_simple(metadata, "taxonomicCoverage"))
+  missing_taxonomic <- is.null(EMLeditor::get_eml_simple(metadata,
+                                                     "taxonomicCoverage"))
 
   if (missing_taxonomic) {
     cli::cli_warn(c("!" = "Metadata does not contain taxonomic coverage information."))
@@ -1226,8 +1240,8 @@ test_taxonomic_cov <- function(metadata = load_metadata(directory)) {
 test_geographic_cov <- function(metadata = load_metadata(directory)) {
   is_eml(metadata)  # Throw an error if metadata isn't an emld object
 
-  missing_geographic <- is.null(EMLeditor::get_eml_simple(metadata, "geographicCoverage"))
-
+  missing_geographic <- is.null(EMLeditor::get_eml_simple(metadata,
+                                                      "geographicCoverage"))
   if (missing_geographic) {
     cli::cli_warn(c("!" = "Metadata does not contain geographic coverage information."))
   } else {
@@ -1372,7 +1386,9 @@ test_valid_fieldnames <- function(metadata = load_metadata(here::here())) {
   }
 
   # Get list of columns for each table in the metadata
-  metadata_attrs <- lapply(data_tbl, function(tbl) {EMLeditor::get_eml_simple(tbl, "attributeName")})
+  metadata_attrs <- lapply(data_tbl,
+                           function(tbl) {EMLeditor::get_eml_simple(tbl,
+                                                                "attributeName")})
   metadata_attrs$`@context` <- NULL
 
   #get names of each file to add to attributes table

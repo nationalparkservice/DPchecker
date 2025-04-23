@@ -1,9 +1,14 @@
 # DPchecker 1.1.0 (under development)
 ## 2025-04-23
   * Remove `test_public_points()` function. DataStore previously made GPS coordinates public, even when data files were restricted-access, so this function was written to alert users of that fact. DataStore now applies the same access rules to GPS coordinates and data files, so this check is no longer needed.
-  * Remove dependency on `arcticdatautils` package.
-  
+
 # DPchecker 1.0.1
+## 2025-04-16
+  * remove arcticdatautils as a dependency and replace functionality with equivalent functions from EMLeditor to reduce the total number of package dependencies.
+
+## 2025-04-01
+  * fix bug that caused `test_datatable_urls_doi` to produce unexpected errors when checking metadata generated from ezEML.
+
 ## 2025-03-25
   * fix bug that caused several functions to fail to detect certain .csv files
 
