@@ -524,7 +524,7 @@ test_datatable_url_attributes <- function(metadata = load_metadata(directory)) {
         suffix <- stringr::str_sub(url, -7, -1)
 
         if(!prefix == "https://irma.nps.gov/DataStore/Reference/Profile/") {
-          cli::cli_warn(c("!" = "One or more data table URL attributes in metadata is set to \"informatoion\" but the URL supplied is not a DataStore reference profile. Please check that the URL goes to the appropriate page and it is not a direct download link for the data file."))
+          cli::cli_warn(c("!" = "One or more data table URL attributes in metadata is set to \"information\" but the URL supplied is not a DataStore reference profile. Please check that the URL goes to the appropriate page and it is not a direct download link for the data file."))
           return(invisible(metadata))
         }
       }
