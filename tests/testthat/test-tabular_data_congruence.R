@@ -1,7 +1,7 @@
 good_dir <- testthat::test_path("good")
 bad_dir <- testthat::test_path("bad")
-bicy_meta <- testthat::load_metadata(test_path("good", "BICY_good"))
-buis_meta <- testthat::load_metadata(test_path("good", "BUIS_good"))
+bicy_meta <- DPchecker::load_metadata(test_path("good", "BICY_good"))
+buis_meta <- DPcheker::load_metadata(test_path("good", "BUIS_good"))
 
 # ---- load_metadata ----
 test_that("load_metadata works on valid EML file", {

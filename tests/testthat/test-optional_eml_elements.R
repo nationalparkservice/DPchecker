@@ -1,7 +1,7 @@
 good_dir <- testthat::test_path("good")
 bad_dir <- testthat::test_path("bad")
-bicy_meta <- testthat::load_metadata(test_path("good", "BICY_good"))
-buis_meta <- testthat::load_metadata(test_path("good", "BUIS_good"))
+bicy_meta <- DPchecker::load_metadata(test_path("good", "BICY_good"))
+buis_meta <- DPchecker::load_metadata(test_path("good", "BUIS_good"))
 
 # ---- test_pii_meta_emails
 
