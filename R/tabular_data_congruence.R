@@ -432,12 +432,9 @@ test_datatable_urls_doi <-  function (metadata = load_metadata(directory)) {
         return(invisible(metadata))
       }
 
-      #handle <url function="download> tag from ezEML:
+      #ignore <url function="download> or <url function = "information> tags:
       if (length(seq_along(url)) > 1) {
-        bad_url <- bad_url + 1
-        tbl_name <- data_tbl[[i]][["physical"]][["objectName"]]
-        cli::cli_warn(c("!" = "Metadata URL for the data table {.var {tbl_name}} is incorrectly formatted. Use {.fn EMLeditor::set_data_urls} to update the URLs."))
-        return(invisible(metadata))
+        url <- url[[1]]
       }
 
       prefix <- stringr::str_sub(url, 1, stringr::str_length(url)-7)
@@ -460,6 +457,86 @@ test_datatable_urls_doi <-  function (metadata = load_metadata(directory)) {
   }
   return(invisible(metadata))
 }
+
+#' Test for the appropriate attribute for data table URLs in metadata
+#'
+#' @description `test_datatable_url_attributes` tests whether the 'function =' attribute for the <url> element for each data table in metadata is properly specified. If there is no attribute, the function is assumed to be a direct download (as per the EML schema). The user is warned to check that this is the case (as data packages on DataStore will typically have a direct download link to the data file). If the specified attribute is not either "information" or "download", the function will throw an error as these are the only allowable attributes. If the attribute is "download" the function will warn the user and ask them to double check this. If the attribute is "information" and does not correspond to a DataStore reference profile, the function will warn the user and ask them to check this. If the attribute is "information" and a DataStore reference profile page is supplied, the test will pass.
+#'
+#' @inheritParams test_metadata_version
+#'
+#' @returns invisible(metadata)
+#' @export
+#'
+#' @examples
+#' \dontrun{
+#' test_datatable_url_attributes(metadata)
+#' }
+test_datatable_url_attributes <- function(metadata = load_metadata(directory)) {
+  is_eml(metadata)
+
+  #get dataTable urls
+  data_tbl <- EML::eml_get(metadata, "dataTable")
+  data_tbl <- within(data_tbl, rm("@context"))
+
+  # If there's only one csv, data_tbl ends up with one less level of nesting. Re-nest it so that the rest of the code works consistently
+  if ("attributeList" %in% names(data_tbl)) {
+    data_tbl <- list(data_tbl)
+  }
+
+  for (i in seq_along(data_tbl)) {
+    url <- data_tbl[[i]][["physical"]][["distribution"]][["online"]][["url"]]
+
+    #if data tables do not have URLs
+    if(is.null(url)){
+      cli::cli_abort(c("x" = "One or more data files lack URLs. Could not test whether URL attributes are properly formatted or correctly correspond to the URL. Use {.fn EMLeditor::set_data_urls} to add URLs and attributes."))
+      return(invisible(metadata))
+    }
+
+    #check for url attributes:
+    if (length(seq_along(url)) == 1) {
+
+      #if no attributes, warn and exit:
+      cli::cli_warn(c("!" = "One or more of data file URLs elements in metadata lack attributes. Either use {.fn EMLeditor::set_data_urls} to add the appropriate attribute for DataStore or make sure the URL provided is a direct download link."))
+      return(invisible(metadata))
+    }
+
+    # if URL element has an attribute:
+    if (length(seq_along(url)) > 1) {
+      tag <- url[[2]]
+      url <- url[[1]]
+
+      # error if tag is not either "information" or "download"
+      if (tag != "information" & tag != "download") {
+        cli::cli_abort(c("x" = "The \"function = \" attribute in data table URLs must be either \"information\" or \"download\". Use {.fn EMLeditor::set_data_urls} to update the URL attribute."))
+        return(invisible(metadata))
+      }
+
+      # warn if attribute is download, warn
+      if (tag == "download") {
+        cli::cli_warn(c("!" = "One or more data file URL attributes in metadata are set to \"download\". Please make sure this is actually a direct download link to the data file. Use {.fn EMLeditor::set_data_urls} to update this attribute."))
+        return(invisible(metadata))
+      }
+
+      # if attribute is "information" check that it is a data store profile reference; warn if it is not:
+      if (tag == "information") {
+
+        prefix <- stringr::str_sub(url, 1, stringr::str_length(url)-7)
+        suffix <- stringr::str_sub(url, -7, -1)
+
+        if(!prefix == "https://irma.nps.gov/DataStore/Reference/Profile/") {
+          cli::cli_warn(c("!" = "One or more data table URL attributes in metadata is set to \"information\" but the URL supplied is not a DataStore reference profile. Please check that the URL goes to the appropriate page and it is not a direct download link for the data file."))
+          return(invisible(metadata))
+        }
+      }
+    }
+  }
+
+  # if you've gotten this far with no errors, it's probably OK:
+  cli::cli_inform(c("v" = "Metadata datatable URLs and URL attributes are properly specified."))
+
+  return(invisible(metadata))
+}
+
 
 
 #' File Name Match
