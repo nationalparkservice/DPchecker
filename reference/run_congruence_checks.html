@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DPchecker</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.0.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -110,6 +110,9 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata Digital Object Identifier appears to be properly formatted.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata contains URLs for all data tables.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Data table URLs are properly formmatted and correspond to the specified DOI.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> One or more of data file URLs elements in metadata lack attributes. Either</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> use `EMLeditor::set_data_urls()` to add the appropriate attribute for DataStore</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> or make sure the URL provided is a direct download link.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Metadata contains publisher element.</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Field names begin with a letter and do not contain spaces or special</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span>   characters.</span>
@@ -176,11 +179,13 @@
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Checking data and metadata compliance</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #00BB00;">✔</span> Data files do not appear to contain any personal emails.</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> CUI is not set to PUBLIC. GPS coordinates detected in metadata will be</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> publicly available. Are you sure?</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> ── <span style="font-weight: bold;">Summary</span> ──</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BB0000;">✖</span> 3 errors to address</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 7 warnings to look into</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> <span style="color: #BBBB00;">!</span> 9 warnings to look into</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
