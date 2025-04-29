@@ -38,7 +38,7 @@ run_congruence_checks("my_data_package_folder")
 ```
 If your data package is somewhere else on your hard drive, you will have to describe the path to the data package folder. In this example, the data package folder is a folder called "nps_data" located in the Downloads folder (and "username" would be your username):
 ```{r alternate_path, eval=FALSE}
-dp<-"C:/Users/username/Downloads/my_data_package_folder"
+dp <- "C:/Users/username/Downloads/my_data_package_folder"
 run_congruence_checks(dp)
 ```
 
@@ -46,7 +46,7 @@ run_congruence_checks(dp)
 In some cases, you may want to check just the EML metadata file for completeness without checking whether it properly coincides with the data files (perhaps you are trouble shooting a metadata issue or were sent just the metadata file to check). In that case, you can restrict the `run_congruence_checks()` function to just check metadata elements:
 ```{r meta_only, eval=FALSE}
 # In this case "my_data_package_folder" need only contain the metadata file but could include .csvs
-dp<-"C:/Users/username/Downloads/my_data_package_folder"
+dp <- "C:/Users/username/Downloads/my_data_package_folder"
 run_congruence_checks(dp, check_metadata_only = TRUE)
 ```
 
@@ -141,4 +141,3 @@ These functions check to make sure the values and fields in the metadata file ac
 These functions check the data and metadata files for compliance. Please resolve any errors before uploading your data. 
 
 * Data files do not contain any email addresses that constitute personally identifiable information (PII) ([`test_pii_data_emails()`](../reference/test_pii_data.html)
-* Metadata do not contain GPS coordinates if the data package is not public ([`test_public_points()`](../reference/test_public_points.html))

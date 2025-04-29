@@ -11,7 +11,9 @@ Allows the user (and reviewer) to check a data package and test whether it meets
 \seealso{
 Useful links:
 \itemize{
+  \item \url{https://github.com/nationalparkservice/DPchecker}
   \item \url{https://nationalparkservice.github.io/DPchecker/}
+  \item Report bugs at \url{https://github.com/nationalparkservice/DPchecker/issues}
 }
 
 }

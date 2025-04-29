@@ -1,5 +1,7 @@
-globalVariables(c("directory",
-                  "header_lines",
-                  "domain",
-                  "delimiter",
-                  "attributeName"))
+globalVariables(c(
+  "directory",
+  "header_lines",
+  "domain",
+  "delimiter",
+  "attributeName"
+))
