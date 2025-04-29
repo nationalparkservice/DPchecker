@@ -3,6 +3,10 @@
   * Remove `test_public_points()` function. DataStore previously made GPS coordinates public, even when data files were restricted-access, so this function was written to alert users of that fact. DataStore now applies the same access rules to GPS coordinates and data files, so this check is no longer needed.
 
 # DPchecker 1.0.1
+## 2025-04-24
+  * add function `test_datatable_url_attributes` to test for the appropriate attribute in the xml designation in metadata for urls. 
+  * Added unit tests for `test_datatable_url_attributes`, `test_datatable_urls_doi`, and `test_datatable_urls`
+
 ## 2025-04-16
   * remove arcticdatautils as a dependency and replace functionality with equivalent functions from EMLeditor to reduce the total number of package dependencies.
 

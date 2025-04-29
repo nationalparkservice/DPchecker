@@ -1,7 +1,7 @@
-good_dir <- test_path("good")
-bad_dir <- test_path("bad")
-bicy_meta <- load_metadata(test_path("good", "BICY_good"))
-buis_meta <- load_metadata(test_path("good", "BUIS_good"))
+good_dir <- testthat::test_path("good")
+bad_dir <- testthat::test_path("bad")
+bicy_meta <- DPchecker::load_metadata(test_path("good", "BICY_good"))
+buis_meta <- DPchecker::load_metadata(test_path("good", "BUIS_good"))
 
 # ---- load_metadata ----
 test_that("load_metadata works on valid EML file", {
@@ -213,6 +213,38 @@ test_that("test_dup_meta_entries displays error message if metadata contains dup
     "Metadata file name check failed. Some filenames are used more than once in the metadata:.*BUIS_herps.csv$"
   )
 })
+
+# ---- test_datatable_urls ----
+
+test_that("test_datatable_urls displays success message if all datatables have urls", {
+  expect_message(test_datatable_urls(load_metadata(test_path("good", "BICY_good"))), "Metadata contains URLs for all data tables.")})
+
+# ---- test_datatable_urls_doi ----
+
+test_that("test_datatable_urls_doi displays success message if datatable urls have the correct format for the doi", {
+  expect_message(test_datatable_urls_doi(load_metadata(test_path("good", "BICY_good"))), "Data table URLs are properly formmatted and correspond to the specified DOI.")
+})
+
+# ---- test_datatable_url_attributes ---
+
+test_that("test_datatable_url_attributes displays appropriate warning if no attribute info", {
+  expect_warning(test_datatable_url_attributes(load_metadata(test_path("good", "BICY_good"))), "One or more of data file URLs elements in metadata lack attributes.")
+})
+
+test_that("test_datatable_url_attributes displays success when proper attribute and url are supplied", {
+  meta <- DPchecker::load_metadata(test_path("good", "BICY_good"))
+  meta2 <- EMLeditor::set_data_urls(meta, tag = "information")
+  expect_message(test_datatable_url_attributes(meta2), "Metadata datatable URLs and URL attributes are properly specified.")
+})
+
+test_that("test_datatable_url_attributes displays warning when attribute and url do not coincide", {
+  meta <- DPchecker::load_metadata(test_path("good", "BICY_good"))
+  meta2 <- EMLeditor::set_data_urls(meta,
+                                    url = "test.com",
+                                    tag = "download")
+  expect_warning(test_datatable_url_attributes(meta2), "One or more data file URL attributes in metadata are set to \"download\".")
+})
+
 
 # ---- test_file_name_match ----
 test_that("test_file_name_match displays success message if files in data dir and metadata match", {
