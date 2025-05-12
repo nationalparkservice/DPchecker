@@ -1,4 +1,6 @@
 # DPchecker 1.1.0 (under development)
+## 2025-05-12
+  * Add links to Bug Reports (issues) and Source code to github.io main page
 ## 2025-04-23
   * Remove `test_public_points()` function. DataStore previously made GPS coordinates public, even when data files were restricted-access, so this function was written to alert users of that fact. DataStore now applies the same access rules to GPS coordinates and data files, so this check is no longer needed.
 
