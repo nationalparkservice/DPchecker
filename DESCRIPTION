@@ -8,7 +8,6 @@ Authors@R: c(
     person("Amelia", "Sherman", role = "ctb"))
 Description: Allows the user (and reviewer) to check a data package and test whether it meets the congruence standards set forth by NPS for upload to DataStore as a datapackage.
 License: MIT + file LICENSE
-BugReports: https://github.com/nationalparkservice/DPchecker/issues
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
@@ -39,3 +38,4 @@ Remotes:
     https://github.com/nationalparkservice/QCkit,
     https://github.com/nationalparkservice/EMLeditor
 URL: https://github.com/nationalparkservice/DPchecker, https://nationalparkservice.github.io/DPchecker/
+BugReports: https://github.com/nationalparkservice/DPchecker/issues
