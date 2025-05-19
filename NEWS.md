@@ -1,4 +1,4 @@
-# DPchecker 1.1.0 (under development)
+# DPchecker 1.1.0
 ## 2025-05-12
   * Add links to Bug Reports (issues) and Source code to github.io main page
 ## 2025-04-23
