@@ -20,4 +20,5 @@ invisible(metadata)
 dir <- DPchecker_example("BICY_veg")
 test_datatable_urls_doi(dir)
 }
+
 }

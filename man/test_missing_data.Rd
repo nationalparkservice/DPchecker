@@ -33,11 +33,15 @@ Why is it important to document missing data? If a user wants to use your data a
 }
 \examples{
 \dontrun{
-test_missing_data(directory = here::here(),
-  metadata = load_metadata(directory))
+test_missing_data(
+  directory = here::here(),
+  metadata = load_metadata(directory)
+)
 
-test_missing_data(directory = here::here(),
+test_missing_data(
+  directory = here::here(),
   metadata = load_metadata(directory),
-  detail_level = "columns")
+  detail_level = "columns"
+)
 }
 }

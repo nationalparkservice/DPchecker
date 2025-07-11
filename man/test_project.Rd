@@ -16,7 +16,8 @@ invisible(metadata)
 Test for a DataStore project
 }
 \examples{
- \dontrun{
+\dontrun{
 test_project()
 }
+
 }

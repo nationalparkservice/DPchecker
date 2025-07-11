@@ -16,7 +16,8 @@ invisible(metadata)
 Test for content unit links
 }
 \examples{
- \dontrun{
+\dontrun{
 test_content_units()
 }
+
 }

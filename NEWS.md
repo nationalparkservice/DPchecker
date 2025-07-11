@@ -1,3 +1,8 @@
+# DPchecker 1.1.1
+## 2025-07-11
+  * Fix bug in `test_datatable_urls_doi()` and `test_datatable_url_attributes()`
+  * Fix bug in `test_dp_abstract()`
+
 # DPchecker 1.1.0
 ## 2025-05-12
   * Add links to Bug Reports (issues) and Source code to github.io main page
