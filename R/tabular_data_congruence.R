@@ -454,7 +454,7 @@ test_datatable_urls_doi <- function(metadata = load_metadata(directory)) {
 
       #ignore <url function="download> or <url function = "information> tags:
       if (length(seq_along(url)) > 1) {
-        url <- url[[1]]
+        url <- url[["url"]]
       }
 
       prefix <- stringr::str_sub(url, 1, stringr::str_length(url) - 7)
@@ -524,8 +524,8 @@ test_datatable_url_attributes <- function(metadata = load_metadata(directory)) {
 
     # if URL element has an attribute:
     if (length(seq_along(url)) > 1) {
-      tag <- url[[2]]
-      url <- url[[1]]
+      tag <- url[["function"]]
+      url <- url[["url"]]
 
       # error if tag is not either "information" or "download"
       if (tag != "information" & tag != "download") {

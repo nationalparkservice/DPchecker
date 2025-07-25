@@ -2,8 +2,7 @@
 % Please edit documentation in R/tabular_data_congruence.R
 \name{test_taxonomic_cov}
 \alias{test_taxonomic_cov}
-\title{Check for Taxonomic Coverage
-test}
+\title{Check for Taxonomic Coverage}
 \usage{
 test_taxonomic_cov(metadata = load_metadata(directory))
 }

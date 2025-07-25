@@ -19,7 +19,7 @@ invisible(metadata)
 suggestions of which functions to use to correct errors/warnings are provided.
 }
 \examples{
- \dontrun{
+\dontrun{
 dir <- DPchecker_example("BICY_veg")
 test_datatable_urls(dir)
 }

@@ -338,7 +338,7 @@ test_dp_abstract <- function(metadata = load_metadata(directory)) {
       ))
       z <- "warn"
     }
-    if (sum(grepl("[\r?\n|\r]", abs)) > 0) {
+    if (sum(grepl("[\r\n]", abs)) > 0) {
       cli::cli_warn(c("!" = "The data package abstract contains non-standard end of line characters such as \\r, \\n, or \\n\\r.
                       Use {.fn EMLeditor::set_abstract} to revise."))
       z <- "warn"
