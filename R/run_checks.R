@@ -59,13 +59,6 @@ run_congruence_checks <- function(directory = here::here(),
            error = function(e) {
              err_count <<- err_count + 1
              cli::cli_bullets(c(e$message, e$body))
-             # try({
-             #   if (grepl("rbaker", Sys.getenv("USERNAME"), ignore.case = TRUE)) {
-             #     rstudioapi::viewer(url = system.file("extdata", "pebkac.jpg",
-             #                                          package = "DPchecker",
-             #                                          mustWork = TRUE))
-             #   }
-             # })
              cli::cli_abort(c("x" = "You must correct the above issue before the congruence checks can run."), call = NULL)
            },
            warning = function(w) {
