@@ -1,7 +1,7 @@
 <!-- badges: start -->
 [![Lifecycle: experimental](https://img.shields.io/badge/lifecycle-experimental-orange.svg)](https://lifecycle.r-lib.org/articles/stages.html#experimental)
-[![CodeFactor](https://www.codefactor.io/repository/github/roblbaker/dpchecker/badge)](https://www.codefactor.io/repository/github/roblbaker/dpchecker)
-[![R-CMD-check](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/nationalparkservice/DPchecker/actions/workflows/R-CMD-check.yaml)
+[![CodeFactor](https://www.codefactor.io/repository/github/doi-nps/dpchecker/badge)](https://www.codefactor.io/repository/github/doi-nps/dpchecker)
+[![R-CMD-check](https://github.com/doi-nps/DPchecker/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/doi-nps/DPchecker/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 
@@ -19,7 +19,10 @@ You can install the development version of DPchecker from
 
 ``` r
 # install.packages("pak")
-pak::pkg_install("nationalparkservice/DPchecker")
+pak::pkg_install("doi-nps/DPchecker")
+# alternatively:
+# install.packages("remotes")
+remotes::install_github("doi-nps/DPchecker")
 ```
 
 ## Examples:
