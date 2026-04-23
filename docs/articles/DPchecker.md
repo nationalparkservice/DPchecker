@@ -1,0 +1,259 @@
+# DPchecker
+
+## Install DP checker
+
+You can install [DPchecker](https://doi-nps.github.io/DPchecker/) as
+part of the [NPSdataverse](https://doi-nps.github.io/NPSdataverse/)
+using:
+
+``` r
+install.packages("remotes")
+remotes::install_github("doi-nps/NPSdataverse")
+library(NPSdataverse)
+```
+
+## Check a data package
+
+### The entire package
+
+The most common use case for DPchecker is to run a single function,
+[`run_congruence_checks()`](../reference/run_congruence_checks.md) that
+will run all of the DPchecker tests at once. To do this you will need
+your fully constructed data package in a single folder consisting of: \*
+EML-formatted metadata with a file a name that ends in \_metadata.xml \*
+UTF-8 encoded .csv files You will also need to supply the path to your
+data package. If you are using Rstudio and have started a new project,
+you can put the data package folder in your Rproject folder and tell R
+where to find it:
+
+``` r
+run_congruence_checks("my_data_package_folder")
+```
+
+If your data package is somewhere else on your hard drive, you will have
+to describe the path to the data package folder. In this example, the
+data package folder is a folder called “nps_data” located in the
+Downloads folder (and “username” would be your username):
+
+``` r
+dp <- "C:/Users/username/Downloads/my_data_package_folder"
+run_congruence_checks(dp)
+```
+
+### Metadata only
+
+In some cases, you may want to check just the EML metadata file for
+completeness without checking whether it properly coincides with the
+data files (perhaps you are trouble shooting a metadata issue or were
+sent just the metadata file to check). In that case, you can restrict
+the [`run_congruence_checks()`](../reference/run_congruence_checks.md)
+function to just check metadata elements:
+
+``` r
+# In this case "my_data_package_folder" need only contain the metadata file but could include .csvs
+dp <- "C:/Users/username/Downloads/my_data_package_folder"
+run_congruence_checks(dp, check_metadata_only = TRUE)
+```
+
+### Generate a log file
+
+If you want to generate a log file of the
+[`run_congruence_checks()`](../reference/run_congruence_checks.md)
+results you can do so. The log file may be useful for collaborating on
+trouble shooting or may simply be handy for your records. **Log files
+should not be included in the data package upload**. The log file will
+be written to the directory of your Rproject by default, but you can
+also specify the directory it should be saved to.
+
+``` r
+# save log file to current working directory:
+run_congruence_checks(dp, output_filename = "congruence_log_YYYY-MM-DD")
+
+# save the log file to another directory:
+save_here <- "C:/Users/username/Documents"
+run_congruence_checks(dp, output_filename = "congruence_log_YYYY-MM-DD", output_dir = save_here)
+```
+
+## Interpreting results
+
+DPchecker tests are designed to help data package creators produce high
+quality, complete data packages that can fully leverage DataStore’s
+ability to ingest machine-readable metadata, and be maximally useful to
+downstream data users. The same set of tests will also be useful for
+data package reviewers.
+
+Passing a test is indicated with a green check mark ($`\checkmark`$).
+When a test fails, it may fail with an error (a red $`\times`$) or a
+warning (a yellow exclamation mark, !).
+
+Errors must be addressed prior to upload. **Please modify your data
+package so that DPchecker does not return any errors.**
+
+Warnings are helpful indications that the data package creator may want
+to look into something. It may not be wrong, but it might be unusual.
+For instance, if a data package lacked taxonomic or geographic coverage
+it would fail the taxonomic or geographic coverage test with a warning
+because while lacking taxonomy or geography is unusual, it may not be
+incorrect. Warnings may also be used to alert data package creators of
+best practices - for instance if an abstract is less than 20 words long
+the test will produce a warning suggesting the data package creator
+consider writing a more informative abstract.
+
+## Tests conducted
+
+DPchecker v0.3.2 and above runs two types of tests: metadata only tests
+and tests to determine whether the metadata and data files are
+congruent. Metadata tests can be broken down in to two sub-categories,
+metadata compliance and metadata completeness. The tests run and the
+order in which they are run are listed below.
+
+### Metadata compliance
+
+These tests determine whether the metadata is schema valid and adheres
+to some rules for data packages. They only require the \*\_metadata.xml
+file to run and do not require that the data files be present. These
+include:
+
+- The metadata file is schema valid
+  ([`test_validate_schema()`](../reference/test_validate_schema.md))
+- Each filename is used exactly once in the metadata
+  ([`test_dup_meta_entries()`](../reference/test_dup_meta_entries.md))
+- The version of EML is supported
+  ([`test_metadata_version()`](../reference/test_metadata_version.md)
+- Metadata indicates that Each data file has a single-character field
+  delimiter ([`test_delimiter()`](../reference/test_delimiter.md))
+- Metadata indicates that each data file contains exactly one header row
+  ([`test_header_num()`](../reference/test_header_num.md))
+- Metadata indicates that data files do not have footers
+  ([`test_footer()`](../reference/test_footer.md))
+- Metadata contains taxonomic coverage element
+  ([`test_taxonomic_cov()`](../reference/test_taxonomic_cov.md))
+- Metadata contains geographic coverage element
+  ([`test_geographic_cov()`](../reference/test_geographic_cov.md))
+- Metadata contain NPS content unit links
+  ([test_content_units()](../reference/test_content_units.md))
+- Metadata contains a Digital Object Identifier (DOI)
+  ([`test_doi()`](../reference/test_doi.md))
+- Metadata DOI is properly formatted
+  ([`test_doi_format()`](../reference/test_doi_format.md))
+- Metadata contains URLs for each data table
+  ([test_datatable_urls](../reference/test_datatable_urls.md))
+- Metadata URLs are properly formatted and correspond to the DOI
+  indicated in the metadata
+  ([test_datatable_urls_doi](../reference/test_datatable_urls_doi))
+- Metadata contains a publisher element
+  ([`test_publisher()`](../reference/test_publisher.md))
+- Metadata indicates data column names begin with a letter and do not
+  contain spaces or special characters
+  ([`test_valid_fieldnames()`](../reference/test_valid_fieldnames.md))
+- Metadata indicates that file names being with a letter and do not
+  contain special characters or spaces.
+  ([`test_valid_filenames()`](../reference/test_valid_filenames.md))
+- Metadata contains emails, but only .gov emails
+  ([`test_pii_meta_emails()`](../reference/test_pii_meta_emails.md))
+
+### EML elements required for DataStore:
+
+These tests ensure that the EML elements necessary for DataStore to
+properly extract metadata and populate a reference exist, are in the
+correct location, and are properly formatted. These elements are also
+often the aspects of metadata that will be passed on to other
+repositories and search engines such as
+[DataCite](https://datacite.org/) [data.gov](https://data.gov/) and
+[google’s dataset search](https://datasetsearch.research.google.com/).
+Therefore, these checks may throw warnings with suggestions on best
+practices - such as removing stray characters from abstracts or
+suggesting a more informative title if your title is unusually short.
+Required EML element tests only require the \*\_metadata.xml file to run
+and do not require that the data files be present.
+
+- Creator element exists and if individual creators exist, they all have
+  valid (\<3 words) surNames
+  ([`test_creator()`](../reference/test_creator.md))
+- Publication date is present and in the correct ISO-8601 format
+  ([`test_pub_date()`](../reference/test_pub_date.md))
+- Data package title is present in metadata
+  ([`test_dp_title()`](../reference/test_dp_title.md))
+- Data package metadata contains at least one keyword
+  ([`test_keywords()`](../reference/test_keywords.md))
+- Metadata states data was created by or for NPS
+  ([`test_by_for_nps()`](../reference/test_by_for_nps.md))
+- Metadata indicates the publisher is the National Park Service
+  ([`test_publisher_name()`](../reference/test_publisher_name.md))
+- Metadata indicates the publisher state is CO
+  ([`test_publisher_state()`](../reference/test_publisher_state.md))
+- Metadata indicates the publisher city is Fort Collins
+  ([`test_publisher_city()`](../reference/test_publisher_city.md))
+- Metadata contains a well formatted abstract for the data package
+  ([`test_dp_abstract()`](../reference/test_dp_abstract.md))
+- Metadata contains a well formatted methods section for the data
+  package ([`test_methods()`](../reference/test_methods.md))
+- All dataTables listed in metadata have a unique file description
+  ([`test_file_descript()`](../reference/test_file_descript.md))
+- Metadata contains a valid CUI code
+  ([`test_cui_dissemination()`](../reference/test_cui_dissemination.md))
+- Metadata contains a valid license name
+  ([`test_license()`](../reference/test_license.md))
+- Metadata contains an Intellectual Rights statement
+  ([`test_int_rights()`](../reference/test_int_rights.md))
+- All attributes listed in metadata have attribute definitions
+  ([`test_attribute_defs()`](../reference/test_attribute_defs.md))
+- All attributes listed in metadata have storage types associated with
+  them ([`test_storage_type()`](../reference/test_storage_type.md))
+- All attribute storage types are valid values
+  ([`test_storage_type()`](../reference/test_storage_type.md))
+
+### Recommended EML elements
+
+These elements aren’t required. If they are missing, the tests will
+generate a warning that you can choose to ignore. However, if you have
+included these elements, please resolve any errors before submitting the
+data package.
+
+- All individual Creators have an [ORCiD](https://orcid.org) associated
+  with them ([`test_orcid_exists()`](../reference/test_orcid_exists.md))
+- All ORCiDs are properly formatted
+  ([`test_orcid_format()`](../reference/test_orcid_format.md))
+- All ORCiDs resolve to an ORCiD profile
+  ([`test_orcid_resolves()`](../reference/test_orcid_resolves.md))
+- All ORCiDs resolve to an ORCiD profile that matches the Creator’s last
+  name ([`test_orcid_match()`](../reference/test_orcid_match.md))
+- The metadata contains a well formatted additionalInfo (“Notes” on
+  DataStore) section ([`test_notes()`](../reference/test_notes.md))
+- The metadata contains a DataStore Project reference in
+  “projects”([`test_project()`](../reference/test_project.md))
+
+### Metadata and Data Congruence
+
+These functions check to make sure the values and fields in the metadata
+file accurately corresponds to the data files supplied. These test
+require the entire data package - both the \*\_metadata.xml file and all
+data files (\*.csv) must be present.
+
+- All data files are listed in metadata and all metadata file names
+  refer to data files
+  ([`test_file_name_match()`](../reference/test_file_name_match.md))
+- All columns in data match all columns in metadata
+  ([`test_fields_match()`](../reference/test_fields_match.md))
+- All NAs (missing data) are properly accounted for in metadata
+  ([`test_missing_data()`](../reference/test_missing_data.md))
+- Columns indicated as numeric in metadata contain only numeric values
+  and missing value codes in the data
+  ([`test_numeric_fields()`](../reference/test_numeric_fields.md))
+- Columns indicated as dates in metadata have matching date formats in
+  the metadata and the data. This checks each cell in each date column
+  against the format provided in the metadata and so can take some time
+  for larger data packages
+  ([`test_dates_parse()`](../reference/test_dates_parse.md))
+- Columns indicated as dates in metadata contain values that fall within
+  the stated temporal coverage in metadata
+  ([`test_date_range()`](../reference/test_date_range.md))
+
+### Data and Metadata Compliance
+
+These functions check the data and metadata files for compliance. Please
+resolve any errors before uploading your data.
+
+- Data files do not contain any email addresses that constitute
+  personally identifiable information (PII)
+  ([`test_pii_data_emails()`](../reference/test_pii_data.md))
