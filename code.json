@@ -1,0 +1,50 @@
+[
+  {
+    "name": "DPchecker",
+    "organization": "NATIONAL PARK SERVICE",
+    "description": "Allows the user (and reviewer) to check a data package and test whether it meets the congruence standards set forth by NPS for upload to DataStore as a datapackage.",
+    "version": "1.1.0",
+    "status": "ongoing development",
+    "permissions": {
+      "usageType": "openSource",
+      "licenses": [
+        {
+          "name": "Public Domain, CC0-1.0",
+          "URL": "https://github.com/DOI-NPS/DPchecker"
+        }
+      ]
+    },
+    "homepageURL": "https://github.com/DOI-NPS/DPchecker",
+    "downloadURL": "https://github.com/DOI-NPS/DPchecker",
+    "disclaimerURL": "hhtps://github.com/DOI-NPS/DPchecker/blob/main/LICENSE",
+    "repositoryURL": "https://github.com/DOI-NPS/DPchecker",
+    "vcs": "git",
+    "laborHours": 1,
+    "tags": [
+      "NRSS",
+      "IMD",
+      "r",
+      "schema",
+      "open",
+      "accessible",
+      "open-data",
+      "nps",
+      "reusable",
+      "datastore",
+      "eml",
+      "findable",
+      "interoperable",
+      "national-park-service"
+    ],
+    "languages": [
+      "R"
+    ],
+    "contact": {
+      "name": "Robert Baker",
+      "email": "robert_baker@nps.gov"
+    },
+    "date": {
+      "metadataLastUpdated": "2026-04-22"
+    }
+  }
+]

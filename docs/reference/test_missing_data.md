@@ -1,0 +1,82 @@
+# Looks for undocumented missing data (NAs)
+
+`test_missing_data` scans the data package for common missing data
+(blanks/empty cells or NA in a cell). If there are no blanks or NAs, the
+test passes. If missing data are found and properly documented
+(missingValueCode is either "NA", "empty", or "blank"), the test passes.
+If any missing data is detected but not properly documented in the
+metadata, the test fails with an error.
+
+Commonly, R will interpret blank cells as missing and fill in NA. To
+pass this test, you will need to either delete columns or tables with
+missing data (if they are completely blank), or add the appropriate as a
+missing data code during metadata creation (in the corresponding
+attributes.txt file).
+
+This is a fairly simple test and ONLY checks for NA and blanks. Although
+there are many common missing data codes (-99999, "Missing", "NaN" etc)
+we cannot anticipate all of them.
+
+When running `test_missing_data()` via
+[`run_congruence_checks()`](run_congruence_checks.md), the default for
+"detail_level" will be used and only file-level information about
+undocumented missing values will be reported to condense the error
+message output. When attempting to identify specifically which data have
+undocumented missing values, it may be helpful to run
+`test_missing_data()` with the parameter "detail_level" set to
+"columns". This will output a list of all columns within each file with
+undocumented missing data.
+
+Why is it important to document missing data? If a user wants to use
+your data and some of it is missing without an explanation or
+acknowledgement, the user cannot trust any of the data in your data
+package to be complete.
+
+## Usage
+
+``` r
+test_missing_data(
+  directory = here::here(),
+  metadata = load_metadata(directory),
+  detail_level = "files"
+)
+```
+
+## Arguments
+
+- directory:
+
+  the directory where the data file(s) are found (i.e. your data
+  package). Defaults to the current working directory. On exit, returns
+  to the current working directory.
+
+- metadata:
+
+  The metadata object returned by `load_metadata`. If parameter not
+  provided, defaults to calling `load_metadata` in current project
+  directory.
+
+- detail_level:
+
+  String. Choose either "files" or "columns". Defaults to "files".
+
+## Value
+
+Invisibly returns `metadata`.
+
+## Examples
+
+``` r
+if (FALSE) { # \dontrun{
+test_missing_data(
+  directory = here::here(),
+  metadata = load_metadata(directory)
+)
+
+test_missing_data(
+  directory = here::here(),
+  metadata = load_metadata(directory),
+  detail_level = "columns"
+)
+} # }
+```

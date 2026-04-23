@@ -18,11 +18,11 @@ knitr::opts_chunk$set(
 
 # Install DP checker
 
-You can install [DPchecker](https://nationalparkservice.github.io/DPchecker/) as part of the [NPSdataverse](https://nationalparkservice.github.io/NPSdataverse/) using: 
+You can install [DPchecker](https://doi-nps.github.io/DPchecker/) as part of the [NPSdataverse](https://doi-nps.github.io/NPSdataverse/) using: 
 
 ```{r verse_install, eval=FALSE}
-install.packages("devtools")
-devtools::install_github("nationalparkservice/NPSdataverse")
+install.packages("remotes")
+remotes::install_github("doi-nps/NPSdataverse")
 library(NPSdataverse)
 ```
 
@@ -112,7 +112,7 @@ These tests ensure that the EML elements necessary for DataStore to properly ext
 * All dataTables listed in metadata have a unique file description ([`test_file_descript()`](../reference/test_file_descript.html))
 * Metadata contains a valid CUI code ([`test_cui_dissemination()`](../reference/test_cui_dissemination.html))
 * Metadata contains a valid license name ([`test_license()`](../reference/test_license.html))
-* Metadata contains an Intellectual Rights statement ([`test_int_rights()`](../reference/test_int_rights.html)
+* Metadata contains an Intellectual Rights statement ([`test_int_rights()`](../reference/test_int_rights.html))
 * All attributes listed in metadata have attribute definitions ([`test_attribute_defs()`](../reference/test_attribute_defs.html))
 * All attributes listed in metadata have storage types associated with them ([`test_storage_type()`](../reference/test_storage_type.html))
 * All attribute storage types are valid values ([`test_storage_type()`](../reference/test_storage_type.html))
@@ -140,4 +140,4 @@ These functions check to make sure the values and fields in the metadata file ac
 ## Data and Metadata Compliance
 These functions check the data and metadata files for compliance. Please resolve any errors before uploading your data. 
 
-* Data files do not contain any email addresses that constitute personally identifiable information (PII) ([`test_pii_data_emails()`](../reference/test_pii_data.html)
+* Data files do not contain any email addresses that constitute personally identifiable information (PII) ([`test_pii_data_emails()`](../reference/test_pii_data.html))
