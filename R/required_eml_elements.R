@@ -100,7 +100,7 @@ test_pub_date <- function(metadata = load_metadata(directory)) {
 
 #' Test data package title
 #'
-#' @description `test_dp_title()` tests EML metadata for presence of a data package title. The test fails with an error if the title is absent. The test fails with a warning if the title is > 20 or < 5 words. Otherwise, the test passes.
+#' @description `test_dp_title()` tests EML metadata for presence of a data package title. The test fails with an error if the title is absent or the title is greater than 300 characters (a data.gov requirement). The test fails with a warning if the title is > 20 or < 5 words. Otherwise, the test passes.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -288,7 +288,7 @@ test_publisher_city <- function(metadata = load_metadata(directory)) {
 
 #' Test EML abstract
 #'
-#' @description `test_dp_abstract()` inspects EML for presence of a data package abstract. The test Fails with an error if the abstract is absent. If the abstract is present, the test fails with a warning if the abstract is <20 words, >250 words, or contains a subset of common characters that indicate improper formatting. Otherwise the test passes.
+#' @description `test_dp_abstract()` inspects EML for presence of a data package abstract. The test Fails with an error if the abstract is absent or greater than 10,000 characters (required for data.gov). If the abstract is present, the test fails with a warning if the abstract is <20 words, >250 words, or contains a subset of common characters that indicate improper formatting. Otherwise the test passes.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -316,6 +316,11 @@ test_dp_abstract <- function(metadata = load_metadata(directory)) {
         abs <- append(abs, abstract[[i]])
       }
     }
+   if (nchar(abs) > 10000) {
+     cli::cli_abort(c(
+      "x" = "The abstract must be less than 10,000 characters.
+      Please revise using {.fn EMLeditor::set_abstract}."))
+   }
     x <- sapply(stringr::str_count(abs, "\\w+"), sum)
     # x <- sapply(strsplit(abs, "" ), length)
     x <- sum(x) # sums up all words across potential multiple paragraphs
