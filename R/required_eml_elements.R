@@ -121,15 +121,21 @@ test_dp_title <- function(metadata = load_metadata(directory)) {
   }
   # if title present, check certain parameters:
   if (!missing_title) {
-    x <- sapply(strsplit(title, " "), length)
-    if (x > 20) {
-      cli::cli_inform(c(
-        "!" = "Data package title is >20 words. Consider a more concise title. Use {.fn EMLeditor::set_title} to revise."
-      ))
+    if (nchar(title) > 300) {
+      cli::cli_abort(c("x" = "Titles must be less than 300 Characters. Please revise your title using {.fn EMLeditor::set_title}."))
     }
+    x <- sapply(strsplit(title, " "), length)
     if (x < 5) {
       cli::cli_inform(c(
         "!" = "Data package title is <5 words. Consider a more informative title. Use {.fn EMLeditor::set_title} to revise."
+      ))
+    }
+    is_upper <- stringr::str_detect(strsplit(title,
+                                          " ")[[1]],
+                                                "^[[:upper:]]+$")
+    if (any(is_upper == TRUE)) {
+      cli::cli_inform(c(
+        "!" = "Data package title appears to contain acronyms. Consider revising to spell out acronyms. Use {.fn EMLeditor::set_title} to revise."
       ))
     } else {
       cli::cli_inform(c(
