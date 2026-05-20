@@ -779,7 +779,7 @@ test_keywords <- function(metadata = load_metadata(directory)) {
     cli::cli_abort(c("x" = "No keywords detected. Metadata must contain at least one keyword."))
   } else {
     if (any(nchar(unlist(keywords)) > 150)) {
-      cli::cli_abort(c("x" = "Each keyword must be less than 150 characters."))
+      cli::cli_abort(c("x" = "Each keyword cannot exceed 150 characters."))
     }
     cli::cli_inform(c("v" = "Metadata contains keyword(s)."))
   }
