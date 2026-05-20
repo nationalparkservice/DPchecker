@@ -1,7 +1,8 @@
 # Test for Keywords
 
 `test_keywords()` tests to see whether metadata contains at least one
-"Keywords Set".
+"Keywords Set". Fails with error if any keyword is longer than 150
+characters (data.gov requirement).
 
 ## Usage
 
@@ -19,7 +20,7 @@ test_keywords(metadata = load_metadata(directory))
 
 ## Value
 
-invisilbe(meatadatda)
+invisible(meatadatda)
 
 ## Examples
 

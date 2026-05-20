@@ -100,7 +100,7 @@ test_pub_date <- function(metadata = load_metadata(directory)) {
 
 #' Test data package title
 #'
-#' @description `test_dp_title()` tests EML metadata for presence of a data package title. The test fails with an error if the title is absent. The test fails with a warning if the title is > 20 or < 5 words. Otherwise, the test passes.
+#' @description `test_dp_title()` tests EML metadata for presence of a data package title. The test fails with an error if the title is absent or the title is greater than 300 characters (a data.gov requirement). The test fails with a warning if the title is > 20 or < 5 words. Otherwise, the test passes.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -121,15 +121,21 @@ test_dp_title <- function(metadata = load_metadata(directory)) {
   }
   # if title present, check certain parameters:
   if (!missing_title) {
-    x <- sapply(strsplit(title, " "), length)
-    if (x > 20) {
-      cli::cli_inform(c(
-        "!" = "Data package title is >20 words. Consider a more concise title. Use {.fn EMLeditor::set_title} to revise."
-      ))
+    if (nchar(title) > 300) {
+      cli::cli_abort(c("x" = "Titles must be less than 300 Characters. Please revise your title using {.fn EMLeditor::set_title}."))
     }
+    x <- sapply(strsplit(title, " "), length)
     if (x < 5) {
       cli::cli_inform(c(
         "!" = "Data package title is <5 words. Consider a more informative title. Use {.fn EMLeditor::set_title} to revise."
+      ))
+    }
+    is_upper <- stringr::str_detect(strsplit(title,
+                                          " ")[[1]],
+                                                "^[[:upper:]]+$")
+    if (any(is_upper == TRUE)) {
+      cli::cli_inform(c(
+        "!" = "Data package title appears to contain acronyms. Consider revising to spell out acronyms. Use {.fn EMLeditor::set_title} to revise."
       ))
     } else {
       cli::cli_inform(c(
@@ -282,7 +288,7 @@ test_publisher_city <- function(metadata = load_metadata(directory)) {
 
 #' Test EML abstract
 #'
-#' @description `test_dp_abstract()` inspects EML for presence of a data package abstract. The test Fails with an error if the abstract is absent. If the abstract is present, the test fails with a warning if the abstract is <20 words, >250 words, or contains a subset of common characters that indicate improper formatting. Otherwise the test passes.
+#' @description `test_dp_abstract()` inspects EML for presence of a data package abstract. The test Fails with an error if the abstract is absent or greater than 10,000 characters (required for data.gov). If the abstract is present, the test fails with a warning if the abstract is <20 words, >250 words, or contains a subset of common characters that indicate improper formatting. Otherwise the test passes.
 #'
 #' @inheritParams test_pub_date
 #'
@@ -310,6 +316,11 @@ test_dp_abstract <- function(metadata = load_metadata(directory)) {
         abs <- append(abs, abstract[[i]])
       }
     }
+   if (nchar(abs) > 10000) {
+     cli::cli_abort(c(
+      "x" = "The abstract must not exceed 10,000 characters.
+      Please revise using {.fn EMLeditor::set_abstract}."))
+   }
     x <- sapply(stringr::str_count(abs, "\\w+"), sum)
     # x <- sapply(strsplit(abs, "" ), length)
     x <- sum(x) # sums up all words across potential multiple paragraphs
@@ -749,11 +760,11 @@ test_creator <- function(metadata = load_metadata(directory)) {
 
 #' Test for Keywords
 #'
-#' @description `test_keywords()` tests to see whether metadata contains at least one "Keywords Set".
+#' @description `test_keywords()` tests to see whether metadata contains at least one "Keywords Set". Fails with error if any keyword is longer than 150 characters (data.gov requirement).
 #'
 #' @inheritParams test_pub_date
 #'
-#' @return invisilbe(meatadatda)
+#' @return invisible(meatadatda)
 #' @export
 #'
 #' @examples
@@ -767,6 +778,9 @@ test_keywords <- function(metadata = load_metadata(directory)) {
   if (is.null(keywords)) {
     cli::cli_abort(c("x" = "No keywords detected. Metadata must contain at least one keyword."))
   } else {
+    if (any(nchar(unlist(keywords)) > 150)) {
+      cli::cli_abort(c("x" = "Each keyword cannot exceed 150 characters."))
+    }
     cli::cli_inform(c("v" = "Metadata contains keyword(s)."))
   }
 }

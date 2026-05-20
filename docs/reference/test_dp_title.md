@@ -1,9 +1,10 @@
 # Test data package title
 
 `test_dp_title()` tests EML metadata for presence of a data package
-title. The test fails with an error if the title is absent. The test
-fails with a warning if the title is \> 20 or \< 5 words. Otherwise, the
-test passes.
+title. The test fails with an error if the title is absent or the title
+is greater than 300 characters (a data.gov requirement). The test fails
+with a warning if the title is \> 20 or \< 5 words. Otherwise, the test
+passes.
 
 ## Usage
 

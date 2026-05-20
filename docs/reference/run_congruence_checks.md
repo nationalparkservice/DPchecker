@@ -101,7 +101,8 @@ run_congruence_checks(dir)
 #> ✔ Any individual Creators in metadata have a surNames with less than three
 #>   words.
 #> ! Publication date, 2022, predates the Data Package Reference Type.
-#> ✔ Data package title is present in metadata.
+#> ! Data package title appears to contain acronyms. Consider revising to spell
+#>   out acronyms. Use `EMLeditor::set_title()` to revise.
 #> ✔ Metadata contains keyword(s).
 #> ✔ Metadata states data was created by or for NPS.
 #> ✔ Metadata indicates the publisher is the National Park Service.
