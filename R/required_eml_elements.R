@@ -318,7 +318,7 @@ test_dp_abstract <- function(metadata = load_metadata(directory)) {
     }
    if (nchar(abs) > 10000) {
      cli::cli_abort(c(
-      "x" = "The abstract must be less than 10,000 characters.
+      "x" = "The abstract must not exceed 10,000 characters.
       Please revise using {.fn EMLeditor::set_abstract}."))
    }
     x <- sapply(stringr::str_count(abs, "\\w+"), sum)
